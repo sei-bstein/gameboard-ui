@@ -1,0 +1,67 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="ctx$ | async as ctx; else loading">
+  <div class="jumbotron d-flex align-items-center">
+    <app-game-card [game]="ctx.game"></app-game-card>
+    <span class="display-4 text-success mx-4">
+      {{ctx.game.competition}}
+      {{ctx.game.season}}
+      {{ctx.game.track}}
+      {{ctx.game.division}}
+      {{ctx.game.name}}
+    </span>
+    <div class="spacer"></div>
+    <div [hidden]="!!ctx.user.id">
+      <app-login>
+        <span class="">Login to enroll or play!</span>
+      </app-login>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+
+    <div class="row justify-content-center">
+      <!-- if auth'd -->
+      <ng-container *ngIf="!!ctx.user.id">
+        <!-- if enrolled -->
+        <ng-container *ngIf="!!ctx.player.id">
+          <div class="col panel">
+            <h2>Status</h2>
+            <app-player-session [ctx]="ctx"></app-player-session>
+          </div>
+        </ng-container>
+        <!-- if not session start -->
+        <ng-container *ngIf="(ctx.user.isTester || !ctx.game.registration.isAfter) && (!ctx.player.id || (ctx.player.sessionBegin+'').startsWith('0001'))">
+          <div class="col panel">
+            <h2>Enrollment</h2>
+            <app-player-enroll [ctx]="ctx"></app-player-enroll>
+          </div>
+        </ng-container>
+
+      </ng-container>
+      <div class="col panel">
+        <h2>Info</h2>
+        <app-game-info [game]="ctx.game"></app-game-info>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 scoreboard bg-dark">
+        <h2 id="scoreboard" class="text-center my-4">Scoreboard</h2>
+      </div>
+    </div>
+
+  </div>
+
+
+</ng-container>
+
+<ng-template #loading>
+  <div class="jumbotron mb-4">
+    <span class="display-4 text-muted">Game Title</span>
+  </div>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

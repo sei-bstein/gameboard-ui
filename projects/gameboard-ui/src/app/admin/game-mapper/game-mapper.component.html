@@ -1,0 +1,123 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="created$ | async"></ng-container>
+<ng-container *ngIf="updated$ | async"></ng-container>
+<ng-container *ngIf="deleted$ | async"></ng-container>
+
+<div class="row">
+
+  <!-- search external specs -->
+  <div class="col-2">
+    <div class="d-flex flex-column">
+      <button class="mb-1 btn btn-secondary" (click)="view('search')">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </button>
+      <button class="mb-1 btn btn-secondary" (click)="view('edit')">
+        <fa-icon [icon]="faEdit"></fa-icon>
+        <span>Edit</span>
+        <span *ngIf="!!addedCount" class="ml-2 px-2 badge badge-info">{{addedCount}}</span>
+      </button>
+      <button class="mb-1 btn btn-secondary" (click)="view('map')">
+        <fa-icon [icon]="faMapMarker"></fa-icon>
+        <span>Map</span>
+      </button>
+      <ng-container *ngIf="viewing==='map'">
+        <button btnCheckbox class="btn btn-outline-info" [(ngModel)]="showGrid">
+          <span>Show Grid</span>
+        </button>
+        <app-dropzone inputId="map-input" btnClass="btn btn-sm btn-primary" (dropped)="upload($event)">
+          <button class="btn btn-sm btn-outline-warning mx-2" (click)="clearImage()">
+            <fa-icon [icon]="faTrash"></fa-icon>
+            <span>Reset</span>
+          </button>
+        </app-dropzone>
+        <div class="form-group pb-1 pt-1">
+          <!-- <label for="logo-input">Map Image</label> -->
+        </div>
+        <div>Alt-Drag to resize hotspots</div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="col-10">
+
+    <!-- edit game specs -->
+    <div  [hidden]="viewing!=='edit'">
+      <h4>Challenge Specs</h4>
+      <div *ngFor="let item of list$ | async; trackBy:trackById">
+        <div class="row align-items-center bg-secondary mb-2">
+          <div class="col-4">
+            {{item.name}}
+          </div>
+          <div class="col-1">
+            <div class="form-group form-check pb-0 pt-1">
+              <input type="checkbox" class="form-check-input" id="disabled-input-{{item.id}}" name="disabled"
+              [(ngModel)]="item.disabled" (ngModelChange)="updating$.next(item)">
+              <label for="disabled-input-{{item.id}}">Disabled</label>
+            </div>
+          </div>
+          <div class="col-2">
+            <div class="form-group pb-0 pt-1">
+              <label for="slug-input-{{item.id}}">Support Key</label>
+              <input type="text" class="form-control" id="slug-input-{{item.id}}" name="slug"
+                [(ngModel)]="item.tag" (ngModelChange)="updating$.next(item)">
+              <small></small>
+            </div>
+          </div>
+          <div class="col-2">
+            <div class="form-group pb-0 pt-1">
+              <label for="points-input-{{item.id}}">Points</label>
+              <input type="number" class="form-control" id="points-input-{{item.id}}" name="points"
+                [(ngModel)]="item.points" (ngModelChange)="updating$.next(item)">
+              <small></small>
+            </div>
+          </div>
+          <div class="col-3">
+            <app-confirm-button btnClass="btn btn-outline-danger" (confirm)="deleting$.next(item)">
+              <fa-icon [icon]="faTrash"></fa-icon>
+              <span>Delete</span>
+            </app-confirm-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- search external specs -->
+    <app-spec-browser  [hidden]="viewing!=='search'"></app-spec-browser>
+
+
+    <!-- edit spec map locations -->
+    <div [hidden]="viewing!=='map'">
+
+
+      <div #mapbox class="mapbox" [class.mapbox-active]="!!this.specDrag" [class.mapbox-hover]="!!specHover">
+        <div #callout class="callout bg-primary m-0 p-4" [hidden]="!this.specHover">
+          <span>{{this.specHover?.name}}</span><br/>
+          <span>Points: {{this.specHover?.points}}</span>
+        </div>
+        <svg viewBox="0 0 100 100" (mousemove)="mousemove($event)">
+          <svg:image [attr.href]="this.game.mapUrl" width="100" height="100" />
+
+          <ng-container *ngIf="showGrid">
+            <ng-container *ngFor="let i of [0,10,20,30,40,50,60,70,80,90,100]">
+              <svg:line [attr.x1]=i y1=0 [attr.x2]=i y2=100 stroke="lime" [attr.stroke-width]="i===50 ? .1 : .05"></svg:line>
+              <svg:line x1=0 [attr.y1]=i x2=100 [attr.y2]=i stroke="lime" [attr.stroke-width]="i===50 ? .1 : .05"></svg:line>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngFor="let c of list">
+            <a class="mapbox-dot" (mousedown)="mousedrag($event, c)" (mouseup)="mousedrag($event, c)" (mouseenter)="mouseenter($event, c)" (mouseleave)="mouseleave($event, c)">
+              <svg:circle [attr.cx]="c.x *100" [attr.cy]="c.y*100" [attr.r]="c.r*100" [attr.fill]="c.c"></svg:circle>
+            </a>
+
+          </ng-container>
+        </svg>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

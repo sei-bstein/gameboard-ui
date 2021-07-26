@@ -1,0 +1,13 @@
+.wrapper {
+  position: relative;
+}
+.overlay {
+  position: absolute;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  border-radius: .25rem;
+  background-color: rgba(black, .8);
+  z-index: 10;
+}

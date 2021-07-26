@@ -1,0 +1,24 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="forecast$ | async as forecast">
+  <svg viewBox="0 0 100 48"  xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <ng-container *ngFor="let t of forecast; let i=index;">
+        <linearGradient [id]="'g'+i">
+          <stop [class]="!!t.available ? 's1' : 's3'" offset="0"/>
+          <stop *ngIf="t.available && t.reserved" class="s1" [attr.offset]="t.percent - .025"/>
+          <stop *ngIf="t.available && t.reserved" class="s2" [attr.offset]="t.percent"/>
+          <stop *ngIf="t.available && t.reserved" class="s3" [attr.offset]="t.percent + .025"/>
+          <stop [class]="!!t.reserved ? 's3' : 's1'" offset="1"/>
+        </linearGradient>
+      </ng-container>
+      <!-- <style type="text/css"></style> -->
+    </defs>
+    <ng-container *ngFor="let t of forecast; let i=index;">
+      <rect [attr.y]="i*3" width="100" height="3" [attr.fill]="'url(#g'+i+')'"></rect>
+      <text [attr.y]="i*3+2.5" x="1" class="forecast-text" textLength="8" lengthAdjust="spacingAndGlyphs">{{t.text}}</text>
+    </ng-container>
+  </svg>
+
+</ng-container>

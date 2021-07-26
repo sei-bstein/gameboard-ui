@@ -1,0 +1,78 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<!-- <div class="card-deck">
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+</div> -->
+
+<!-- Live -->
+<div class="row mt-4" *ngIf="present$ | async as present; else loading">
+
+  <ng-container *ngIf="!!present.length">
+    <div class="col-12">
+      <h4>Live!</h4>
+    </div>
+    <app-game-card *ngFor="let g of present"
+      [game]="g" (selected)="selected(g)"
+      class="col-lg-3 col-md-4 col-6 mb-4">
+    </app-game-card>
+  </ng-container>
+
+</div>
+
+<!-- Upcoming -->
+<div class="row mt-4" *ngIf="future$ | async as future; else loading">
+
+  <div class="col-12">
+    <h4>Upcoming Games</h4>
+  </div>
+
+  <app-game-card *ngFor="let g of future"
+    [game]="g" (selected)="selected(g)"
+    class="col-lg-3 col-md-4 col-6 mb-4">
+  </app-game-card>
+
+</div>
+
+<!-- past -->
+<div class="row mt-4" *ngIf="past$ | async as past; else loading">
+
+  <div class="col-12">
+    <h4>Completed Games</h4>
+  </div>
+
+  <app-game-card *ngFor="let g of past"
+    [game]="g" (selected)="selected($event)"
+    class="col-lg-3 col-md-4 col-6 mb-4">
+  </app-game-card>
+
+</div>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

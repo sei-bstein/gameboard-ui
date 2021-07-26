@@ -1,0 +1,12 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<div class="text-center">
+  <p><ng-content></ng-content></p>
+  <button [hidden]="working" class="btn btn-lg btn-primary" (click)="login()" aria-label="identity provider">
+    <fa-icon [icon]="faOpenid"></fa-icon>
+    <span>Login </span>
+    <span>&mdash; {{authority}}</span>
+  </button>
+  <app-spinner *ngIf="working"></app-spinner>
+</div>

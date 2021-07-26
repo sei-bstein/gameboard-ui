@@ -1,0 +1,120 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="ctx$ | async as ctx; else loading">
+
+  <div class="card">
+    <div class="card-body">
+
+      <div class="text-info card-text mb-2">
+        <span *ngIf="ctx.game.session.isBefore">Enrollment opens in </span>
+        <span *ngIf="ctx.game.session.isDuring">Enrollment closes in </span>
+        <span *ngIf="ctx.game.session.isAfter">Enrollment is closed </span>
+        <span>{{ctx.game.session.countdown | countdown}}</span>
+      </div>
+
+      <!-- not yet enrolled -->
+      <ng-container *ngIf="!ctx.player.id && (ctx.user.isTester || ctx.game.registration.isDuring)">
+
+        <!-- team -->
+        <div *ngIf="ctx.game.allowTeam">
+          <p>
+            This event allows team participation.
+            After enrolling you will be able to
+            generate and accept a link-up code
+            that will associate your teammates.
+          </p>
+        </div>
+        <div *ngIf="ctx.game.requireTeam">
+          <p>
+            In fact, this event <em>requires</em>
+            a team of {{ctx.game.minTeamSize}} to {{ctx.game.maxTeamSize}}.
+            Any player not associated with a sufficiently
+            sized team at game-open will be unable to participate.
+          </p>
+        </div>
+        <!-- disclosure -->
+        <div *ngIf="ctx.game.registrationMarkdown">
+          <alert type="info">By enrolling in {{ctx.game.name}}, you are accepting the following terms.</alert>
+          <markdown [data]="ctx.game.registrationMarkdown"></markdown>
+        </div>
+        <!-- accept -->
+        <div class="text-center">
+          <app-confirm-button btnClass="btn btn-primary btn-lg" (confirm)="enroll(ctx.user.id, ctx.game.id)">
+            <fa-icon [icon]="faEdit"></fa-icon>
+            <span>Enroll</span>
+          </app-confirm-button>
+          <app-error-div [errors]="errors"></app-error-div>
+        </div>
+      </ng-container>
+
+      <!-- already enrolled -->
+      <ng-container
+        *ngIf="!!ctx.player.id && ctx.player.session.isBefore && (ctx.user.isTester || ctx.game.registration.isDuring)">
+        <div class="form-group mb-0">
+          <label for="name-input">Set {{ctx.game.maxTeamSize > 1 ? 'Team' : 'Game'}} Display Name</label>
+          <div class="input-group mb-3">
+            <input id="name-input" type="text" class="form-control" [(ngModel)]="ctx.player.name"
+              placeholder="display anme" aria-label="display anme" aria-describedby="button-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-info" (click)="update(ctx.player)">
+                <span>Update</span>
+              </button>
+            </div>
+            <small>
+              This will show on the public scoreboard.
+              Your requested display name is subject to approval and a generic moniker is used until that time.
+            </small>
+          </div>
+        </div>
+        <ng-container *ngIf="ctx.game.allowTeam">
+          <div class="form-group d-flex flex-column">
+            <div class="mb-2">
+              <span class="lead">Manager</span>, generate an invitation for your teammates.<br />
+              <small>NOTE: generating an invitation invalidates previous invitations.</small>
+            </div>
+            <button class="btn btn-outline-info mb-2" (click)="invite(ctx.player)">
+              <fa-icon [icon]="faCopy"></fa-icon>
+              <span>Generate</span>
+            </button>
+            <div class="text-center mb-2">
+              <app-clipspan *ngIf="invitation" class="mb-2">{{code}}</app-clipspan><br />
+              <app-clipspan *ngIf="invitation" class="mb-2" [text]="invitation">convenience url</app-clipspan>
+            </div>
+          </div>
+          <div class="form-group d-flex flex-column">
+            <div class="mb-2">
+              <span class="lead">Member</span>, redeem the invitation code here in order to team up.<br />
+              <small>Or click on the convenience url if you were given one.</small>
+            </div>
+            <div class="input-group">
+              <input type="text" id="token-input" class="form-control" [(ngModel)]="token">
+              <div class="input-group-append">
+                <button class="btn btn-outline-info" (click)="redeem(ctx.player)">
+                  <fa-icon [icon]="faPaste"></fa-icon>
+                  <span>Redeem</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <!-- delete -->
+        <div *ngIf="ctx.game.gameStart" class="form-group text-center">
+          <app-confirm-button btnClass="btn btn-outline-danger btn" (confirm)="delete(ctx.player)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+            <span>Leave this game</span>
+          </app-confirm-button>
+          <p class="small">You can delete this enrollment until either the enrollment period ends or your game session
+            starts.</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

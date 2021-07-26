@@ -1,0 +1,43 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="game">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-title lead text-success">
+        {{game.competition}} &nbsp;
+        {{game.season}} &nbsp;
+        {{game.track}} &nbsp;
+        {{game.division}} &nbsp;
+        {{game.name}} &nbsp;
+      </div>
+      <div class="lead">Overview</div>
+
+      <div class="lead mt-4">Execution</div>
+
+      <table class="table">
+        <tbody>
+          <tr><th>Starts</th><td>{{game.gameStart}}</td></tr>
+          <tr><th>Ends</th><td>{{game.gameEnd}}</td></tr>
+          <tr><th>Session</th><td>{{game.sessionMinutes}} minutes</td></tr>
+        </tbody>
+      </table>
+
+      <div class="lead mt-4">Registration</div>
+
+      <table class="table">
+        <tbody>
+          <tr><th>Access</th><td>{{game.registrationType}}</td></tr>
+          <tr><th>Opens</th><td>{{game.registrationOpen}}</td></tr>
+          <tr><th>Closes</th><td>{{game.registrationClose}}</td></tr>
+          <tr><th>Constraint</th><td>{{game.registrationConstraint}}</td></tr>
+          <tr><th>Min Team Size</th><td>{{game.minTeamSize}}</td></tr>
+          <tr><th>Max Team Size</th><td>{{game.maxTeamSize}}</td></tr>
+          <tr><th>Require same-sponsor team</th><td>{{game.requireSponsoredTeam}}</td></tr>
+        </tbody>
+      </table>
+
+      <!-- <pre>{{game | yaml}}</pre> -->
+    </div>
+  </div>
+</ng-container>

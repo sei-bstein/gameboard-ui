@@ -1,0 +1,50 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<nav>
+  <div class="text-right">
+    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/home']">Home</a>
+    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/admin']">Admin</a>
+    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/score']">Scores</a>
+    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['news']">News</a>
+    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['profile']">Profile</a>
+    <ng-container *ngIf="user$ | async as user">
+      <a *ngIf="!!user" class="btn btn-link text-success mx-1" (click)="logout()">Logout</a>
+    </ng-container>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+
+<!-- <div class="my-4 p-4 bg-primary">primary</div>
+<div class="my-4 p-4 bg-secondary">secondary</div>
+<div class="my-4 p-4 bg-info">info</div>
+<div class="my-4 p-4 bg-success">success</div>
+<div class="my-4 p-4 bg-warning">warning</div>
+<div class="my-4 p-4 bg-danger">danger</div>
+<div class="my-4 p-4 bg-primary">primary</div>
+<div class="my-4 p-4 bg-secondary">secondary</div>
+<div class="my-4 p-4 bg-info">info</div>
+<div class="my-4 p-4 bg-success">success</div>
+<div class="my-4 p-4 bg-warning">warning</div>
+<div class="my-4 p-4 bg-danger">danger</div>
+<div class="my-4 p-4 bg-primary">primary</div>
+<div class="my-4 p-4 bg-secondary">secondary</div>
+<div class="my-4 p-4 bg-info">info</div>
+<div class="my-4 p-4 bg-success">success</div>
+<div class="my-4 p-4 bg-warning">warning</div>
+<div class="my-4 p-4 bg-danger">danger</div>
+<div class="my-4 p-4 bg-primary">primary</div>
+<div class="my-4 p-4 bg-secondary">secondary</div>
+<div class="my-4 p-4 bg-info">info</div>
+<div class="my-4 p-4 bg-success">success</div>
+<div class="my-4 p-4 bg-warning">warning</div>
+<div class="my-4 p-4 bg-danger">danger</div>
+<div class="my-4 p-4 bg-primary">primary</div>
+<div class="my-4 p-4 bg-secondary">secondary</div>
+<div class="my-4 p-4 bg-info">info</div>
+<div class="my-4 p-4 bg-success">success</div>
+<div class="my-4 p-4 bg-warning">warning</div>
+<div class="my-4 p-4 bg-danger">danger</div> -->
+
+<footer></footer>

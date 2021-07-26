@@ -1,0 +1,73 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<a class="btn btn-link" routerLink="../../">
+  <fa-icon [icon]="faArrowLeft"></fa-icon>
+  <span>Back</span>
+</a>
+  <h4>Players</h4>
+
+  <div>
+    <div class="input-group input-group-sm">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <fa-icon [icon]="faSearch"></fa-icon>
+          <span>Search</span>
+        </span>
+      </div>
+      <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+    </div>
+    <div>
+    </div>
+  </div>
+
+  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+  <hr/>
+
+  <div *ngFor="let player of source$ | async; trackBy:trackById"
+    class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline bg-secondary">
+    <div class="">
+      <span class="">{{player.name}} / {{player.userName}}</span><br/>
+      <span *ngIf="player.name!==player.approvedName" class="">{{player.approvedName}}<br/></span>
+      <small class="text-muted">
+        <app-clipspan>{{player.id}}</app-clipspan>
+      </small>
+    </div>
+    <button *ngIf="player.name!==player.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="approveName(player)">
+      <fa-icon [icon]="faCheck"></fa-icon>
+      <span>Approve</span>
+    </button>
+
+    <div class="spacer"></div>
+    <div [class.text-success]="player.session.isDuring">
+      {{player.rank}} |
+      {{player.score}} |
+      {{player.time}} |
+      {{player.correctCount}} |
+      {{player.partialCount}} |
+      {{player.session.countdown | countdown }}
+    </div>
+    <div class="">
+
+      <button class="btn btn-outline-info btn-sm mx-1" (click)="view(player)">
+        <fa-icon [icon]="faList"></fa-icon>
+        <span>View</span>
+      </button>
+
+      <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(player)">
+        <fa-icon [icon]="faTrash"></fa-icon>
+        <span>Delete</span>
+      </app-confirm-button>
+
+    </div>
+
+    <div *ngIf="viewed === player" class="col-12">
+
+        <div class="form-group">
+          <label class="mb-0" for="name-input">Approved Name</label>
+          <input id="name-input" class="form-control" type="text" [(ngModel)]="player.approvedName" (change)="update(player)">
+          <small></small>
+        </div>
+
+    </div>
+  </div>

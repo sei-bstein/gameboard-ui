@@ -1,0 +1,31 @@
+.jumbotron {
+  img {
+    max-height: 150px;
+  }
+  span {
+    font-size: 1.5rem;
+  }
+  .small-card {
+    width: 120px;
+  }
+}
+.mapbox {
+  max-width: 800px;
+}
+.quizbox {
+  max-width: 800px;
+}
+.mapbox-dot {
+  fill: lime;
+  stroke: lime;
+  fill-opacity: .6;
+  stroke-opacity: 1;
+  stroke-width: .25;
+}
+.callout {
+  position: absolute;
+  z-index: 10;
+  border-radius: .5rem;
+  max-width: 300px;
+  max-height: 300px;
+}

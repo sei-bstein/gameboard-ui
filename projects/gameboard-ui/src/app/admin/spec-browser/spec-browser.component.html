@@ -1,0 +1,28 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<!-- search -->
+<div class="input-group mb-4">
+  <div class="input-group-prepend">
+    <span id="search-label" class="input-group-text">
+      <fa-icon [icon]="faSearch"></fa-icon>
+      <span>Search</span>
+    </span>
+  </div>
+  <input id="search-input" type="search" class="form-control"
+    [(ngModel)]="search.term" (input)="typing($event)"
+    aria-label="search term" aria-describedby="search-label">
+</div>
+
+<!-- filters -->
+<div></div>
+
+<!-- list -->
+<ng-container *ngFor="let item of list$ | async; trackBy:trackById">
+  <div class="card m-2" tabindex="0" (click)="select(item)">
+    <div class="card-body">
+      <div class="card-title">{{item.name}}</div>
+      <p>{{item.description}}</p>
+    </div>
+  </div>
+</ng-container>

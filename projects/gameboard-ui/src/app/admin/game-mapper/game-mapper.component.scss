@@ -1,0 +1,25 @@
+label {
+  margin-bottom: 0;
+}
+.mapbox-hover {
+  cursor: pointer;
+}
+.mapbox-active {
+  cursor: crosshair !important;
+}
+.mapbox-dot {
+  fill: blue;
+  stroke: lime;
+  fill-opacity: .6;
+  stroke-opacity: 1;
+  stroke-width: .25;
+}
+.callout {
+  position: absolute;
+  z-index: 10;
+  border-radius: .5rem;
+  // width: 300px;
+  // height: 80;
+  max-width: 300px;
+  max-height: 300px;
+}

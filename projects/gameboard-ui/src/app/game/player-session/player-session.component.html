@@ -1,0 +1,108 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<ng-container *ngIf="ctx$ | async as ctx; else loading">
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="card-title lead">
+        <ng-container *ngIf="!ctx.player.session.isBefore">
+          <div class="d-flex text-info card-text">
+            <span *ngIf="ctx.player.session.isDuring">Session ends in </span>
+            <span *ngIf="ctx.player.session.isAfter">Session ended </span>
+            <span class="">&nbsp;{{ctx.player.session.countdown | countdown}}</span>
+            <div class="spacer"></div>
+            <app-confirm-button *ngIf="ctx.user.isTester || ctx.game.allowReset" class="mx-2"
+              btnClass="btn btn-sm pop-warning" (confirm)="reset(ctx.player)">
+              <fa-icon [icon]="faTrash"></fa-icon>
+              <span>Reset Session</span>
+            </app-confirm-button>
+          </div>
+        </ng-container>
+        {{ctx.player.name}} |
+        {{ctx.player.approvedName}}
+      </div>
+
+      <app-error-div [errors]="errors"></app-error-div>
+
+      <!-- show this if Tester or (game not ended and session not started) -->
+      <!-- <ng-container *ngIf="ctx.user.isTester || (!ctx.game.session.isAfter && ctx.player.session.isBefore)"> -->
+
+        <ng-container *ngIf="ctx.player.session.isBefore && (ctx.user.isTester || !ctx.game.session.isAfter)">
+          <div *ngIf="ctx.user.isTester" class="pop-warning">Tester Access</div>
+
+          <div class="text-info card-text mb-2">
+            <span *ngIf="ctx.game.session.isBefore">Game window opens in </span>
+            <span *ngIf="ctx.game.session.isDuring">Game window closes in </span>
+            <span *ngIf="ctx.game.session.isAfter">Game window is closed </span>
+            <span>{{ctx.game.session.countdown | countdown}}</span>
+          </div>
+
+          <div *ngIf="ctx.player.sessionMinutes" class="card-text">
+            <alert type="warning">
+              After starting the session, the clock expires after {{ctx.game.sessionMinutes}} minutes.
+
+              <span [hidden]="ctx.game.maxTeamSize < 2">
+                <br />This will start the session for the team, so be sure your teammates are ready to start.
+              </span>
+            </alert>
+
+            <div class="mb-2">
+              <label class="mb-0">Session Forecast</label><br />
+              <small>Shows when sessions become available. (Green means available.)</small>
+              <div class="text-center forecast">
+                <app-session-forecast [game]="ctx.game"></app-session-forecast>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <app-confirm-button btnClass="btn btn-lg btn-primary" (confirm)="start(ctx.player)">
+                <fa-icon [icon]="faBolt"></fa-icon>
+                <span>Start Session</span>
+              </app-confirm-button>
+            </div>
+          </div>
+        </ng-container>
+      <!-- </ng-container> -->
+
+      <div *ngIf="!ctx.player.session.isBefore" class="text-center mb-4">
+        <a class="btn btn-primary btn-lg" [routerLink]="['../board', ctx.player.id]">Continue to Gameboard</a>
+      </div>
+
+      <!-- <pre>// TODO: show team members</pre> -->
+
+      <table class="table mt-2 text-center">
+        <tbody>
+          <tr>
+            <th>Rank</th>
+            <th>Score</th>
+            <th>Duration</th>
+            <th>Completes</th>
+            <th>Partials</th>
+          </tr>
+          <tr>
+            <td>{{ctx.player.rank}}</td>
+            <td>{{ctx.player.score}}</td>
+            <td>{{ctx.player.time | clock}}</td>
+            <td>{{ctx.player.correctCount}}</td>
+            <td>{{ctx.player.partialCount}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- <pre>{{player | yaml}}</pre> -->
+
+      <div class="col">
+        <img [src]="ctx.game.mapUrl" alt="game map background" class="img-fluid">
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>
