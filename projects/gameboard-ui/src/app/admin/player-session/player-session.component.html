@@ -1,0 +1,9 @@
+<ng-container *ngIf="team$ | async as team; else loading">
+  <pre>{{team | yaml}}</pre>
+</ng-container>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

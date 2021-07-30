@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, BehaviorSubject, combineLatest, interval, merge, Observable, scheduled, Subscription, timer } from 'rxjs';
-import { debounceTime, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Search } from '../../api/models';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
@@ -24,7 +24,7 @@ export class PlayerRegistrarComponent implements OnInit {
   selected: Player[] = [];
   viewed: Player | undefined = undefined;
   viewChange$ = new BehaviorSubject<Player | undefined>(this.viewed);
-  search: PlayerSearch = { term: '', take: 100};
+  search: PlayerSearch = { term: '', take: 0};
   filter = '';
   scope = '';
   scopes: string[] = [];
@@ -40,7 +40,7 @@ export class PlayerRegistrarComponent implements OnInit {
     route: ActivatedRoute,
     private api: PlayerService,
   ) {
-    this.source$ = combineLatest([
+    const fetch$ = combineLatest([
       route.params,
       this.refresh$,
       timer(0, 60000)
@@ -49,16 +49,16 @@ export class PlayerRegistrarComponent implements OnInit {
       tap(([a, b, c]) => this.search.gid = a.id),
       switchMap(() => this.api.list(this.search)),
       tap(r => this.source = r),
-      tap(() => this.review()),
+      tap(() => this.review())
     );
 
-    const sub: Subscription = timer(0, 1000).pipe(
-      finalize(() => sub.unsubscribe())
-    ).subscribe(() => {
-      this.source.forEach(p => {
-        p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
-      });
-    });
+    this.source$ = scheduled([
+      fetch$,
+      interval(1000).pipe(map(() => this.source))
+    ], asyncScheduler).pipe(
+      mergeAll(),
+      tap(r => r.forEach(p => p.session = new TimeWindow(p.sessionBegin, p.sessionEnd)))
+    );
 
   }
 

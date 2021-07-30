@@ -18,6 +18,7 @@ import { GameMapperComponent } from './game-mapper/game-mapper.component';
 import { SpecBrowserComponent } from './spec-browser/spec-browser.component';
 import { PlayerRegistrarComponent } from './player-registrar/player-registrar.component';
 import { SponsorBrowserComponent } from './sponsor-browser/sponsor-browser.component';
+import { PlayerSessionComponent } from './player-session/player-session.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { SponsorBrowserComponent } from './sponsor-browser/sponsor-browser.compo
     GameMapperComponent,
     SpecBrowserComponent,
     DashboardComponent,
-    SponsorBrowserComponent
+    SponsorBrowserComponent,
+    PlayerSessionComponent
   ],
   imports: [
     CommonModule,

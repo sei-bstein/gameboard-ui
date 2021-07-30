@@ -1,6 +1,7 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
+import { ChallengeResult } from "./board-models";
 import { Search } from "./models";
 
 export interface Player {
@@ -109,9 +110,22 @@ export interface Team {
   time: number;
   correctCount: number;
   partialCount: number;
-  // TeamChallenge> Challenges { get; set; } = new List<Tea: ICollection;
-  // TeamMember> Members { get; set; } = new List<: ICollection;
-
+  challenges: TeamChallenge[];
+  members: TeamMember[];
+}
+export interface TeamChallenge {
+  id: string;
+  name: string;
+  tag: string;
+  points: number;
+  score: number;
+  duration: number;
+  result: ChallengeResult;
+}
+export interface TeamMember {
+  id: string;
+  approvedName: string;
+  role: PlayerRole;
 }
 
 export interface PlayerSearch extends Search {
