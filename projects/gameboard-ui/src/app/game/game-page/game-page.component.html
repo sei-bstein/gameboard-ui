@@ -47,8 +47,16 @@
     </div>
 
     <div class="row">
-      <div class="col-12 scoreboard bg-dark">
-        <h2 id="scoreboard" class="text-center my-4">Scoreboard</h2>
+      <div class="col-12 scoreboard">
+        <h2 id="scoreboard" class="text-center my-4">
+          <span>Scoreboard</span>&nbsp;&nbsp;
+          <a [routerLink]="['../', 'scores', ctx.game.id]">
+            <small>
+              <fa-icon [icon]="faLink"></fa-icon>
+            </small>
+          </a>
+        </h2>
+        <app-scoreboard-table [id]="ctx.game.id"></app-scoreboard-table>
       </div>
     </div>
 

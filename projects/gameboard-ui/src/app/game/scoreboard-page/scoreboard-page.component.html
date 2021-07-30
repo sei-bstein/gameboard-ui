@@ -1,0 +1,30 @@
+<ng-container *ngIf="game$ | async as game; else loading">
+  <div class="jumbotron d-flex align-items-center">
+    <a [routerLink]="['../../', game.id]">
+      <img [src]="game.cardUrl" class="img-fluid" alt="{{game.name}} logo">
+    </a>
+    <span class="text-success mx-4">
+      {{game.competition}}
+      {{game.season}}
+      {{game.track}}
+      {{game.division}}
+      {{game.name}}
+    </span>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12 scoreboard">
+        <h2 id="scoreboard" class="text-center my-4">Scoreboard</h2>
+        <app-scoreboard-table [id]="game.id"></app-scoreboard-table>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

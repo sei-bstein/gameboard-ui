@@ -87,6 +87,7 @@ export interface Standing {
   time: number;
   correctCount: number;
   partialCount: number;
+  session: TimeWindow;
 }
 
 export interface TeamInvitation {

@@ -1,0 +1,35 @@
+<table class="table table-striped mt-2 text-center">
+  <tbody>
+    <tr>
+      <td>Rank</td>
+      <td>Sponsor</td>
+      <td>Name</td>
+      <td>Score</td>
+      <td>Duration</td>
+      <td>Completes</td>
+      <td>Partials</td>
+    </tr>
+    <ng-container *ngIf="scores$ | async as scores; else loading">
+      <tr *ngFor="let s of scores; trackBy:trackById">
+        <td>{{s.rank}}</td>
+        <td>{{s.sponsor}}</td>
+        <td>
+          <small *ngIf="s.session.countdown" class="bg-success px-2 rounded">{{s.session.countdown | countdown}}</small>
+          <span> {{s.approvedName}}</span>
+        </td>
+        <td>{{s.score}}</td>
+        <td>{{s.time | clock}}</td>
+        <td>{{s.correctCount}}</td>
+        <td>{{s.partialCount}}</td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+
+<ng-template #loading>
+  <tr>
+    <td colspan="7" class="text-center">
+      <app-spinner></app-spinner>
+    </td>
+  </tr>
+</ng-template>

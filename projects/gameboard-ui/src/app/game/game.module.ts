@@ -18,6 +18,8 @@ import { GameboardPageComponent } from './gameboard-page/gameboard-page.componen
 import { GamespaceQuizComponent } from './gamespace-quiz/gamespace-quiz.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { SessionForecastComponent } from './session-forecast/session-forecast.component';
+import { ScoreboardPageComponent } from './scoreboard-page/scoreboard-page.component';
+import { ScoreboardTableComponent } from './scoreboard-table/scoreboard-table.component';
 
 
 @NgModule({
@@ -29,7 +31,9 @@ import { SessionForecastComponent } from './session-forecast/session-forecast.co
     GamePageComponent,
     GameboardPageComponent,
     GamespaceQuizComponent,
-    SessionForecastComponent
+    SessionForecastComponent,
+    ScoreboardPageComponent,
+    ScoreboardTableComponent
   ],
   exports: [
   ],
@@ -39,6 +43,7 @@ import { SessionForecastComponent } from './session-forecast/session-forecast.co
     RouterModule.forChild([
       { path: 'teamup/:code', canActivate: [AuthGuard], component: PlayerEnlistComponent },
       { path: 'board/:id', canActivate: [AuthGuard], component: GameboardPageComponent },
+      { path: 'scores/:id', component: ScoreboardPageComponent },
       { path: ':id', component: GamePageComponent, children: [
       ]}
     ]),

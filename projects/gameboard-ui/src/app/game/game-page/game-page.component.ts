@@ -3,11 +3,12 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { asyncScheduler, combineLatest, Observable, of, scheduled } from 'rxjs';
+import { faExternalLinkAlt, faExternalLinkSquareAlt } from '@fortawesome/free-solid-svg-icons';
+import { asyncScheduler, combineLatest, Observable, of, scheduled, timer } from 'rxjs';
 import { filter, map, switchMap, tap, zipAll } from 'rxjs/operators';
 import { Game } from '../../api/game-models';
 import { GameService } from '../../api/game.service';
-import { Player } from '../../api/player-models';
+import { Player, Standing } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
 import { ApiUser } from '../../api/user-models';
 import { UserService as LocalUserService } from '../../utility/user.service';
@@ -19,6 +20,7 @@ import { UserService as LocalUserService } from '../../utility/user.service';
 })
 export class GamePageComponent implements OnInit {
   ctx$: Observable<{ user: ApiUser; game: Game; player: Player; }>;
+  faLink = faExternalLinkAlt;
 
   constructor(
     router: Router,

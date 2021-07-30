@@ -12,7 +12,9 @@
 </div> -->
 <div class="jumbotron d-flex align-items-center">
   <!-- <app-game-card class="small-card" [game]="ctx.game"></app-game-card> -->
-  <img [src]="ctx.game.cardUrl" class="img-fluid" alt="{{ctx.game.name}} logo">
+  <a [routerLink]="['../../', ctx.game.id]">
+    <img [src]="ctx.game.cardUrl" class="img-fluid" alt="{{ctx.game.name}} logo">
+  </a>
   <span class="text-success mx-4">
     {{ctx.game.competition}}
     {{ctx.game.season}}
@@ -135,10 +137,8 @@
         <app-gamespace-quiz [spec]="spec!" [session]="ctx.session"></app-gamespace-quiz>
 
         <div *ngIf="spec.instance?.id" class="text-right m-4">
-          Challenge Key:
-          <span>{{spec.tag}}</span>
           Support Code:
-          <app-clipspan class="text-info m-2 p-2">{{spec.instance?.id | slice:0:8}}</app-clipspan>
+          <app-clipspan class="text-info m-2 p-2">{{spec.instance?.id | slice:0:8}} {{spec.tag}}</app-clipspan>
         </div>
 
       </ng-container>

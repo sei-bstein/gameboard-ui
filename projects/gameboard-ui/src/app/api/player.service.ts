@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ConfigService } from '../utility/config.service';
-import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, TeamInvitation } from './player-models';
+import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, Standing, TeamInvitation, TimeWindow } from './player-models';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +43,8 @@ export class PlayerService {
   }
   public enlist(model: PlayerEnlistment): Observable<Player> {
     return this.http.post<Player>(`${this.url}/player/enlist`, model);
+  }
+  public scores(search: any): Observable<Standing[]> {
+    return this.http.get<Standing[]>(this.url + '/scores', {params: search});
   }
 }
