@@ -27,6 +27,7 @@ export interface GameDetail {
   maxTeamSize: number;
   sessionMinutes: number;
   sessionLimit: number;
+  gamespaceLimitPerSession: number;
   isPublished: boolean;
   requireSponsoredTeam: boolean;
   allowPreview: boolean;

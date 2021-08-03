@@ -4,7 +4,7 @@
 import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowLeft, faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, combineLatest, interval, Observable, of, scheduled, Subject, timer } from 'rxjs';
+import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
 import { catchError, combineAll, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
@@ -22,6 +22,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
   // @ViewChild('callout') calloutRef!: ElementRef;
   // mapbox!: HTMLDivElement;
   // callout!: HTMLDivElement;
+  refresh$ = new Subject<string>();
   ctx$: Observable<BoardPlayer>;
   ctx!: BoardPlayer;
   hoveredItem: BoardSpec | null = null;
@@ -51,13 +52,19 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
 
     this.user$ = usersvc.user$;
 
+    const fetch$ = merge(
+      route.params.pipe(map(p => p.id)),
+      this.refresh$
+    ).pipe(
+      filter(id => !!id),
+      switchMap(id => api.load(id).pipe(
+        catchError(err => of({} as BoardPlayer))
+      ))
+    );
+
     // pull data
     this.ctx$ = combineLatest([
-      route.params.pipe(
-        switchMap(p => api.load(p.id).pipe(
-          catchError(err => of({} as BoardPlayer))
-        ))
-      ),
+      fetch$,
       interval(1000).pipe(
         takeUntil(this.gameOver$)
       )
@@ -158,9 +165,18 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
     // start gamespace
     this.deploying = true;
     if (!model.instance) { return; }
-    this.api.start(model.instance).subscribe(
+    this.api.start(model.instance).pipe(
+      catchError(e => {
+        this.errors.push(e);
+        return of({} as Challenge);
+      })
+    ).subscribe(
       c => this.syncOne(c)
     );
+  }
+
+  graded(): void {
+    this.refresh$.next(this.ctx.id);
   }
 
   console(vm: VmState): void {

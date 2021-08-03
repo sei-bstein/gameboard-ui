@@ -149,6 +149,13 @@
         </div>
 
         <div class="form-group pb-0 pt-1">
+          <label for="gamespaceLimit-input">Gamespace Limit</label>
+          <input type="number" class="form-control" id="gamespaceLimit-input" name="gamespaceLimit"
+            [(ngModel)]="game.gamespaceLimitPerSession">
+          <small>max gamespaces per session</small>
+        </div>
+
+        <div class="form-group pb-0 pt-1">
           <label for="maxAttempts-input">Max Submissions</label>
           <input type="number" class="form-control" id="maxAttempts-input" name="maxAttempts"
             [(ngModel)]="game.maxAttempts">

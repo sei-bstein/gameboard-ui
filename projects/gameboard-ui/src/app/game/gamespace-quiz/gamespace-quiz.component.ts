@@ -1,7 +1,7 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,6 +18,8 @@ import { TimeWindow } from '../../api/player-models';
 export class GamespaceQuizComponent implements OnInit {
   @Input() spec!: BoardSpec;
   @Input() session!: TimeWindow;
+  @Output() graded = new EventEmitter<boolean>();
+
   errors: Error[] = [];
   faSubmit = faCloudUploadAlt;
 
@@ -39,6 +41,7 @@ export class GamespaceQuizComponent implements OnInit {
       (c: Challenge) => {
         this.spec.instance = c;
         this.api.setColor(this.spec);
+        this.graded.emit(true);
       },
       (err: any) => this.errors.push(err.error)
     );
