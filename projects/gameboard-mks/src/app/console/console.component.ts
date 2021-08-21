@@ -188,6 +188,17 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   create(info: ConsoleSummary): void {
+
+    if (!info.id) {
+      this.changeState('failed');
+      return;
+    }
+
+    if (!info.url || !info.isRunning) {
+      this.changeState('stopped');
+      return;
+    }
+
     this.vmId = info.id;
 
     this.isMock = !!(info.url.match(/mock/i));
@@ -196,19 +207,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       ? this.injector.get(MockConsoleService)
       : this.injector.get(WmksConsoleService);
 
-    if (info.id) {
-      if (info.isRunning) {
-        this.console.connect(
-          info.url,
-          (state: string) => this.changeState(state),
-          { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
-        );
-      } else {
-        this.changeState('stopped');
-      }
-    } else {
-      this.changeState('failed');
-    }
+    this.console.connect(
+      info.url,
+      (state: string) => this.changeState(state),
+      { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
+    );
   }
 
   start(): void {
