@@ -1,0 +1,47 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<a class="btn btn-link" routerLink="../">
+  <fa-icon [icon]="faArrowLeft"></fa-icon>
+  <span>Back</span>
+</a>
+<h4>Challenges</h4>
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
+    </div>
+    <input type="search" [(ngModel)]="search.term" placeholder="code" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <div>
+
+  <div *ngIf="source$ | async as list">
+    <table class="table">
+      <thead></thead>
+      <tbody>
+        <tr *ngFor="let s of list; trackBy:trackById">
+          <td>{{s.id | slice:0:8}} : {{s.tag}}</td>
+          <td>{{s.gameName}}</td>
+          <td>{{s.name}}</td>
+          <!-- todo: link to player page -->
+          <!-- <td><a [routerLink]="[s.playerId]">{{s.playerName}}</a></td> -->
+          <td>{{s.playerName}}</td>
+          <td>{{s.score}} / {{s.points}}</td>
+          <td>{{s.lastSyncTime | ago}}</td>
+          <td>
+            <button class="btn btn-outline-light btn-sm" (click)="select(s)">
+              <fa-icon [icon]="faDetail"></fa-icon>
+              <span>Detail</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- <pre>{{list | yaml}}</pre> -->
+  </div>
+</div>

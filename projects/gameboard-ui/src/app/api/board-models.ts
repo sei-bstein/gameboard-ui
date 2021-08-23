@@ -19,6 +19,24 @@ export interface Challenge {
   result: ChallengeResult;
   state: GameState;
 }
+export interface ChallengeSummary {
+  id: string;
+  name: string;
+  gameId: string;
+  gameName: string;
+  playerName: string;
+  playerId: string;
+  tag: string;
+  startTime: Date;
+  endTime: Date;
+  lastScoreTime: Date;
+  lastSyncTime: Date;
+  hasGamespaceDeployed: boolean;
+  points: number;
+  score: number;
+  duration: number;
+  result: ChallengeResult;
+}
 
 export interface NewChallenge {
   specId: string;

@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeResult, ChallengeView, ChangedChallenge, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
+import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
 
 @Injectable({
@@ -20,6 +20,10 @@ export class BoardService {
     private config: ConfigService
   ) {
     this.url = config.apphost + 'api';
+  }
+
+  public list(filter: any): Observable<ChallengeSummary[]> {
+    return this.http.get<ChallengeSummary[]>(this.url + '/challenges', {params: filter});
   }
 
   public load(id: string): Observable<BoardPlayer> {

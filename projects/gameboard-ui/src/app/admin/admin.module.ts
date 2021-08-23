@@ -19,6 +19,7 @@ import { SpecBrowserComponent } from './spec-browser/spec-browser.component';
 import { PlayerRegistrarComponent } from './player-registrar/player-registrar.component';
 import { SponsorBrowserComponent } from './sponsor-browser/sponsor-browser.component';
 import { PlayerSessionComponent } from './player-session/player-session.component';
+import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { PlayerSessionComponent } from './player-session/player-session.componen
     SpecBrowserComponent,
     DashboardComponent,
     SponsorBrowserComponent,
-    PlayerSessionComponent
+    PlayerSessionComponent,
+    ChallengeBrowserComponent
   ],
   imports: [
     CommonModule,
@@ -45,6 +47,7 @@ import { PlayerSessionComponent } from './player-session/player-session.componen
         { path: 'registrar/sponsors', component: SponsorBrowserComponent },
         { path: 'registrar/users', component: UserRegistrarComponent },
         { path: 'registrar/:id', component: PlayerRegistrarComponent },
+        { path: 'support', component: ChallengeBrowserComponent }
         // { path: '**', redirectTo: 'dashboard' }
       ]},
     ]),
