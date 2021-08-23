@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Team } from '../../api/player-models';

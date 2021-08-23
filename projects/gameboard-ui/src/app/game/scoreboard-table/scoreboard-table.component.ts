@@ -1,3 +1,6 @@
+// Copyright 2021 Carnegie Mellon University. All Rights Reserved.
+// Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
+
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { BehaviorSubject, combineLatest, interval, merge, Observable, Subject, timer } from 'rxjs';
 import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';

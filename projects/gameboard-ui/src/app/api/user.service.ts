@@ -8,8 +8,6 @@ import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
 import { ApiUser, ChangedUser, NewUser, TreeNode } from './user-models';
 
-type NewType = Observable<ApiUser[]>;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +22,7 @@ export class UserService {
     this.url = config.apphost + 'api';
   }
 
-  public list(filter: any): NewType {
+  public list(filter: any): Observable<ApiUser[]> {
     return this.http.get<ApiUser[]>(this.url + '/users', {params: filter});
   }
   public retrieve(id: string): Observable<ApiUser> {
