@@ -38,6 +38,9 @@ export interface GameDetail {
   registrationActive: boolean;
   session: TimeWindow;
   registration: TimeWindow;
+  cardText1: string;
+  cardText2: string;
+  cardText3: string;
 }
 
 export interface Game extends GameDetail
