@@ -56,7 +56,7 @@
             </small>
           </a>
         </h2>
-        <app-scoreboard-table [id]="ctx.game.id"></app-scoreboard-table>
+        <app-scoreboard-table [id]="ctx.game.id" [live]="ctx.game.session.isDuring"></app-scoreboard-table>
       </div>
     </div>
 

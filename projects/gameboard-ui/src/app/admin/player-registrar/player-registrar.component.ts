@@ -21,7 +21,7 @@ export class PlayerRegistrarComponent implements OnInit {
   selected: Player[] = [];
   viewed: Player | undefined = undefined;
   viewChange$ = new BehaviorSubject<Player | undefined>(this.viewed);
-  search: PlayerSearch = { term: '', take: 0};
+  search: PlayerSearch = { term: '', take: 100, filter: ['collapse']};
   filter = '';
   scope = '';
   scopes: string[] = [];
@@ -64,7 +64,7 @@ export class PlayerRegistrarComponent implements OnInit {
 
   toggleFilter(role: string): void {
     this.filter = this.filter !== role ? role : '';
-    this.search.filter = [this.filter];
+    this.search.filter = ['collapse', this.filter];
     this.refresh$.next(true);
   }
 

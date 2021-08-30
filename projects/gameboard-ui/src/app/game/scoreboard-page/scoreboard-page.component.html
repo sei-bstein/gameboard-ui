@@ -19,7 +19,7 @@
     <div class="row">
       <div class="col-12 scoreboard">
         <h2 id="scoreboard" class="text-center my-4">Scoreboard</h2>
-        <app-scoreboard-table [id]="game.id"></app-scoreboard-table>
+        <app-scoreboard-table [id]="game.id" [live]="game.session.isDuring"></app-scoreboard-table>
       </div>
     </div>
   </div>

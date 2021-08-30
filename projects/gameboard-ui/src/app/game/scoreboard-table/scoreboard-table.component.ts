@@ -2,9 +2,8 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { BehaviorSubject, combineLatest, interval, merge, Observable, Subject, timer } from 'rxjs';
-import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
-import { Search } from '../../api/models';
+import { combineLatest, iif, interval, merge, Observable, Subject, timer } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { PlayerSearch, Standing, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
 
@@ -17,23 +16,34 @@ export class ScoreboardTableComponent implements OnInit, OnChanges, AfterViewIni
   @Input() id = '';
   @Input() live = false;
 
-  refresh$ = new Subject<PlayerSearch>();
+  refresh$ = new Subject<boolean>();
   scores$: Observable<Standing[]>;
   scores: Standing[] = [];
+  search: PlayerSearch = { filter: ['scored']};
 
   constructor(
     api: PlayerService
   ) {
+    const liveFetch$ = iif(
+      () => this.live,
+      timer(1000, 60000),
+      timer(1000)
+    );
+
     const fetch$ = combineLatest([
       this.refresh$.pipe(debounceTime(500)),
-      timer(2000, 60000)
+      liveFetch$
     ]).pipe(
       map(([s, i]) => s),
-      switchMap(s => api.scores(s)),
+      switchMap(s => api.scores(this.search)),
       tap(r => this.scores = r)
     );
 
-    const update$ = interval(1000).pipe(
+    const update$ = iif(
+      () => this.live,
+      interval(1000),
+      timer(1000)
+    ).pipe(
       map(() => this.scores)
     );
 
@@ -47,7 +57,8 @@ export class ScoreboardTableComponent implements OnInit, OnChanges, AfterViewIni
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.id) {
-      this.refresh$.next({gid: changes.id.currentValue});
+      this.search.gid = changes.id.currentValue;
+      this.refresh$.next(true);
     }
   }
 
@@ -55,9 +66,8 @@ export class ScoreboardTableComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    // timer(0).subscribe(() =>
-      this.refresh$.next({gid: this.id});
-    // );
+    this.search.gid = this.id;
+    this.refresh$.next(true);
   }
 
   trackById(index: number, s: Standing): string {
