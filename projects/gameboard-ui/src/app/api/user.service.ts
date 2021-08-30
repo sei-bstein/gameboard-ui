@@ -52,6 +52,10 @@ export class UserService {
   public logout(): Observable<any> {
     return this.http.post<any>(`${this.url}/user/logout`, null);
   }
+  public ticket(): Observable<any> {
+    return this.http.post<any>(`${this.url}/user/ticket`, null);
+  }
+
   public getDocs(): Observable<TreeNode> {
     return this.http.get<string[]>(`${this.url}/docs`).pipe(
       map(r => this.mapToTree(r))

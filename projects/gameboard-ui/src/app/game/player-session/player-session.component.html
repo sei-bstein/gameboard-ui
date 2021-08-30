@@ -1,8 +1,8 @@
 <!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
 <!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+<ng-container *ngIf="teamEvents$ | async"></ng-container>
 
 <ng-container *ngIf="ctx$ | async as ctx; else loading">
-
 
   <div class="card mb-4">
     <div class="card-body">
@@ -32,6 +32,15 @@
         {{ctx.player.name}} |
         {{ctx.player.approvedName}}
       </div>
+
+      <ng-container *ngIf="hub$ | async as hub">
+        <div *ngFor="let actor of hub.actors" [class.text-muted]="!actor.online" [class.text-success]="actor.online">
+          <img [src]="actor.sponsorLogo" width="48px" class="mr-2">
+          <fa-icon [icon]="faDot"></fa-icon>
+          {{actor.userName}} |
+          {{actor.userApprovedName}}
+        </div>
+      </ng-container>
 
       <table class="table mt-2 text-center">
         <tbody>
