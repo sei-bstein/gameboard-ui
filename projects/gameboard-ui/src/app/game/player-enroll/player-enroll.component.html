@@ -72,10 +72,10 @@
         <div *ngIf="ctx.player.isManager" class="form-group mb-0">
           <label for="name-input">Set {{ctx.game.maxTeamSize > 1 ? 'Team' : 'Game'}} Display Name</label>
           <div class="input-group mb-3">
-            <input id="name-input" type="text" class="form-control" [(ngModel)]="ctx.player.name"
-              placeholder="display anme" aria-label="display anme" aria-describedby="button-addon2">
+            <input id="name-input" type="text" class="form-control" [(ngModel)]="ctx.player.name" maxlength="64" autocomplete="off"
+              placeholder="display name" aria-label="display name" aria-describedby="name-update-button">
             <div class="input-group-append">
-              <button class="btn btn-outline-info" (click)="update(ctx.player)">
+              <button id="name-update-button" class="btn btn-outline-info" (click)="update(ctx.player)">
                 <span>Update</span>
               </button>
             </div>
@@ -109,7 +109,7 @@
               <!-- <small>Or click on the convenience url if you were given one.</small> -->
             </div>
             <div class="input-group">
-              <input type="text" id="token-input" class="form-control" [(ngModel)]="token">
+              <input type="text" id="token-input" class="form-control" [(ngModel)]="token" maxlength="64">
               <div class="input-group-append">
                 <button class="btn btn-outline-info" (click)="redeem(ctx.player)">
                   <fa-icon [icon]="faPaste"></fa-icon>

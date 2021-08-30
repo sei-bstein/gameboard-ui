@@ -9,6 +9,7 @@ import { GameContext } from '../../api/models';
 import { NewPlayer, Player, PlayerEnlistment, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
 import { ConfigService } from '../../utility/config.service';
+import { HubEventAction, NotificationService } from '../../utility/notification.service';
 
 @Component({
   selector: 'app-player-enroll',
@@ -30,7 +31,8 @@ export class PlayerEnrollComponent implements OnInit {
 
   constructor(
     private api: PlayerService,
-    private config: ConfigService
+    private config: ConfigService,
+    private hub: NotificationService
   ) {
     this.ctx$ = timer(0, 1000).pipe(
       map(i => this.ctx),
@@ -53,7 +55,7 @@ export class PlayerEnrollComponent implements OnInit {
     const sub: Subscription = this.api.create(model).pipe(
       finalize(() => sub.unsubscribe())
     ).subscribe(
-      p => this.ctx.player = p,
+      p => this.enrolled(p),
       err => this.errors.push(err)
     );
 
@@ -77,7 +79,7 @@ export class PlayerEnrollComponent implements OnInit {
       tap(p => this.token = ''),
       finalize(() => sub.unsubscribe())
     ).subscribe(
-      p => this.ctx.player = p,
+      p => this.enrolled(p),
       err => this.errors.push(err)
     );
   }
@@ -92,8 +94,14 @@ export class PlayerEnrollComponent implements OnInit {
     const sub: Subscription = this.api.delete(p.id).pipe(
       finalize(() => sub.unsubscribe())
     ).subscribe(() =>
-      this.ctx.player = {} as Player
+      this.enrolled({} as Player)
     );
   }
 
+  enrolled(p: Player): void {
+    this.ctx.player = p;
+    if (this.ctx.game.allowTeam) {
+      this.hub.init(p.id);
+    }
+  }
 }
