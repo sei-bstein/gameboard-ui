@@ -10,8 +10,9 @@ export interface Player {
   userId: string;
   userName: string;
   gameId: string;
-  approvedName: string;
   name: string;
+  nameStatus: string;
+  approvedName: string;
   sponsor: string;
   role: PlayerRole;
   sessionBegin: Date;
@@ -25,6 +26,7 @@ export interface Player {
   isManager: boolean;
 
   sponsorLogo: string;
+  pendingName: string;
   session: TimeWindow;
 }
 
@@ -62,8 +64,9 @@ export interface NewPlayer {
 export interface ChangedPlayer {
   id: string;
   name: string;
-  sponsor: string;
+  nameStatus: string;
   approvedName: string;
+  sponsor: string;
   role: PlayerRole;
 }
 
@@ -136,11 +139,13 @@ export interface TeamPlayer {
   userName: string;
   userApprovedName: string;
   name: string;
+  nameStatus: string;
   approvedName: string;
   sponsor: string;
   role: PlayerRole;
   isManager: boolean;
   sponsorLogo: string;
+  pendingName: string;
 }
 
 export interface TeamState {

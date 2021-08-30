@@ -158,9 +158,14 @@ export class NotificationService {
 
   private updatePresence(event: HubEvent): void {
 
-    const actor = this.hubState.actors.find(a => a.id === event.model.id)
+    let actor = this.hubState.actors.find(a => a.id === event.model.id)
       ?? {...event.model} as Actor
     ;
+
+    actor.userName = event.model.userName;
+    actor.userApprovedName = event.model.userApprovedName;
+    actor.userNameStatus  = event.model.userNameStatus;
+    actor.sponsor = event.model.sponsor;
 
     actor.online = (
       event.action === HubEventAction.arrived ||
@@ -172,6 +177,10 @@ export class NotificationService {
       : `${this.config.basehref}assets/sponsor.svg`
     ;
 
+    actor.pendingName = actor.userApprovedName !== actor.userName
+      ? actor.userName //+ (!!actor.userNameStatus ? `...${actor.userNameStatus}` : '...pending')
+      : ''
+    ;
     const i = this.hubState.actors.indexOf(actor);
 
     if (
@@ -212,8 +221,10 @@ export interface Actor {
   id: string;
   userName: string;
   userApprovedName: string;
+  userNameStatus: string;
   sponsor: string;
   sponsorLogo: string;
+  pendingName: string;
   online?: boolean;
 }
 

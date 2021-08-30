@@ -4,13 +4,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, BehaviorSubject, combineLatest, interval, merge, Observable, scheduled, Subscription, timer } from 'rxjs';
-import { debounceTime, finalize, map, mergeAll, switchMap, tap } from 'rxjs/operators';
-import { Search } from '../../api/models';
+import { asyncScheduler, BehaviorSubject, combineLatest, interval, Observable, scheduled, timer } from 'rxjs';
+import { debounceTime, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
-import { ApiUser, UserRole } from '../../api/user-models';
-import { UserService } from '../../api/user.service';
 
 @Component({
   selector: 'app-player-registrar',

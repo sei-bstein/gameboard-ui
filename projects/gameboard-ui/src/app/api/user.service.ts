@@ -23,7 +23,12 @@ export class UserService {
   }
 
   public list(filter: any): Observable<ApiUser[]> {
-    return this.http.get<ApiUser[]>(this.url + '/users', {params: filter});
+    return this.http.get<ApiUser[]>(this.url + '/users', {params: filter}).pipe(
+      map(r => {
+        r.forEach(u => this.transform(u));
+        return r;
+      })
+    );
   }
   public retrieve(id: string): Observable<ApiUser> {
     return this.http.get<ApiUser>(`${this.url}/user/${id}`).pipe(
@@ -92,6 +97,15 @@ export class UserService {
     user.sponsorLogo = user.sponsor
       ? `${this.config.imagehost}/${user.sponsor}`
       : `${this.config.basehref}assets/sponsor.svg`
+    ;
+
+    if (!user.nameStatus && user.approvedName !== user.name) {
+      user.nameStatus = 'pending';
+    }
+
+    user.pendingName = user.approvedName !== user.name
+      ? user.name + (!!user.nameStatus ? `...${user.nameStatus}` : '...pending')
+      : ''
     ;
     return user;
   }

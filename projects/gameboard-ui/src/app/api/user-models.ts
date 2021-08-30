@@ -4,10 +4,10 @@
 export interface ApiUser {
   id: string;
   name: string;
+  nameStatus: string;
   approvedName: string;
   sponsor: string;
   role: UserRole;
-  // enrollments: Player[];
   isAdmin: boolean;
   isDirector: boolean;
   isRegistrar: boolean;
@@ -15,6 +15,7 @@ export interface ApiUser {
   isTester: boolean;
   isObserver: boolean;
   sponsorLogo: string;
+  pendingName: string;
 }
 
 export interface NewUser {
@@ -29,6 +30,7 @@ export interface ChangedUser {
   id: string;
   name: string;
   approvedName: string;
+  nameStatus: string;
   sponsor: string;
   role: UserRole;
 }

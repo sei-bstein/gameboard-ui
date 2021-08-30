@@ -29,16 +29,16 @@
           </div>
         </ng-container>
         <img [src]="ctx.player.sponsorLogo" width="64px" class="mr-2">
-        {{ctx.player.name}} |
-        {{ctx.player.approvedName}}
+        <span class="mr-2">{{ctx.player.approvedName}}</span>
+        <small *ngIf="!!ctx.player.pendingName" class="text-muted">({{ctx.player.pendingName}})</small>
       </div>
 
       <ng-container *ngIf="hub$ | async as hub">
         <div *ngFor="let actor of hub.actors" [class.text-muted]="!actor.online" [class.text-success]="actor.online">
           <img [src]="actor.sponsorLogo" width="48px" class="mr-2">
           <fa-icon [icon]="faDot"></fa-icon>
-          {{actor.userName}} |
-          {{actor.userApprovedName}}
+          <span class="mr-2">{{actor.userApprovedName}}</span>
+          <small *ngIf="!!actor.pendingName" class="text-muted">({{actor.pendingName}})</small>
         </div>
       </ng-container>
 

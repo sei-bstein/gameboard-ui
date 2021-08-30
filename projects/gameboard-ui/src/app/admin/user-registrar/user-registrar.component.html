@@ -43,8 +43,8 @@
     <!-- [class.pop-success]="user.isAdmin" -->
     <!-- [class.pop-warning]="user.isRegistrar" -->
     <div class="">
-      <span class="">{{user.name}}</span><br/>
-      <span *ngIf="user.name!==user.approvedName" class="">{{user.approvedName}}<br/></span>
+      <span class="mr-2">{{user.approvedName}}</span>
+      <span class="text-muted">{{user.pendingName}}</span><br/>
       <small class="text-muted">
         <app-clipspan>{{user.id}}</app-clipspan>
       </small>
@@ -52,6 +52,10 @@
     <button *ngIf="user.name!==user.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="approveName(user)">
       <fa-icon [icon]="faCheck"></fa-icon>
       <span>Approve</span>
+    </button>
+    <button *ngIf="user.name!==user.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
+      <fa-icon [icon]="faCheck"></fa-icon>
+      <span>Disapprove</span>
     </button>
     <div class="spacer"></div>
 
@@ -89,6 +93,11 @@
           <label class="mb-0" for="name-input">Approved Name</label>
           <input id="name-input" class="form-control" type="text" [(ngModel)]="user.approvedName" (change)="update(user)">
           <small></small>
+        </div>
+        <div class="form-group">
+          <label class="mb-0" for="reason-input">Disapproved Reason</label>
+          <input id="reason-input" class="form-control" type="text" [(ngModel)]="user.nameStatus" (change)="update(user)">
+          <small>not_unique, disallowed, disallowed_pii, disallowed_explicit, disallowed_innuendo, disallowed_excessive_emojis, etc.</small>
         </div>
 
         <pre>// todo: show enrollments</pre>

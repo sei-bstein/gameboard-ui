@@ -42,7 +42,10 @@ export class PlayerSessionComponent implements OnInit {
 
     // listen for hub session events (update / start) to keep team sync'd
     this.teamEvents$ = hub.teamEvents.pipe(
-      tap(e => this.ctx.player = ({...this.ctx.player, ...e.model}))
+      tap(e => {
+        this.ctx.player = ({...this.ctx.player, ...e.model});
+        this.api.transform(this.ctx.player);
+      })
     );
   }
 

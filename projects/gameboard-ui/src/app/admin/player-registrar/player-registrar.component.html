@@ -18,6 +18,10 @@
       <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
     </div>
     <div>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('active')">
+        <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
+        <span>active-only</span>
+      </button>
     </div>
   </div>
 
@@ -27,15 +31,22 @@
   <div *ngFor="let player of source$ | async; trackBy:trackById"
     class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline bg-secondary">
     <div class="">
-      <span class="">{{player.name}} / {{player.userName}}</span><br/>
-      <span *ngIf="player.name!==player.approvedName" class="">{{player.approvedName}}<br/></span>
+      <span class="mr-2">{{player.approvedName}}</span>
+      <span class="text-muted">{{player.pendingName}}</span><br/>
       <small class="text-muted">
-        <app-clipspan>{{player.id}}</app-clipspan>
+        <span>player: </span>&nbsp;
+        <app-clipspan class="mr-2">{{player.id | slice:0:8}}</app-clipspan>
+        <span>team: </span>&nbsp;
+        <app-clipspan class="mr-2">{{player.teamId | slice:0:8}}</app-clipspan>
       </small>
     </div>
     <button *ngIf="player.name!==player.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="approveName(player)">
       <fa-icon [icon]="faCheck"></fa-icon>
       <span>Approve</span>
+    </button>
+    <button *ngIf="player.name!==player.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="view(player)">
+      <fa-icon [icon]="faCheck"></fa-icon>
+      <span>Disapprove</span>
     </button>
 
     <div class="spacer"></div>
@@ -67,6 +78,12 @@
           <label class="mb-0" for="name-input">Approved Name</label>
           <input id="name-input" class="form-control" type="text" [(ngModel)]="player.approvedName" (change)="update(player)">
           <small></small>
+        </div>
+
+        <div class="form-group">
+          <label class="mb-0" for="reason-input">Disapproved Reason</label>
+          <input id="reason-input" class="form-control" type="text" [(ngModel)]="player.nameStatus" (change)="update(player)">
+          <small>not_unique, disallowed, disallowed_pii, disallowed_explicit, disallowed_innuendo, disallowed_excessive_emojis, etc.</small>
         </div>
 
         <app-player-session [id]="player.teamId"></app-player-session>

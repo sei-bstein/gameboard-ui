@@ -61,7 +61,7 @@ export class PlayerService {
   public scores(search: any): Observable<Standing[]> {
     return this.http.get<Standing[]>(this.url + '/scores', {params: search}).pipe(
       map(r => {
-        r.forEach(s => this.transform(s));
+        r.forEach(s => this.transformStanding(s));
         return r;
       })
     );
@@ -70,7 +70,21 @@ export class PlayerService {
     return this.http.get<Team>(`${this.url}/team/${id}`);
   }
 
-  private transform(p: Player | Standing): Player | Standing {
+  public transform(p: Player): Player {
+    p.sponsorLogo = p.sponsor
+      ? `${this.config.imagehost}/${p.sponsor}`
+      : `${this.config.basehref}assets/sponsor.svg`
+    ;
+
+    p.pendingName = p.approvedName !== p.name
+      ? p.name + (!!p.nameStatus ? `...${p.nameStatus}` : '...pending')
+      : ''
+    ;
+
+    p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
+    return p;
+  }
+  private transformStanding(p: Standing): Standing {
     p.sponsorLogo = p.sponsor
       ? `${this.config.imagehost}/${p.sponsor}`
       : `${this.config.basehref}assets/sponsor.svg`
