@@ -9,6 +9,8 @@ export const environment = {
     apphost: 'http://localhost:5002',
     mkshost: 'http://localhost:4201',
     imghost: 'http://localhost:5002/img',
+    tochost: 'http://localhost:5002/doc',
+    tocfile: 'toc.json',
     oidc: {
       client_id: 'dev-code',
       // authority: 'http://localhost:5000',

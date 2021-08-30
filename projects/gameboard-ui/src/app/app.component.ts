@@ -5,6 +5,8 @@ import { ThrowStmt } from '@angular/compiler';
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { TocFile, TocService } from './api/toc.service';
 import { ApiUser } from './api/user-models';
 import { ConfigService } from './utility/config.service';
 import { UserService } from './utility/user.service';
@@ -16,13 +18,16 @@ import { UserService } from './utility/user.service';
 })
 export class AppComponent {
   user$: Observable<ApiUser | null>;
+  toc$: Observable<TocFile[]>;
 
   constructor(
     private usersvc: UserService,
     config: ConfigService,
+    toc: TocService,
     title: Title
   ) {
     this.user$ = usersvc.user$;
+    this.toc$ = toc.toc$;
     title.setTitle(config.settings.appname || 'Gameboard');
   }
 
