@@ -3,16 +3,13 @@
 
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, NgForm } from '@angular/forms';
-import { faArrowLeft, faCaretDown, faCaretRight, faCloudUploadAlt, faCopy, faGamepad, faSave, faShare, faToggleOff, faToggleOn, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { concat, Observable, Subject, timer } from 'rxjs';
-import { debounceTime, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
-import { ChangedGame, Game, GameRegistrationType } from '../../api/game-models';
+import { faArrowLeft, faCaretDown, faCaretRight, faCloudUploadAlt, faCopy, faGamepad, faToggleOff, faToggleOn, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Observable } from 'rxjs';
+import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Game } from '../../api/game-models';
 import { GameService } from '../../api/game.service';
-import { ClipboardService } from '../../utility/clipboard.service';
-import * as YAML from 'yaml';
 import { ConfigService } from '../../utility/config.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { transformAll } from '@angular/compiler/src/render3/r3_ast';
 
 @Component({
   selector: 'app-game-editor',
@@ -75,16 +72,8 @@ export class GameEditorComponent implements OnInit, AfterViewInit {
   upload(files: File[], type: string): void {
     this.api.uploadImage(this.game.id, type, files[0]).subscribe(
       r => {
-
-        let ts = '';
-        if (this.game.logo) {
-          ts = `?ts=${(Date.now() / 1000)}`;
-        }
-
         this.game.logo = r.filename;
-
-        this.game.cardUrl = `${this.config.imagehost}/${r.filename}${ts}`;
-
+        this.game.cardUrl = `${this.config.imagehost}/${r.filename}`;
       }
     );
   }

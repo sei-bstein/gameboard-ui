@@ -14,6 +14,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UtilityModule } from '../utility/utility.module';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { FormsModule } from '@angular/forms';
+import { AuthGuard } from '../utility/auth.guard';
+import { TocPageComponent } from './toc-page/toc-page.component';
 
 
 
@@ -25,7 +28,8 @@ import { MarkdownModule } from 'ngx-markdown';
     NewsComponent,
     LandingComponent,
     ForbiddenComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    TocPageComponent,
   ],
   imports: [
     CommonModule,
@@ -34,13 +38,14 @@ import { MarkdownModule } from 'ngx-markdown';
         { path: '', pathMatch: 'full', redirectTo: '/home' },
         { path: 'login', component: LoginPageComponent },
         { path: 'oidc', component: OidcComponent },
-        { path: 'profile', component: ProfileComponent },
-        { path: 'news', component: NewsComponent },
+        { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+        { path: 'doc/:id', component: TocPageComponent },
         { path: 'forbidden', component: ForbiddenComponent },
-        { path: 'home', component: LandingComponent },
+        { path: 'home', component: LandingComponent }
       ]},
       { path: '**', redirectTo: '/home' }
     ]),
+    FormsModule,
     UtilityModule,
     FontAwesomeModule,
     MarkdownModule

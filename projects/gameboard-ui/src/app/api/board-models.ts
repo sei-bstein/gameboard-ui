@@ -70,6 +70,9 @@ export interface BoardGame {
   mapUrl: string;
   cardUrl: string;
   modeUrl: string;
+  cardText1: string;
+  cardText2: string;
+  cardText3: string;
 }
 
 export interface BoardSpec {

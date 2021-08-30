@@ -81,6 +81,10 @@ export class ConfigService {
     return this.settings.imghost || `${this.basehref}img`;
   }
 
+  get tochost(): string {
+    return this.settings.tochost || `${this.basehref}doc`;
+  }
+
   load(): Observable<any> {
     return this.http.get<Settings>(this.basehref + this.url)
       .pipe(
@@ -151,6 +155,8 @@ export interface Settings {
   apphost?: string;
   mkshost?: string;
   imghost?: string;
+  tochost?: string;
+  tocfile?: string;
   oidc: AppUserManagerSettings;
 }
 

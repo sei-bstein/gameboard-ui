@@ -17,6 +17,7 @@ export interface GameDetail {
   testCode: string;
   gameStart: Date;
   gameEnd: Date;
+  gameMarkdown: string;
   registrationMarkdown: string;
   registrationOpen: Date;
   registrationClose: Date;
@@ -38,6 +39,9 @@ export interface GameDetail {
   registrationActive: boolean;
   session: TimeWindow;
   registration: TimeWindow;
+  cardText1: string;
+  cardText2: string;
+  cardText3: string;
 }
 
 export interface Game extends GameDetail

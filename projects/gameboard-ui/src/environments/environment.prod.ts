@@ -5,6 +5,8 @@ export const environment = {
     apphost: '',
     mkshost: '',
     imghost: '',
+    tochost: '',
+    tocfile: 'toc.json',
     oidc: {}
   }
 };

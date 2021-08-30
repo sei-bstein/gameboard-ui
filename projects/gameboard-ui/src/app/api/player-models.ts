@@ -24,6 +24,7 @@ export interface Player {
   partialCount: number;
   isManager: boolean;
 
+  sponsorLogo: string;
   session: TimeWindow;
 }
 
@@ -89,6 +90,7 @@ export interface Standing {
   correctCount: number;
   partialCount: number;
   session: TimeWindow;
+  sponsorLogo: string;
 }
 
 export interface TeamInvitation {
@@ -126,6 +128,27 @@ export interface TeamMember {
   id: string;
   approvedName: string;
   role: PlayerRole;
+}
+
+export interface TeamPlayer {
+  id: string;
+  teamId: string;
+  userName: string;
+  userApprovedName: string;
+  name: string;
+  approvedName: string;
+  sponsor: string;
+  role: PlayerRole;
+  isManager: boolean;
+  sponsorLogo: string;
+}
+
+export interface TeamState {
+  teamId: string;
+  name: string;
+  approvedName: string;
+  sessionBegin: Date;
+  sessionEnd: Date;
 }
 
 export interface PlayerSearch extends Search {
