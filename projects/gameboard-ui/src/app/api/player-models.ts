@@ -130,6 +130,27 @@ export interface TeamMember {
   role: PlayerRole;
 }
 
+export interface TeamPlayer {
+  id: string;
+  teamId: string;
+  userName: string;
+  userApprovedName: string;
+  name: string;
+  approvedName: string;
+  sponsor: string;
+  role: PlayerRole;
+  isManager: boolean;
+  sponsorLogo: string;
+}
+
+export interface TeamState {
+  teamId: string;
+  name: string;
+  approvedName: string;
+  sessionBegin: Date;
+  sessionEnd: Date;
+}
+
 export interface PlayerSearch extends Search {
   tid?: string;
   gid?: string;

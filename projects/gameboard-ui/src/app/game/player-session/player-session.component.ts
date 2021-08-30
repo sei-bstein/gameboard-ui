@@ -2,14 +2,13 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { Component, Input, OnInit } from '@angular/core';
-import { faBolt, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { interval, Observable, Subscription, timer } from 'rxjs';
-import { filter, finalize, map, switchMap, tap } from 'rxjs/operators';
-import { Game } from '../../api/game-models';
+import { faBolt, faCircle, faDotCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Observable, Subscription, timer } from 'rxjs';
+import { finalize, map, tap } from 'rxjs/operators';
 import { GameContext } from '../../api/models';
 import { Player, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
-import { ApiUser } from '../../api/user-models';
+import { HubEvent, HubState, NotificationService } from '../../utility/notification.service';
 
 @Component({
   selector: 'app-player-session',
@@ -20,11 +19,16 @@ export class PlayerSessionComponent implements OnInit {
   @Input() ctx!: GameContext;
   errors: any[] = [];
   ctx$: Observable<GameContext>;
+  hub$: Observable<HubState>;
+  teamEvents$: Observable<HubEvent>;
+
   faBolt = faBolt;
   faTrash = faTrash;
+  faDot = faCircle;
 
   constructor(
-    private api: PlayerService
+    private api: PlayerService,
+    private hub: NotificationService
   ) {
     this.ctx$ = timer(0, 1000).pipe(
       map(i => this.ctx),
@@ -33,9 +37,19 @@ export class PlayerSessionComponent implements OnInit {
         ctx.game.session = new TimeWindow(ctx.game.gameStart, ctx.game.gameEnd);
       })
     );
+
+    this.hub$ = hub.state$.pipe();
+
+    // listen for hub session events (update / start) to keep team sync'd
+    this.teamEvents$ = hub.teamEvents.pipe(
+      tap(e => this.ctx.player = ({...this.ctx.player, ...e.model}))
+    );
   }
 
   ngOnInit(): void {
+    if (this.ctx.game.allowTeam && !!this.ctx.player && !this.ctx.player.session.isAfter) {
+      this.hub.init(this.ctx.player.id);
+    }
   }
 
   start(p: Player): void {

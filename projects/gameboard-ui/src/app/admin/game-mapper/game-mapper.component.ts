@@ -108,16 +108,8 @@ export class GameMapperComponent implements OnInit, AfterViewInit {
   upload(files: File[]): void {
     this.gameSvc.uploadImage(this.game.id, 'map', files[0]).subscribe(
       r => {
-
-        let ts = '';
-        if (this.game.background) {
-          ts = `?ts=${(Date.now() / 1000)}`;
-        }
-
         this.game.background = r.filename;
-
-        this.game.mapUrl = `${this.config.imagehost}/${r.filename}${ts}`;
-
+        this.game.mapUrl = `${this.config.imagehost}/${r.filename}`;
       }
     );
   }
