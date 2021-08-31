@@ -46,7 +46,7 @@
       <span class="mr-2">{{user.approvedName}}</span>
       <span class="text-muted">{{user.pendingName}}</span><br/>
       <small class="text-muted">
-        <app-clipspan>{{user.id}}</app-clipspan>
+        <app-clipspan>{{user.id | slice:0:8}}</app-clipspan>
       </small>
     </div>
     <button *ngIf="user.name!==user.approvedName" class="btn btn-outline-info btn-sm mx-1" (click)="approveName(user)">
@@ -60,19 +60,20 @@
     <div class="spacer"></div>
 
     <div class="btn-group">
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isObserver" (click)="role(user, 'observer')"
-             btnCheckbox tabindex="0" role="button">Observer</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isTester" (click)="role(user, 'tester')"
-             btnCheckbox tabindex="0" role="button">Tester</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDesigner"  (click)="role(user, 'designer')"
-             btnCheckbox tabindex="0" role="button">Designer</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isRegistrar"  (click)="role(user, 'registrar')"
-             btnCheckbox tabindex="0" role="button">Registrar</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDirector"  (click)="role(user, 'director')"
-             btnCheckbox tabindex="0" role="button">Director</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isAdmin"  (click)="role(user, 'admin')"
-             btnCheckbox tabindex="0" role="button">Admin</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isObserver"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Observer</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isTester"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Tester</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDesigner"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Designer</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isRegistrar"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Registrar</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDirector"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Director</label>
+      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isAdmin"
+             btnCheckbox tabindex="0" [disabled]="true" role="button">Admin</label>
     </div>
+
     <div class="">
 
       <button class="btn btn-outline-info btn-sm mx-1" (click)="view(user)">
@@ -100,6 +101,23 @@
           <small>not_unique, disallowed, disallowed_pii, disallowed_explicit, disallowed_innuendo, disallowed_excessive_emojis, etc.</small>
         </div>
 
+        <div class="form-group">
+          <label for="role-button-group">Edit User Roles</label><br/>
+          <div class="btn-group" id="role-button-group">
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isObserver" (click)="role(user, 'observer')"
+                   btnCheckbox tabindex="0" role="button">Observer</label>
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isTester" (click)="role(user, 'tester')"
+                   btnCheckbox tabindex="0" role="button">Tester</label>
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDesigner"  (click)="role(user, 'designer')"
+                   btnCheckbox tabindex="0" role="button">Designer</label>
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isRegistrar"  (click)="role(user, 'registrar')"
+                   btnCheckbox tabindex="0" role="button">Registrar</label>
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDirector"  (click)="role(user, 'director')"
+                   btnCheckbox tabindex="0" role="button">Director</label>
+            <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isAdmin"  (click)="role(user, 'admin')"
+                   btnCheckbox tabindex="0" role="button">Admin</label>
+          </div>
+        </div>
         <pre>// todo: show enrollments</pre>
     </div>
   </div>
