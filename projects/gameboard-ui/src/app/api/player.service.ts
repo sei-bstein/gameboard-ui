@@ -82,8 +82,10 @@ export class PlayerService {
     ;
 
     p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
+
     return p;
   }
+
   private transformStanding(p: Standing): Standing {
     p.sponsorLogo = p.sponsor
       ? `${this.config.imagehost}/${p.sponsor}`

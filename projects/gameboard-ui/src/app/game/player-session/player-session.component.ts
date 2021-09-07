@@ -50,8 +50,11 @@ export class PlayerSessionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.ctx.game.allowTeam && !!this.ctx.player && !this.ctx.player.session.isAfter) {
-      this.hub.init(this.ctx.player.id);
+    if (this.ctx.game.allowTeam) {
+      if (!!this.ctx.player && !this.ctx.player.session.isAfter) {
+        this.hub.init(this.ctx.player.id);
+      }
+
     }
   }
 
