@@ -8,20 +8,19 @@ import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { Search } from '../../api/models';
 import { ReportService } from '../../api/report.service';
-import { UserReport, PlayerReport } from '../../api/report-models';
+import { GameSponsorReport, SponsorReport, SponsorStat, } from '../../api/report-models';
 import { environment } from '../../../environments/environment';
 import { debug } from 'console';
 
 @Component({
-  selector: 'app-user-report',
-  templateUrl: './user-report.component.html',
-  styleUrls: ['./user-report.component.scss']
+  selector: 'player-sponsor-user-report',
+  templateUrl: './player-sponsor-report.component.html',
+  styleUrls: ['./player-sponsor-report.component.scss']
 })
-export class UserReportComponent implements OnInit {
-  users?: UserReport;
-  players?: PlayerReport;
-  totalUserCount = 0;
-  errorMessage = "";
+export class PlayerSponsorReportComponent implements OnInit {
+  gameSponsorReport?: GameSponsorReport;
+  sponsors?: SponsorReport;
+  sponsorStats?: SponsorStat[];
   url = '';
 
   faArrowLeft = faArrowLeft;
@@ -32,16 +31,16 @@ export class UserReportComponent implements OnInit {
   ) {
     this.url = environment.settings.apphost;
 
-    this.api.userReport().subscribe(
+    this.api.gameSponsorReport().subscribe(
       r => {
-        this.users = r;
-        this.totalUserCount = r.enrolledUserCount + r.unenrolledUserCount;
+        this.gameSponsorReport = r;
       }
     );
 
-    this.api.playerReport().subscribe(
+    this.api.sponsorReport().subscribe(
       r => {
-        this.players = r;
+        this.sponsors = r;
+        this.sponsorStats = r.stats;
       }
     );
   }

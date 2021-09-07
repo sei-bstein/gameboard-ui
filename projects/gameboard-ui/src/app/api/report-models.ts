@@ -33,4 +33,16 @@ export interface SponsorStat {
   count: number;
 }
 
+export interface GameSponsorReport {
+  title: string;
+  timestamp: Date;
+  stats: GameSponsorStat[];
+}
+
+export interface GameSponsorStat {
+  gameId: string; 
+  gameName: string;
+  stats: SponsorStat[];
+}
+
 
