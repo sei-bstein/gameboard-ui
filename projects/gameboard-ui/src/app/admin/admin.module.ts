@@ -20,6 +20,9 @@ import { PlayerRegistrarComponent } from './player-registrar/player-registrar.co
 import { SponsorBrowserComponent } from './sponsor-browser/sponsor-browser.component';
 import { PlayerSessionComponent } from './player-session/player-session.component';
 import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser.component';
+import { UserReportComponent } from './user-report/user-report.component';
+import { ReportPageComponent } from './report-page/report-page.component';
+import { PlayerSponsorReportComponent } from './player-sponsor-report/player-sponsor-report.component';
 
 
 @NgModule({
@@ -34,7 +37,10 @@ import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser
     DashboardComponent,
     SponsorBrowserComponent,
     PlayerSessionComponent,
-    ChallengeBrowserComponent
+    ChallengeBrowserComponent,
+    UserReportComponent,
+    ReportPageComponent,
+    PlayerSponsorReportComponent
   ],
   imports: [
     CommonModule,
@@ -47,6 +53,9 @@ import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser
         { path: 'registrar/sponsors', component: SponsorBrowserComponent },
         { path: 'registrar/users', component: UserRegistrarComponent },
         { path: 'registrar/:id', component: PlayerRegistrarComponent },
+        { path: 'report', component: ReportPageComponent },
+        { path: 'report/users', component: UserReportComponent },
+        { path: 'report/sponsors', component: PlayerSponsorReportComponent },
         { path: 'support', component: ChallengeBrowserComponent }
         // { path: '**', redirectTo: 'dashboard' }
       ]},
