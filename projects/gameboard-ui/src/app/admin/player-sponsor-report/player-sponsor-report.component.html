@@ -6,19 +6,32 @@
   <span>Back</span>
 </a>
 
-<h4>Sponsor Reports</h4>
+<h4>Board Reports</h4>
+
+<form #form="ngForm" autocomplete="off">
+  <div class="input-group mb-4" *ngIf="sponsorStats; else loading">
+    <div class="pr-4">
+      <label for="gameSelect">Select a board: </label>
+    </div>
+    <div>
+      <select class="form-control" #selectGame (change)="updateGame(selectGame.value)">
+        <option *ngFor="let g of games" value="{{g.id}}">{{g.name}}</option>
+      </select>
+    </div>
+  </div>
+</form>
 
 <div class="container pt-4 border-top" *ngIf="gameSponsorReport; else loading">
   <div *ngFor="let g of gameSponsorReport.stats">
     <div>
-      <h5 class="pt-5">Game: {{g.gameName}}</h5>
+      <h5 class="pt-5">Board: {{g.gameName}}</h5>
     </div>
     <div class="row border-top p-3">
       <div class="col-6 font-weight-bold">Name</div>
       <div class="col-6 fw-bold font-weight-bold">Player Count</div>
     </div>
     <div class="row border-top p-3" *ngFor="let s of g.stats">
-      <div class="col-6"><img width="40" height="40" src="{{url}}/img/{{s.logo}}" /><span class="pl-3">{{s.name}}</span></div>
+      <div class="col-6"><img width="40" height="40" src="{{s.logo}}" /><span class="pl-3">{{s.name}}</span></div>
       <div class="col-6">{{s.count}}</div>
     </div>
   </div>
@@ -31,7 +44,7 @@
     <div class="col-6 fw-bold font-weight-bold">User Count</div>
   </div>
   <div class="row border-top p-3" *ngFor="let s of sponsorStats">
-    <div class="col-6"><img width="40" height="40" src="{{url}}/img/{{s.logo}}" /><span class="pl-3">{{s.name}}</span></div>
+    <div class="col-6"><img width="40" height="40" src="{{s.logo}}" /><span class="pl-3">{{s.name}}</span></div>
     <div class="col-6">{{s.count}}</div>
   </div>
 </div>

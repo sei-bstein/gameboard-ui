@@ -23,8 +23,6 @@ import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser
 import { UserReportComponent } from './user-report/user-report.component';
 import { ReportPageComponent } from './report-page/report-page.component';
 import { PlayerSponsorReportComponent } from './player-sponsor-report/player-sponsor-report.component';
-import { TeamReportComponent } from './team-report/team-report.component';
-
 
 @NgModule({
   declarations: [
@@ -41,8 +39,7 @@ import { TeamReportComponent } from './team-report/team-report.component';
     ChallengeBrowserComponent,
     UserReportComponent,
     ReportPageComponent,
-    PlayerSponsorReportComponent,
-    TeamReportComponent
+    PlayerSponsorReportComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +55,6 @@ import { TeamReportComponent } from './team-report/team-report.component';
         { path: 'report', component: ReportPageComponent },
         { path: 'report/users', component: UserReportComponent },
         { path: 'report/sponsors', component: PlayerSponsorReportComponent },
-        { path: 'report/teams', component: TeamReportComponent },
         { path: 'support', component: ChallengeBrowserComponent }
         // { path: '**', redirectTo: 'dashboard' }
       ]},

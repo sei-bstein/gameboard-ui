@@ -45,12 +45,5 @@ export interface GameSponsorStat {
   stats: SponsorStat[];
 }
 
-export interface TeamReport {
-  title: string;
-  timestamp: Date;
-  totalTeamCount: number;
-  stats: SponsorStat[];
-}
-
 
 

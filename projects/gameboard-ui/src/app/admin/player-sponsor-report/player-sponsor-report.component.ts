@@ -1,14 +1,17 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location, PlatformLocation } from '@angular/common';
 import { faTrash, faList, faSearch, faFilter, faCheck, faTintSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
+import { FormGroup, NgForm } from '@angular/forms';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { Search } from '../../api/models';
 import { ReportService } from '../../api/report.service';
-import { GameSponsorReport, SponsorReport, SponsorStat, } from '../../api/report-models';
+import { GameService } from '../../api/game.service';
+import { GameSponsorReport, SponsorReport, SponsorStat } from '../../api/report-models';
+import { Game } from '../../api/game-models';
 import { environment } from '../../../environments/environment';
 import { debug } from 'console';
 
@@ -18,33 +21,57 @@ import { debug } from 'console';
   styleUrls: ['./player-sponsor-report.component.scss']
 })
 export class PlayerSponsorReportComponent implements OnInit {
+  @ViewChild(NgForm) form!: FormGroup;
   gameSponsorReport?: GameSponsorReport;
   sponsors?: SponsorReport;
   sponsorStats?: SponsorStat[];
-  url = '';
+  games?: Game[];
+  search: Search = { term: '' };
+  currentGame = "";
 
   faArrowLeft = faArrowLeft;
 
   constructor(
     private api: ReportService,
+    private gameService: GameService,
     private platform: PlatformLocation
   ) {
-    this.url = environment.settings.apphost;
-
-    this.api.gameSponsorReport().subscribe(
+    this.gameService.list(this.search).subscribe(
       r => {
-        this.gameSponsorReport = r;
+        this.games = r;
+        if (this.games.length > 0) {
+          this.currentGame = this.games[0].id;
+
+          this.api.gameSponsorReport(this.currentGame).subscribe(
+            r => {
+              r.stats.forEach(gss => gss.stats.forEach(ss => ss.logo = api.getSponsorLogoUrl(ss.logo)));
+              this.gameSponsorReport = r;
+            }
+          );
+        }
       }
     );
 
     this.api.sponsorReport().subscribe(
       r => {
         this.sponsors = r;
+        r.stats.forEach(ss => ss.logo = api.getSponsorLogoUrl(ss.logo));
         this.sponsorStats = r.stats;
       }
     );
   }
 
   ngOnInit(): void {
+  }
+
+  updateGame(id: string) {
+    this.currentGame = id;
+
+    this.api.gameSponsorReport(this.currentGame).subscribe(
+      r => {
+        r.stats.forEach(gss => gss.stats.forEach(ss => ss.logo = this.api.getSponsorLogoUrl(ss.logo)));
+        this.gameSponsorReport = r;
+      }
+    );
   }
 }
