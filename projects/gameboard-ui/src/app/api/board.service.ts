@@ -55,7 +55,9 @@ export class BoardService {
   public delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/challenge/${id}`);
   }
-
+  public audit(id: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/challenge/${id}/audit`);
+  }
   private transform(b: BoardPlayer): BoardPlayer {
     b.game.mapUrl = b.game.background
       ? `${this.config.imagehost}/${b.game.background}`
