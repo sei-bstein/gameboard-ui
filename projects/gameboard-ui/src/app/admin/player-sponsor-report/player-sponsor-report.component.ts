@@ -27,7 +27,7 @@ export class PlayerSponsorReportComponent implements OnInit {
   sponsorStats?: SponsorStat[];
   games?: Game[];
   search: Search = { term: '' };
-  currentGame = "";
+  currentGame?: Game;
 
   faArrowLeft = faArrowLeft;
 
@@ -40,9 +40,9 @@ export class PlayerSponsorReportComponent implements OnInit {
       r => {
         this.games = r;
         if (this.games.length > 0) {
-          this.currentGame = this.games[0].id;
+          this.currentGame = this.games[0];
 
-          this.api.gameSponsorReport(this.currentGame).subscribe(
+          this.api.gameSponsorReport(this.currentGame.id).subscribe(
             r => {
               r.stats.forEach(gss => gss.stats.forEach(ss => ss.logo = api.getSponsorLogoUrl(ss.logo)));
               this.gameSponsorReport = r;
@@ -65,13 +65,17 @@ export class PlayerSponsorReportComponent implements OnInit {
   }
 
   updateGame(id: string) {
-    this.currentGame = id;
+    if (this.games) {
+      this.currentGame = this.games.find(g => g.id == id);
 
-    this.api.gameSponsorReport(this.currentGame).subscribe(
-      r => {
-        r.stats.forEach(gss => gss.stats.forEach(ss => ss.logo = this.api.getSponsorLogoUrl(ss.logo)));
-        this.gameSponsorReport = r;
+      if (this.currentGame) {
+        this.api.gameSponsorReport(this.currentGame.id).subscribe(
+          r => {
+            r.stats.forEach(gss => gss.stats.forEach(ss => ss.logo = this.api.getSponsorLogoUrl(ss.logo)));
+            this.gameSponsorReport = r;
+          }
+        );
       }
-    );
+    }
   }
 }

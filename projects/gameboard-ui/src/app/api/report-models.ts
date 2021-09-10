@@ -31,6 +31,7 @@ export interface SponsorStat {
   name: string;
   logo: string;
   count: number;
+  teamCount: number;
 }
 
 export interface GameSponsorReport {
