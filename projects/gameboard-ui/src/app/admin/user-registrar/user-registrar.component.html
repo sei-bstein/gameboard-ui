@@ -24,6 +24,14 @@
         <fa-icon [hidden]="filter!=='roles'" [icon]="faFilter"></fa-icon>
         <span>roles</span>
       </button>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('pending')">
+        <fa-icon [hidden]="filter!=='pending'" [icon]="faFilter"></fa-icon>
+        <span>names-pending</span>
+      </button>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('disallowed')">
+        <fa-icon [hidden]="filter!=='disallowed'" [icon]="faFilter"></fa-icon>
+        <span>names-disallowed</span>
+      </button>
       <!-- |
       <button *ngFor="let s of scopes"
         class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
@@ -59,7 +67,7 @@
     </button>
     <div class="spacer"></div>
 
-    <div class="btn-group">
+    <!-- <div class="btn-group">
       <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isObserver"
              btnCheckbox tabindex="0" [disabled]="true" role="button">Observer</label>
       <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isTester"
@@ -72,7 +80,11 @@
              btnCheckbox tabindex="0" [disabled]="true" role="button">Director</label>
       <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isAdmin"
              btnCheckbox tabindex="0" [disabled]="true" role="button">Admin</label>
-    </div>
+    </div> -->
+
+    <button class="btn btn-outline-warning btn-sm" *ngIf="user.role !== 'member'" (click)="view(user)">
+      <span>Privileged</span>
+    </button>
 
     <div class="">
 
@@ -98,7 +110,11 @@
         <div class="form-group">
           <label class="mb-0" for="reason-input">Disapproved Reason</label>
           <input id="reason-input" class="form-control" type="text" [(ngModel)]="user.nameStatus" (change)="update(user)">
-          <small>not_unique, disallowed, disallowed_pii, disallowed_explicit, disallowed_innuendo, disallowed_excessive_emojis, etc.</small>
+          <small>
+            <button *ngFor="let reason of reasons" class="btn btn-link btn-sm" (click)="user.nameStatus = reason; update(user)">
+              {{reason}}
+            </button>
+          </small>
         </div>
 
         <div class="form-group">

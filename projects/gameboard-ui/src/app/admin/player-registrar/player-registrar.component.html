@@ -22,6 +22,14 @@
         <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
         <span>active-only</span>
       </button>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('pending')">
+        <fa-icon [hidden]="filter!=='pending'" [icon]="faFilter"></fa-icon>
+        <span>names-pending</span>
+      </button>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('disallowed')">
+        <fa-icon [hidden]="filter!=='disallowed'" [icon]="faFilter"></fa-icon>
+        <span>names-disallowed</span>
+      </button>
     </div>
   </div>
 

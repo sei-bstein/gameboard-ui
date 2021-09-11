@@ -18,7 +18,7 @@ export class ChallengeBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<ChallengeSummary[]>;
   source: ChallengeSummary[] = [];
-  search: Search = { term: '', take: 50};
+  search: Search = { term: '', take: 100};
   selected!: ChallengeSummary;
   // audited$: Observable<any>;
   // auditing$ = new Subject<ChallengeSummary>();
