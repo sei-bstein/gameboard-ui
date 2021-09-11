@@ -21,29 +21,6 @@
   </div>
 </form>
 
-<!--<div class="container" pt-4 *ngIf="challengeReport; else loading">
-  <div class="row border-top p-3">
-    <div class="col-2 font-weight-bold">Name</div>
-    <div class="col-1 font-weight-bold">Tag</div>
-    <div class="col-1 font-weight-bold">Points</div>
-    <div class="col-2 font-weight-bold">Success (# / %)</div>
-    <div class="col-2 font-weight-bold">Failure (# / %)</div>
-    <div class="col-2 font-weight-bold">Partial (# / %)</div>
-    <div class="col-2 font-weight-bold">Avg Time</div>
-    <div class="col-2 font-weight-bold">Attempts #</div>
-  </div>
-  <div class="row border-top p-3" *ngFor="let c of challengeReport.stats">
-    <div class="col-2">{{c.name}}</div>
-    <div class="col-1">{{c.tag}}</div>
-    <div class="col-1">{{c.points}}</div>
-    <div class="col-2">{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</div>
-    <div class="col-2">{{c.failureCount}} / {{c.failureCount / c.attemptCount | percent}}</div>
-    <div class="col-2">{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</div>
-    <div class="col-2">{{c.averageTime}}</div>
-    <div class="col-2">{{c.attemptCount}}</div>
-  </div>
-</div>-->
-
 <table class="table table-bordered table-dark" *ngIf="challengeReport; else loading">
   <thead>
     <tr>
