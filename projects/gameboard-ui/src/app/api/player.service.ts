@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, Standing, Team, TeamInvitation, TimeWindow } from './player-models';
+import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, SessionChangeRequest, Standing, Team, TeamInvitation, TimeWindow } from './player-models';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,9 @@ export class PlayerService {
     return this.http.put<Player>(`${this.url}/player/start`, model).pipe(
       map(p => this.transform(p) as Player)
     );
+  }
+  public updateSession(model: SessionChangeRequest): Observable<any> {
+    return this.http.put<any>(`${this.url}/team/session`, model);
   }
   public delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/player/${id}`);

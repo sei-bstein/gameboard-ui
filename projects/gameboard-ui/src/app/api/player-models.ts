@@ -75,6 +75,11 @@ export interface SelfChangedPlayer {
   name: string;
 }
 
+export interface SessionChangeRequest {
+  teamId: string;
+  sessionEnd: Date;
+}
+
 export interface PlayerEnlistment {
   playerId: string;
   userId: string;
