@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { UserReport, PlayerReport, SponsorReport, GameSponsorReport } from './report-models';
+import { UserReport, PlayerReport, SponsorReport, GameSponsorReport, ChallengeReport } from './report-models';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +36,10 @@ export class ReportService {
 
   public gameSponsorReport(id: string): Observable<GameSponsorReport> {
     return this.http.get<GameSponsorReport>(`${this.url}/report/gamesponsorstats/${id}`);
+  }
+
+  public challengeReport(id: string): Observable<ChallengeReport> {
+    return this.http.get<ChallengeReport>(`${this.url}/report/challengestats/${id}`);
   }
 
   public getSponsorLogoUrl(logo: string): string {

@@ -1,0 +1,78 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<a class="btn btn-link" routerLink="../">
+  <fa-icon [icon]="faArrowLeft"></fa-icon>
+  <span>Back</span>
+</a>
+
+<h4>Challenge Reports</h4>
+
+<form #form="ngForm" autocomplete="off">
+  <div class="input-group mb-4" *ngIf="challengeReport; else loading">
+    <div class="pr-4">
+      <label for="gameSelect">Select a board: </label>
+    </div>
+    <div>
+      <select class="form-control" #selectGame (change)="updateGame(selectGame.value)">
+        <option *ngFor="let g of games" value="{{g.id}}">{{g.name}}</option>
+      </select>
+    </div>
+  </div>
+</form>
+
+<!--<div class="container" pt-4 *ngIf="challengeReport; else loading">
+  <div class="row border-top p-3">
+    <div class="col-2 font-weight-bold">Name</div>
+    <div class="col-1 font-weight-bold">Tag</div>
+    <div class="col-1 font-weight-bold">Points</div>
+    <div class="col-2 font-weight-bold">Success (# / %)</div>
+    <div class="col-2 font-weight-bold">Failure (# / %)</div>
+    <div class="col-2 font-weight-bold">Partial (# / %)</div>
+    <div class="col-2 font-weight-bold">Avg Time</div>
+    <div class="col-2 font-weight-bold">Attempts #</div>
+  </div>
+  <div class="row border-top p-3" *ngFor="let c of challengeReport.stats">
+    <div class="col-2">{{c.name}}</div>
+    <div class="col-1">{{c.tag}}</div>
+    <div class="col-1">{{c.points}}</div>
+    <div class="col-2">{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</div>
+    <div class="col-2">{{c.failureCount}} / {{c.failureCount / c.attemptCount | percent}}</div>
+    <div class="col-2">{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</div>
+    <div class="col-2">{{c.averageTime}}</div>
+    <div class="col-2">{{c.attemptCount}}</div>
+  </div>
+</div>-->
+
+<table class="table table-bordered table-dark" *ngIf="challengeReport; else loading">
+  <thead>
+    <tr>
+      <th>Challenge</th>
+      <th>Tag</th>
+      <th>Points</th>
+      <th>Success (# / %)</th>
+      <th>Failure (# / %)</th>
+      <th>Partial (# / %)</th>
+      <th>Avg Time</th>
+      <th>Attempts #</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of challengeReport.stats">
+      <td>{{c.name}}</td>
+      <td>{{c.tag}}</td>
+      <td>{{c.points}}</td>
+      <td>{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</td>
+      <td>{{c.failureCount}} / {{c.failureCount / c.attemptCount | percent}}</td>
+      <td>{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</td>
+      <td>{{c.averageTime}}</td>
+      <td>{{c.attemptCount}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

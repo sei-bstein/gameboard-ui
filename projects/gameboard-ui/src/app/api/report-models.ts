@@ -46,5 +46,22 @@ export interface GameSponsorStat {
   stats: SponsorStat[];
 }
 
+export interface ChallengeReport {
+  title: string;
+  timestamp: Date;
+  stats: ChallengeStat[];
+}
+
+export interface ChallengeStat {
+  id: string;
+  name: string;
+  tag: string;
+  points: number;
+  successCount: number;
+  partialCount: number;
+  failureCount: number;
+  averageTime: string;
+  attemptCount: number;
+}
 
 
