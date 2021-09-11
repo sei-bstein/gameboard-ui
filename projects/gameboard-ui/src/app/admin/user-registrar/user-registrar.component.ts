@@ -21,10 +21,11 @@ export class UserRegistrarComponent implements OnInit {
   selected: ApiUser[] = [];
   viewed: ApiUser | undefined = undefined;
   viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
-  search: Search = { term: '', take: 100};
+  search: Search = { term: '', take: 0};
   filter = '';
   scope = '';
   scopes: string[] = [];
+  reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
 
   faTrash = faTrash;
   faList = faList;
@@ -65,6 +66,7 @@ export class UserRegistrarComponent implements OnInit {
     // this.search.scope = this.scope;
     this.refresh$.next(true);
   }
+
 
   // create(): void {
   //   this.api.update({

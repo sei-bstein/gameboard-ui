@@ -21,7 +21,7 @@ export class PlayerRegistrarComponent implements OnInit {
   selected: Player[] = [];
   viewed: Player | undefined = undefined;
   viewChange$ = new BehaviorSubject<Player | undefined>(this.viewed);
-  search: PlayerSearch = { term: '', take: 100, filter: ['collapse']};
+  search: PlayerSearch = { term: '', take: 0, filter: ['collapse'], sort: 'time'};
   filter = '';
   scope = '';
   scopes: string[] = [];
