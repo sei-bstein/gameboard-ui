@@ -2,151 +2,150 @@
 <!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
 
 <ng-container *ngIf="ctx$ | async as ctx; else loading">
-<!-- <div class="">
-  <a class="btn btn-link" [routerLink]="['/game', ctx?.gameId]">
-    <fa-icon [icon]="faArrowLeft"></fa-icon>
-    <span>Back To Lobby</span>
-  </a>
-  <h4 class="display-4">Gameboard</h4>
-  <pre>// TODO: countdown</pre>
-</div> -->
-<div class="jumbotron d-flex align-items-center">
-  <!-- <app-game-card class="small-card" [game]="ctx.game"></app-game-card> -->
-  <a [routerLink]="['../../', ctx.game.id]">
-    <img [src]="ctx.game.cardUrl" class="img-fluid" alt="{{ctx.game.name}} logo">
-  </a>
-  <span class="text-success mx-4">
-    {{ctx.game.competition}}
-    {{ctx.game.season}}
-    {{ctx.game.track}}
-    {{ctx.game.division}}
-    {{ctx.game.name}}
-  </span>
-  <div class="spacer"></div>
-  <div>
-    <div class="text-info card-text mb-2">
-      <!-- <span *ngIf="game.isBefore">Game window opens in </span> -->
-      <span *ngIf="ctx.session.isAfter">Game Over </span>
-      <span *ngIf="ctx.session.isDuring">Session ends in </span>
-      <span>{{ctx.session.countdown | countdown}}</span>
-    </div>
-    <table class="table mt-2 text-center">
-      <tbody>
-        <tr>
-          <td>Rank</td>
-          <td>Score</td>
-          <td>Duration</td>
-          <td>Completes</td>
-          <td>Partials</td>
-        </tr>
-        <tr>
-          <td>{{ctx.rank}}</td>
-          <td>{{ctx.score}}</td>
-          <td>{{ctx.time | clock}}</td>
-          <td>{{ctx.correctCount}}</td>
-          <td>{{ctx.partialCount}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <!-- <div [hidden]="!!ctx.user.id">
-    <app-login>
-      <span class="">Login to enroll or play!</span>
-    </app-login>
-  </div> -->
-</div>
 
-<div class="container-fluid">
-  <div class="col m-2 p-4"><h3 class="font-weight-bold grayText">To start a challenge, click a circle on the below gameboard:</h3></div>
-  <div class="row justify-content-center">
-    <div class="mapbox col m-4 p-4">
-      <div #callout class="callout bg-primary m-0 p-4" [hidden]="!this.hoveredItem">
-        <span>{{this.hoveredItem?.name}}</span><br />
-        <span>Points: {{this.hoveredItem?.points}}</span>
+  <div class="jumbotron d-flex align-items-center">
+    <a [routerLink]="['../../', ctx.game.id]">
+      <img [src]="ctx.game.cardUrl" class="img-fluid" alt="{{ctx.game.name}} logo">
+    </a>
+    <span class="text-success mx-4">
+      {{ctx.game.competition}}
+      {{ctx.game.season}}
+      {{ctx.game.track}}
+      {{ctx.game.division}}
+      {{ctx.game.name}}
+    </span>
+    <div class="spacer"></div>
+    <div>
+      <div class="text-info card-text mb-2">
+        <!-- <span *ngIf="game.isBefore">Game window opens in </span> -->
+        <span *ngIf="ctx.session.isAfter">Game Over </span>
+        <span *ngIf="ctx.session.isDuring">Session ends in </span>
+        <span>{{ctx.session.countdown | countdown}}</span>
       </div>
-      <svg viewBox="0 0 100 100">
-        <svg:image [attr.href]="ctx?.game?.mapUrl" width="100" height="100" />
-        <ng-container *ngFor="let c of ctx?.game?.specs">
-          <a class="mapbox-dot" (mouseenter)="mouseenter($event, c)" (mouseleave)="mouseleave($event, c)">
-            <svg:circle [attr.cx]="c.x*100" [attr.cy]="c.y*100" [attr.r]="c.r*100" [attr.fill]="c.c" (click)="select(c)"
-                        [attr.fill]="c.c"></svg:circle>
-          </a>
-        </ng-container>
-      </svg>
+      <table class="table mt-2 text-center">
+        <tbody>
+          <tr>
+            <td>Rank</td>
+            <td>Score</td>
+            <td>Cumulative Time</td>
+            <td>Completes</td>
+            <td>Partials</td>
+          </tr>
+          <tr>
+            <td>{{ctx.rank}}</td>
+            <td>{{ctx.score}}</td>
+            <td>{{ctx.time | clock}}</td>
+            <td>{{ctx.correctCount}}</td>
+            <td>{{ctx.partialCount}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-container *ngIf="ctx.session.isDuring">
+        <div *ngIf="hubstate$ | async as hubstate" class="text-center">
+          <small *ngIf="!!hubstate.joined" class="text-success">
+            <fa-icon [icon]="faBolt"></fa-icon>
+            connected
+          </small>
+          <small *ngIf="!hubstate.joined" class="ml-2 text-danger">
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+            disconnected
+          </small>
+        </div>
+      </ng-container>
     </div>
+  </div>
 
-    <div class="quizbox col m-4 p-4">
-
-      <app-error-div [errors]="errors"></app-error-div>
-
-      <!-- not started, show preview -->
-      <ng-container *ngIf="specs$ | async as spec">
-
-        <div *ngIf="!spec.instance!.id" class="text-center mb-4">
-          <ng-container *ngIf="this.user$ | async as user">
-            <div *ngIf="user.isTester" class="form-group">
-              <label for="variant-input">Variant</label>
-              <input type="number" class="form-control" [(ngModel)]="variant">
-            </div>
+  <div class="container-fluid">
+    <div class="col m-2 p-4"><h3 class="font-weight-bold grayText">To start a challenge, click a circle on the below gameboard:</h3></div>
+    <div class="row justify-content-center">
+      <div class="mapbox col m-4 p-4">
+        <div #callout class="callout bg-primary m-0 p-4" [hidden]="!this.hoveredItem">
+          <span>{{this.hoveredItem?.name}}</span><br />
+          <span>Points: {{this.hoveredItem?.points}}</span>
+        </div>
+        <svg viewBox="0 0 100 100">
+          <svg:image [attr.href]="ctx?.game?.mapUrl" width="100" height="100" />
+          <ng-container *ngFor="let c of ctx?.game?.specs">
+            <a class="mapbox-dot" (mouseenter)="mouseenter($event, c)" (mouseleave)="mouseleave($event, c)">
+              <svg:circle [attr.cx]="c.x*100" [attr.cy]="c.y*100" [attr.r]="c.r*100" [attr.fill]="c.c" (click)="select(c)"
+                          [attr.fill]="c.c"></svg:circle>
+            </a>
           </ng-container>
-          <ng-container *ngIf="!deploying">
-            <app-confirm-button btnClass="btn btn-primary" (confirm)="launch(spec)">
-              <span>Start Challenge</span>
-            </app-confirm-button>
-            <div>
-              This will start the challenge timer. The time it takes to
-              earn points is a factor in tie-breaking.
-            </div>
-          </ng-container>
-          <div *ngIf="deploying" class="text-center">
-            <app-spinner></app-spinner>
-            <ng-container *ngIf="etd$ | async as etd">
-              <div *ngIf="etd > 0">
-                Estimated time remaining: {{etd}}s
+        </svg>
+      </div>
+
+      <div class="quizbox col m-4 p-4">
+
+        <app-error-div [errors]="errors"></app-error-div>
+
+        <!-- not started, show preview -->
+        <ng-container *ngIf="specs$ | async as spec">
+
+          <div *ngIf="!spec.instance!.id" class="text-center mb-4">
+            <ng-container *ngIf="this.user$ | async as user">
+              <div *ngIf="user.isTester" class="form-group">
+                <label for="variant-input">Variant</label>
+                <input type="number" class="form-control" [(ngModel)]="variant">
               </div>
             </ng-container>
+            <ng-container *ngIf="!deploying">
+              <app-confirm-button btnClass="btn btn-primary" (confirm)="launch(spec)">
+                <span>Start Challenge</span>
+              </app-confirm-button>
+              <div>
+                This will start the challenge timer. The time it takes to
+                earn points is a factor in tie-breaking.
+              </div>
+            </ng-container>
+            <div *ngIf="deploying" class="text-center">
+              <app-spinner></app-spinner>
+              <ng-container *ngIf="etd$ | async as etd">
+                <div *ngIf="etd > 0">
+                  Estimated time remaining: {{etd}}s
+                </div>
+              </ng-container>
+            </div>
           </div>
-        </div>
 
-        <markdown [data]="spec.instance!.state.markdown ||''"></markdown>
+          <markdown [data]="spec.instance!.state.markdown ||''"></markdown>
 
-        <markdown [data]="spec.instance!.state.challenge?.text || ''"></markdown>
+          <markdown [data]="spec.instance!.state.challenge?.text || ''"></markdown>
 
-        <ng-container *ngIf="!!spec.instance!.state && spec.instance!.state.isActive">
-          <h3>Gamespace Resources</h3>
-          <div *ngIf="!deploying && ctx.session.isDuring" class="d-flex my-4">
-            <button *ngFor="let vm of spec.instance!.state.vms" class="btn btn-sm btn-dark mr-2" (click)="console(vm)">
-              <fa-icon [icon]="faTv"></fa-icon>
-              <span>{{vm.name}}</span>
-            </button>
-            <app-confirm-button *ngIf="spec.instance!.state.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="stop(spec)">
-              <fa-icon [icon]="faTrash"></fa-icon>
-              <span>Destroy</span>
-            </app-confirm-button>
-            <app-confirm-button *ngIf="!spec.instance!.state.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="start(spec)">
-              <fa-icon [icon]="faBolt"></fa-icon>
-              <span>Deploy</span>
-            </app-confirm-button>
+          <ng-container *ngIf="!!spec.instance!.state && spec.instance!.state.isActive">
+            <h3>Gamespace Resources</h3>
+            <div *ngIf="!deploying && ctx.session.isDuring" class="d-flex my-4">
+              <button *ngFor="let vm of spec.instance!.state.vms" class="btn btn-sm btn-dark mr-2" (click)="console(vm)">
+                <fa-icon [icon]="faTv"></fa-icon>
+                <span>{{vm.name}}</span>
+              </button>
+              <app-confirm-button *ngIf="spec.instance!.state.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="stop(spec)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+                <span>Destroy</span>
+              </app-confirm-button>
+              <app-confirm-button *ngIf="!spec.instance!.state.vms?.length" btnClass="btn btn-sm btn-outline-warning" (confirm)="start(spec)">
+                <fa-icon [icon]="faBolt"></fa-icon>
+                <span>Deploy</span>
+              </app-confirm-button>
+            </div>
+            <div *ngIf="deploying" class="text-center">
+              <app-spinner></app-spinner>
+            </div>
+          </ng-container>
+
+          <h3 *ngIf="spec.instance!.state.challenge?.questions?.length">Challenge Questions</h3>
+          <app-gamespace-quiz [spec]="spec!" [session]="ctx.session" (graded)="graded()"></app-gamespace-quiz>
+
+          <div *ngIf="spec.instance?.id" class="text-right m-4">
+            Support Code:
+            <app-clipspan class="text-info m-2 p-2">{{spec.instance?.id | slice:0:8}} {{spec.tag}}</app-clipspan>
           </div>
-          <div *ngIf="deploying" class="text-center">
-            <app-spinner></app-spinner>
-          </div>
+
         </ng-container>
 
-        <h3 *ngIf="spec.instance!.state.challenge?.questions?.length">Challenge Questions</h3>
-        <app-gamespace-quiz [spec]="spec!" [session]="ctx.session" (graded)="graded()"></app-gamespace-quiz>
 
-        <div *ngIf="spec.instance?.id" class="text-right m-4">
-          Support Code:
-          <app-clipspan class="text-info m-2 p-2">{{spec.instance?.id | slice:0:8}} {{spec.tag}}</app-clipspan>
-        </div>
-
-      </ng-container>
-
-
+      </div>
     </div>
   </div>
-</div>
 
 </ng-container>
 
