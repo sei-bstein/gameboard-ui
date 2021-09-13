@@ -59,4 +59,12 @@ export class ApiService {
   ping(): Observable<any> {
     return this.http.get<any>(this.url + '/user/ping');
   }
+
+  focus(model: ConsoleRequest): Observable<any> {
+    return this.http.put<any>(this.url + `/challenge/console`, model);
+  }
+
+  blur(model: ConsoleRequest): Observable<any> {
+    return this.http.put<any>(this.url + `/challenge/console`, ({...model, name: ''}));
+  }
 }

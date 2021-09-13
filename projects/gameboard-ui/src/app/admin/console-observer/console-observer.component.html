@@ -1,0 +1,38 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<a class="btn btn-link mr-2" routerLink="../../">
+  <fa-icon [icon]="faArrowLeft"></fa-icon>
+  <span>Back</span>
+</a>
+<button class="btn btn-link mr-2" (click)="refresh$.next(true)">
+  <fa-icon [icon]="faSync"></fa-icon>
+  <span>Refresh</span>
+</button>
+<h4>Player Map</h4>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>User</th>
+      <th>Challenge</th>
+      <th>Console</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngIf="fetch$ | async as players">
+      <tr *ngFor="let p of players">
+        <td>{{p.playerName}}</td>
+        <td>{{p.userName}}</td>
+        <td>{{p.challengeName}}</td>
+        <td>
+          <button *ngIf="!!p.vmName" class="btn btn-outline-success btn-sm" (click)="go(p)">
+            <fa-icon [icon]="faTv"></fa-icon>
+            <span>{{p.vmName}}</span>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

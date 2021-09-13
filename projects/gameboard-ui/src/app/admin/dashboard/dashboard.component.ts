@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faArrowLeft, faPlus, faCopy, faTrash, faEdit, faUsers, faUsersCog, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlus, faCopy, faTrash, faEdit, faUsers, faUsersCog, faCog, faTv } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { debounceTime, switchMap, tap, mergeMap } from 'rxjs/operators';
 import { Game } from '../../api/game-models';
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
   faEdit = faEdit;
   faUsers = faUsersCog;
   faCog = faCog;
+  faTv = faTv;
 
   constructor(
     private api: GameService,
