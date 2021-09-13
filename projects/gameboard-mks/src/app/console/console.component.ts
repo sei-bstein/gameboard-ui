@@ -210,7 +210,11 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.console.connect(
       info.url,
       (state: string) => this.changeState(state),
-      { canvasId: this.canvasId, viewOnly: this.viewOnly, changeResolution: !!this.request.fullbleed }
+      {
+        canvasId: this.canvasId,
+        viewOnly: !!info.isObserver || !!this.request.observer || !!this.viewOnly,
+        changeResolution: !!this.request.fullbleed
+      }
     );
   }
 
@@ -303,12 +307,12 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:focus', ['$event'])
   onFocus(): void {
-    this.hubSvc.focus();
+    this.api.focus(this.request);
   }
 
   @HostListener('window:blur', ['$event'])
   onBlur(): void {
-    this.hubSvc.blur();
+    this.api.blur(this.request);
   }
 
   @HostListener('document:mouseup', ['$event'])

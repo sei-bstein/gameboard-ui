@@ -32,12 +32,6 @@
         <fa-icon [hidden]="filter!=='disallowed'" [icon]="faFilter"></fa-icon>
         <span>names-disallowed</span>
       </button>
-      <!-- |
-      <button *ngFor="let s of scopes"
-        class="mr-1 btn btn-link text-dark btn-sm" (click)="toggleScope(s)">
-        <fa-icon [hidden]="scope!==s" [icon]="faFilter"></fa-icon>
-        <span>{{s}}</span>
-      </button> -->
     </div>
   </div>
 
@@ -67,23 +61,8 @@
     </button>
     <div class="spacer"></div>
 
-    <!-- <div class="btn-group">
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isObserver"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Observer</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isTester"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Tester</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDesigner"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Designer</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isRegistrar"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Registrar</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isDirector"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Director</label>
-      <label class="btn btn-outline-warning btn-sm" [(ngModel)]="user.isAdmin"
-             btnCheckbox tabindex="0" [disabled]="true" role="button">Admin</label>
-    </div> -->
-
     <button class="btn btn-outline-warning btn-sm" *ngIf="user.role !== 'member'" (click)="view(user)">
-      <span>Privileged</span>
+      <span>Role: {{user.roleTag}}</span>
     </button>
 
     <div class="">
@@ -134,7 +113,10 @@
                    btnCheckbox tabindex="0" role="button">Admin</label>
           </div>
         </div>
-        <pre>// todo: show enrollments</pre>
+
+        <app-error-div [errors]="errors"></app-error-div>
+
+        <!-- <pre>// todo: show enrollments</pre> -->
     </div>
   </div>
 <!-- </div> -->

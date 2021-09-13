@@ -25,6 +25,7 @@ import { ReportPageComponent } from './report-page/report-page.component';
 import { PlayerSponsorReportComponent } from './player-sponsor-report/player-sponsor-report.component';
 import { ChallengeReportComponent } from './challenge-report/challenge-report.component';
 import { AnnounceComponent } from './announce/announce.component';
+import { ConsoleObserverComponent } from './console-observer/console-observer.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { AnnounceComponent } from './announce/announce.component';
     ReportPageComponent,
     PlayerSponsorReportComponent,
     ChallengeReportComponent,
-    AnnounceComponent
+    AnnounceComponent,
+    ConsoleObserverComponent
   ],
   imports: [
     CommonModule,
@@ -56,6 +58,7 @@ import { AnnounceComponent } from './announce/announce.component';
         { path: 'registrar/sponsors', component: SponsorBrowserComponent },
         { path: 'registrar/users', component: UserRegistrarComponent },
         { path: 'registrar/:id', component: PlayerRegistrarComponent },
+        { path: 'observer/:id', component: ConsoleObserverComponent },
         { path: 'report', component: ReportPageComponent },
         { path: 'report/users', component: UserReportComponent },
         { path: 'report/sponsors', component: PlayerSponsorReportComponent },

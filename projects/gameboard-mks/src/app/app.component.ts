@@ -28,8 +28,9 @@ export class AppComponent {
         name: p.v,
         sessionId: p.s,
         token: p.t,
-        fullbleed: p.f
-      })),
+        fullbleed: p.f,
+        observer: p.o
+      }))
       // switchMap(p => api.redeem(p.token).pipe(
       //   catchError(err => of(p)),
       //   map(r => p)

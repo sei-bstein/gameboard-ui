@@ -16,6 +16,7 @@ export interface ApiUser {
   isObserver: boolean;
   sponsorLogo: string;
   pendingName: string;
+  roleTag: string;
 }
 
 export interface NewUser {

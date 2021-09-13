@@ -26,6 +26,7 @@ export class UserRegistrarComponent implements OnInit {
   scope = '';
   scopes: string[] = [];
   reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
+  errors: any[] = [];
 
   faTrash = faTrash;
   faList = faList;
@@ -104,7 +105,10 @@ export class UserRegistrarComponent implements OnInit {
   }
 
   update(model: ApiUser): void {
-    this.api.update(model).subscribe();
+    this.api.update(model).subscribe(
+      () => {},
+      (err) => this.errors.push(err)
+    );
   }
 
   approveName(model: ApiUser): void {

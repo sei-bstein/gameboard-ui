@@ -185,3 +185,14 @@ export interface VmConsole {
   isRunning: boolean;
   url: string;
 }
+
+export interface ConsoleActor {
+  userId: string;
+  userName: string;
+  playerName: string;
+  challengeName: string;
+  challengeId: string;
+  gameId: string;
+  vmName: string;
+  timestamp: Date;
+}

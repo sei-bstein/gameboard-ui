@@ -111,6 +111,11 @@ export class UserService {
       ? user.name + (!!user.nameStatus ? `...${user.nameStatus}` : '...pending')
       : ''
     ;
+
+    user.roleTag = user.role.split(', ')
+      .map(a => a.substring(0, 1).toUpperCase() + (a.startsWith('d') ? a.substring(1, 2) : ''))
+      .join('')
+    ;
     return user;
   }
 }
