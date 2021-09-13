@@ -25,6 +25,7 @@ export class PlayerRegistrarComponent implements OnInit {
   filter = '';
   scope = '';
   scopes: string[] = [];
+  reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
 
   faTrash = faTrash;
   faList = faList;
