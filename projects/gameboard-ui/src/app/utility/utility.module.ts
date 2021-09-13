@@ -24,6 +24,7 @@ import { ClipboardService } from './clipboard.service';
 import { ClockPipe } from './pipes/clock.pipe';
 import { ProfileEditorComponent } from './components/profile-editor/profile-editor.component';
 import { FormsModule } from '@angular/forms';
+import { MessageBoardComponent } from './components/message-board/message-board.component';
 
 const components = [
   ClipspanComponent,
@@ -34,6 +35,7 @@ const components = [
   GameCardComponent,
   LoginComponent,
   ProfileEditorComponent,
+  MessageBoardComponent,
   AgedDatePipe,
   CamelspacePipe,
   CountdownPipe,

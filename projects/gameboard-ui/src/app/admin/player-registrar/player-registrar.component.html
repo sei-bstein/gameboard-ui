@@ -91,7 +91,9 @@
         <div class="form-group">
           <label class="mb-0" for="reason-input">Disapproved Reason</label>
           <input id="reason-input" class="form-control" type="text" [(ngModel)]="player.nameStatus" (change)="update(player)">
-          <small>not_unique, disallowed, disallowed_pii, disallowed_explicit, disallowed_innuendo, disallowed_excessive_emojis, etc.</small>
+          <small> <button *ngFor="let reason of reasons" class="btn btn-link btn-sm" (click)="player.nameStatus = reason; update(player)">
+            {{reason}}
+          </button></small>
         </div>
 
         <app-player-session [id]="player.teamId"></app-player-session>

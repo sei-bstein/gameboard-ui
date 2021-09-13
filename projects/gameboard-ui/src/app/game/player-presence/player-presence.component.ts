@@ -3,8 +3,8 @@
 
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { faCircle, faStar } from '@fortawesome/free-solid-svg-icons';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { delay, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { delay, switchMap, tap } from 'rxjs/operators';
 import { Player } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
 import { Actor, HubState, NotificationService } from '../../utility/notification.service';
@@ -29,7 +29,6 @@ export class PlayerPresenceComponent implements OnInit, OnChanges {
     this.hub$ = hub.state$;
 
     this.team$ = this.refresh$.pipe(
-      tap(tid => console.log(tid)),
       switchMap(tid => api.list({tid})),
       delay(2000),
       tap(list => hub.initActors(list as unknown as Actor[]))
@@ -38,7 +37,6 @@ export class PlayerPresenceComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!!changes.id) {
-    console.log('init');
     this.refresh$.next(changes.id.currentValue);
     }
   }
@@ -48,7 +46,6 @@ export class PlayerPresenceComponent implements OnInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    console.log('init');
     this.refresh$.next(this.id);
   }
 }

@@ -1,15 +1,17 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
+import { ThrowStmt } from '@angular/compiler';
+import { AfterViewInit, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faArrowLeft, faBolt, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, timer } from 'rxjs';
+import { faArrowLeft, faBolt, faExclamationTriangle, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
 import { catchError, combineAll, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { ApiUser } from '../../api/user-models';
 import { ConfigService } from '../../utility/config.service';
+import { HubState, NotificationService } from '../../utility/notification.service';
 import { UserService } from '../../utility/user.service';
 
 @Component({
@@ -17,7 +19,7 @@ import { UserService } from '../../utility/user.service';
   templateUrl: './gameboard-page.component.html',
   styleUrls: ['./gameboard-page.component.scss']
 })
-export class GameboardPageComponent implements OnInit, AfterViewInit {
+export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy {
   // @ViewChild('mapbox') mapboxRef!: ElementRef;
   // @ViewChild('callout') calloutRef!: ElementRef;
   // mapbox!: HTMLDivElement;
@@ -36,10 +38,13 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
   faTv = faTv;
   faTrash = faTrash;
   faBolt = faBolt;
+  faExclamationTriangle = faExclamationTriangle;
   faArrowLeft = faArrowLeft;
   deploying = false;
   variant = 0;
   user$: Observable<ApiUser | null>;
+  hubstate$: Observable<HubState>;
+  hubsub: Subscription;
 
   constructor(
     route: ActivatedRoute,
@@ -47,10 +52,15 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
     private api: BoardService,
     private renderer: Renderer2,
     private config: ConfigService,
+    private hub: NotificationService,
     usersvc: UserService
   ) {
 
     this.user$ = usersvc.user$;
+
+    this.hubstate$ = hub.state$;
+
+    this.hubsub = hub.challengeEvents.subscribe(ev => this.syncOne(ev.model as Challenge));
 
     const fetch$ = merge(
       route.params.pipe(map(p => p.id)),
@@ -59,7 +69,8 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
       filter(id => !!id),
       switchMap(id => api.load(id).pipe(
         catchError(err => of({} as BoardPlayer))
-      ))
+      )),
+      tap(b => this.startHub(b))
     );
 
     // pull data
@@ -128,6 +139,17 @@ export class GameboardPageComponent implements OnInit, AfterViewInit {
     // this.callout = this.calloutRef.nativeElement as HTMLDivElement;
   }
 
+  ngOnDestroy(): void {
+    if (!this.hubsub.closed) {
+      this.hubsub.unsubscribe();
+    }
+  }
+
+  startHub(b: BoardPlayer): void {
+    if (b.session.isDuring) {
+      this.hub.init(b.id);
+    }
+  }
   syncOne = (c: Challenge): BoardSpec => {
     this.deploying = false;
     const s = this.ctx.game.specs.find(i => i.id === c.specId);

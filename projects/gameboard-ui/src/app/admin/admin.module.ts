@@ -24,6 +24,7 @@ import { UserReportComponent } from './user-report/user-report.component';
 import { ReportPageComponent } from './report-page/report-page.component';
 import { PlayerSponsorReportComponent } from './player-sponsor-report/player-sponsor-report.component';
 import { ChallengeReportComponent } from './challenge-report/challenge-report.component';
+import { AnnounceComponent } from './announce/announce.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ChallengeReportComponent } from './challenge-report/challenge-report.co
     UserReportComponent,
     ReportPageComponent,
     PlayerSponsorReportComponent,
-    ChallengeReportComponent
+    ChallengeReportComponent,
+    AnnounceComponent
   ],
   imports: [
     CommonModule,

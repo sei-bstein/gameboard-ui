@@ -68,3 +68,8 @@ export interface TreeNode {
   folders: TreeNode[];
   files: string[];
 }
+
+export interface Announcement {
+  teamId?: string;
+  message: string;
+}

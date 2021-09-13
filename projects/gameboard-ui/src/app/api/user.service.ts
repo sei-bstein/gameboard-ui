@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { ApiUser, ChangedUser, NewUser, TreeNode } from './user-models';
+import { Announcement, ApiUser, ChangedUser, NewUser, TreeNode } from './user-models';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +65,10 @@ export class UserService {
     return this.http.get<string[]>(`${this.url}/docs`).pipe(
       map(r => this.mapToTree(r))
     );
+  }
+
+  public announce(model: Announcement): Observable<any> {
+    return this.http.post<any>(`${this.url}/announce`, model);
   }
 
   private mapToTree(list: string[]): TreeNode {
