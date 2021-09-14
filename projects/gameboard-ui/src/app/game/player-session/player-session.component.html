@@ -69,7 +69,25 @@
 
       <ng-container *ngIf="ctx.player.session.isBefore && ctx.game.session.isDuring">
 
-        <div class="card-text">
+        <div class="card-text my-4" *ngIf="doublechecking">
+
+          <alert type="danger">
+            <ul>
+              <li>After starting the session, the clock expires after {{ctx.game.sessionMinutes}} minutes!</li>
+              <li [hidden]="ctx.game.maxTeamSize < 2">This will start the session for the team, so be sure your teammates are ready to start!</li>
+              <li [hidden]="ctx.game.allowReset">You will not be able to reset the session after starting it!</li>
+            </ul>
+          </alert>
+
+          <div class="text-center">
+            <app-confirm-button btnClass="btn btn-lg btn-warning" (confirm)="start(ctx.player)" (cancel)="doublechecking=false">
+              <fa-icon [icon]="faBolt"></fa-icon>
+              <span>Yes, start {{ctx.game.name}}</span>
+            </app-confirm-button>
+          </div>
+        </div>
+
+        <div class="card-text" *ngIf="!doublechecking">
 
           <alert type="warning">
             After starting the session, the clock expires after {{ctx.game.sessionMinutes}} minutes.
@@ -87,17 +105,18 @@
           </div>
 
           <div class="text-center">
-            <app-confirm-button btnClass="btn btn-lg btn-primary" (confirm)="start(ctx.player)">
+            <app-confirm-button btnClass="btn btn-lg btn-primary" (confirm)="doublechecking=true">
               <fa-icon [icon]="faBolt"></fa-icon>
               <span>Start Session</span>
             </app-confirm-button>
           </div>
 
         </div>
+
       </ng-container>
 
       <ng-container *ngIf="ctx.user.isDesigner && !ctx.player.session.isDuring">
-        <div class="text-center">
+        <div class="text-center my-4">
           <app-confirm-button btnClass="btn btn-lg btn-primary" (confirm)="start(ctx.player)">
             <fa-icon [icon]="faBolt"></fa-icon>
             <span>Admin Start</span>

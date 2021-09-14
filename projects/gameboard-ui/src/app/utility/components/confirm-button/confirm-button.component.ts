@@ -14,6 +14,7 @@ export class ConfirmButtonComponent implements OnInit {
   @Input() cancelButtonClass = 'btn btn-outline-secondary';
   @Input() disabled = false;
   @Output() confirm = new EventEmitter<boolean>();
+  @Output() cancel = new EventEmitter<boolean>();
   confirming = false;
 
   faCheck = faCheck;
@@ -25,7 +26,11 @@ export class ConfirmButtonComponent implements OnInit {
   }
 
   continue(yes?: boolean): void {
-    if (!!yes) { this.confirm.emit(true); }
+    if (!!yes) {
+      this.confirm.emit(true);
+    } else {
+      this.cancel.emit(true);
+    }
     this.confirming = false;
   }
 
