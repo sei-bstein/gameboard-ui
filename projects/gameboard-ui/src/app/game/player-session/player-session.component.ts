@@ -21,6 +21,7 @@ export class PlayerSessionComponent implements OnInit {
   ctx$: Observable<GameContext>;
   hub$: Observable<HubState>;
   teamEvents$: Observable<HubEvent>;
+  doublechecking = false;
 
   faBolt = faBolt;
   faTrash = faTrash;
@@ -64,7 +65,8 @@ export class PlayerSessionComponent implements OnInit {
       finalize(() => sub.unsubscribe())
     ).subscribe(
       p => this.ctx.player = p,
-      err => this.errors.push(err)
+      err => this.errors.push(err),
+      () => this.doublechecking = false
     );
   }
 
