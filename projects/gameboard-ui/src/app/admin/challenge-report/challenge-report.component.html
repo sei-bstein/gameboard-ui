@@ -27,11 +27,10 @@
       <th>Challenge</th>
       <th>Tag</th>
       <th>Points</th>
-      <th>Success (# / %)</th>
-      <th>Failure (# / %)</th>
+      <th>Attempts #</th>
+      <th>Complete (# / %)</th>
       <th>Partial (# / %)</th>
       <th>Avg Time</th>
-      <th>Attempts #</th>
     </tr>
   </thead>
   <tbody>
@@ -39,11 +38,10 @@
       <td>{{c.name}}</td>
       <td>{{c.tag}}</td>
       <td>{{c.points}}</td>
+      <td>{{c.attemptCount}}</td>
       <td>{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</td>
-      <td>{{c.failureCount}} / {{c.failureCount / c.attemptCount | percent}}</td>
       <td>{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</td>
       <td>{{c.averageTime}}</td>
-      <td>{{c.attemptCount}}</td>
     </tr>
   </tbody>
 </table>
