@@ -8,6 +8,7 @@ import { asyncScheduler, BehaviorSubject, combineLatest, interval, Observable, s
 import { debounceTime, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
+import { ClipboardService } from '../../utility/clipboard.service';
 
 @Component({
   selector: 'app-player-registrar',
@@ -38,6 +39,7 @@ export class PlayerRegistrarComponent implements OnInit {
   constructor(
     route: ActivatedRoute,
     private api: PlayerService,
+    private clipboard: ClipboardService
   ) {
     const fetch$ = combineLatest([
       route.params,
@@ -114,5 +116,15 @@ export class PlayerRegistrarComponent implements OnInit {
 
   trackById(index: number, model: Player): string {
     return model.id;
+  }
+
+  exportCsv(list: Player[]): void {
+    const a = list.map(p => this.asCsv(p))
+    const hdr = 'GameId,TeamId,TeamName,PlayerId,UserId,UserName,Rank,Score,Time,Correct,Partial,SessionBegin,SessionEnd\n';
+    this.clipboard.copyToClipboard(hdr + a.join('\n'));
+  }
+
+  asCsv(p: Player): string {
+    return `${p.gameId},${p.teamId},${p.approvedName.replace(',', '-')},${p.id},${p.userId},${p.userName.replace(',','-')},${p.rank},${p.score},${p.time},${p.correctCount},${p.partialCount},${p.sessionBegin},${p.sessionEnd}`;
   }
 }
