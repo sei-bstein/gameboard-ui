@@ -127,7 +127,10 @@ export class UserRegistrarComponent implements OnInit {
       a.push(r);
     }
 
-    model.role = a.join(', ') as UserRole;
+    model.role = !!a.length
+      ? a.join(', ') as UserRole
+      : UserRole.member
+    ;
 
     this.update(model);
   }

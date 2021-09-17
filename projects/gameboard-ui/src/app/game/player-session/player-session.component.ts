@@ -8,7 +8,7 @@ import { finalize, map, tap } from 'rxjs/operators';
 import { GameContext } from '../../api/models';
 import { Player, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
-import { HubEvent, HubState, NotificationService } from '../../utility/notification.service';
+import { HubEvent, HubEventAction, HubState, NotificationService } from '../../utility/notification.service';
 
 @Component({
   selector: 'app-player-session',
@@ -46,6 +46,10 @@ export class PlayerSessionComponent implements OnInit {
       tap(e => {
         this.ctx.player = ({...this.ctx.player, ...e.model});
         this.api.transform(this.ctx.player);
+        if (e.action === HubEventAction.deleted) {
+          console.log(e);
+          this.ctx.player = ({ userId: this.ctx.user.id }) as Player
+        }
       })
     );
   }

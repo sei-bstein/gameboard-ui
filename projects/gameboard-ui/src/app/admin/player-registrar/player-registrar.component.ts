@@ -23,6 +23,7 @@ export class PlayerRegistrarComponent implements OnInit {
   viewChange$ = new BehaviorSubject<Player | undefined>(this.viewed);
   search: PlayerSearch = { term: '', take: 0, filter: ['collapse'], sort: 'time'};
   filter = '';
+  teamView = 'collapsed';
   scope = '';
   scopes: string[] = [];
   reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
@@ -65,7 +66,13 @@ export class PlayerRegistrarComponent implements OnInit {
 
   toggleFilter(role: string): void {
     this.filter = this.filter !== role ? role : '';
-    this.search.filter = ['collapse', this.filter];
+    this.search.filter = [this.teamView, this.filter];
+    this.refresh$.next(true);
+  }
+
+  toggleTeamView(): void {
+    this.teamView = !this.teamView ? 'collapse' : '';
+    this.search.filter = [this.teamView, this.filter];
     this.refresh$.next(true);
   }
 
