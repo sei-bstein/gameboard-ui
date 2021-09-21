@@ -28,6 +28,7 @@ export interface Player {
   sponsorLogo: string;
   pendingName: string;
   session: TimeWindow;
+  checked: boolean;
 }
 
 export class TimeWindow {

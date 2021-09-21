@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, BehaviorSubject, combineLatest, interval, Observable, scheduled, timer } from 'rxjs';
 import { debounceTime, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
@@ -35,6 +35,9 @@ export class PlayerRegistrarComponent implements OnInit {
   faFilter = faFilter;
   faCheck = faCheck;
   faArrowLeft = faArrowLeft;
+  faArrowDown = faLongArrowAltDown;
+  faChecked = faCheckSquare;
+  faUnChecked = faSquare;
 
   constructor(
     route: ActivatedRoute,
@@ -78,9 +81,27 @@ export class PlayerRegistrarComponent implements OnInit {
     this.refresh$.next(true);
   }
 
+  toggleSort(s: string): void {
+    this.search.sort = s;
+    this.refresh$.next(true);
+  }
+
   toggleScope(scope: string): void {
     this.scope = this.scope !== scope ? scope : '';
     this.refresh$.next(true);
+  }
+
+  toggleSelected(player: Player): void {
+    const item = this.selected.find(p => p.id === player.id);
+    if (!!item) {
+      this.selected.splice(
+        this.selected.indexOf(item),
+        1
+      );
+    } else {
+      this.selected.push(player);
+    }
+    player.checked = !item;
   }
 
   view(u: Player): void {
@@ -119,12 +140,21 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   exportCsv(list: Player[]): void {
-    const a = list.map(p => this.asCsv(p))
+    const a = (this.selected.length ? this.selected : list)
+      .map(p => this.asCsv(p))
     const hdr = 'GameId,TeamId,TeamName,PlayerId,UserId,UserName,Rank,Score,Time,Correct,Partial,SessionBegin,SessionEnd\n';
     this.clipboard.copyToClipboard(hdr + a.join('\n'));
   }
 
   asCsv(p: Player): string {
     return `${p.gameId},${p.teamId},${p.approvedName.replace(',', '-')},${p.id},${p.userId},${p.userName.replace(',','-')},${p.rank},${p.score},${p.time},${p.correctCount},${p.partialCount},${p.sessionBegin},${p.sessionEnd}`;
+  }
+
+  exportMailMeta(list: Player[]): void {
+// teamid, userid, name
+  }
+
+  asMailMeta(p: Player): string {
+    return ``;
   }
 }

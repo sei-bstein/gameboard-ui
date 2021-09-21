@@ -39,6 +39,15 @@
       <fa-icon [hidden]="teamView===''" [icon]="faFilter"></fa-icon>
       <span>consolidate-teams</span>
     </button>
+    <span class="text-warning"> | </span>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleSort('time')">
+      <fa-icon [hidden]="search.sort!=='time'" [icon]="faArrowDown"></fa-icon>
+      <span>time</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleSort('rank')">
+      <fa-icon [hidden]="search.sort!=='rank'" [icon]="faArrowDown"></fa-icon>
+      <span>rank</span>
+    </button>
   </div>
 </div>
 
@@ -47,14 +56,23 @@
 
 <ng-container *ngIf="source$ | async as list; else loading">
   <div class="mb-2">
-    <small class="text-warning mx-2">count: {{list.length}}</small> |
-    <button class="btn btn-sm btn-outline-warning py-0" (click)="exportCsv(list)">csv</button>
+    <small class="text-warning mx-2">count: {{list.length}}</small>
+    <small class="text-warning mx-2">selected: {{selected.length}}</small>
+    <span class="text-warning"> | </span>
+    <button class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="exportCsv(list)">csv</button>
+    <button class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="exportMailMeta(list)">mail</button>
   </div>
 
   <div *ngFor="let player of list; trackBy:trackById"
-    class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline bg-secondary">
+    class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline rounded" [class.bg-secondary]="!player.checked"[class.pop-success]="player.checked">
+    <div class="mx-2">
+      <button class="btn btn-secondary btn-sm" (click)="toggleSelected(player)">
+        <fa-icon [icon]="player.checked ? faChecked : faUnChecked"></fa-icon>
+      </button>
+    </div>
     <div class="">
-      <span class="mr-2">{{player.approvedName}}</span>
+      <img [src]="player.sponsorLogo" [alt]="player.sponsor" width="48px">
+      <span class="mx-2">{{player.approvedName}}</span>
       <span class="text-muted">{{player.pendingName}}</span><br/>
       <small class="text-muted">
         <span>player: </span>&nbsp;
