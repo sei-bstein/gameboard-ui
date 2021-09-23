@@ -3,9 +3,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, BehaviorSubject, combineLatest, interval, Observable, scheduled, timer } from 'rxjs';
-import { debounceTime, map, mergeAll, switchMap, tap } from 'rxjs/operators';
+import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare, faClipboard, faCertificate } from '@fortawesome/free-solid-svg-icons';
+import { asyncScheduler, BehaviorSubject, combineLatest, iif, interval, Observable, of, scheduled, timer } from 'rxjs';
+import { debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
+import { Game } from '../../api/game-models';
+import { GameService } from '../../api/game.service';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
 import { ClipboardService } from '../../utility/clipboard.service';
@@ -17,7 +19,8 @@ import { ClipboardService } from '../../utility/clipboard.service';
 })
 export class PlayerRegistrarComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
-  source$: Observable<Player[]>;
+  game!: Game;
+  ctx$: Observable<{game: Game, futures: Game[], players: Player[]}>;
   source: Player[] = [];
   selected: Player[] = [];
   viewed: Player | undefined = undefined;
@@ -28,6 +31,7 @@ export class PlayerRegistrarComponent implements OnInit {
   scope = '';
   scopes: string[] = [];
   reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
+  advanceOptions = false;
 
   faTrash = faTrash;
   faList = faList;
@@ -38,12 +42,24 @@ export class PlayerRegistrarComponent implements OnInit {
   faArrowDown = faLongArrowAltDown;
   faChecked = faCheckSquare;
   faUnChecked = faSquare;
+  faCopy = faClipboard;
+  faStar = faCertificate;
 
   constructor(
     route: ActivatedRoute,
+    gameapi: GameService,
     private api: PlayerService,
     private clipboard: ClipboardService
   ) {
+
+    const game$ = route.params.pipe(
+      debounceTime(500),
+      filter(p => !!p.id),
+      switchMap(p => gameapi.retrieve(p.id)),
+      tap(r => this.game = r),
+      tap(r => this.teamView = r.allowTeam ? 'collapse' : '')
+    );
+
     const fetch$ = combineLatest([
       route.params,
       this.refresh$,
@@ -56,7 +72,7 @@ export class PlayerRegistrarComponent implements OnInit {
       tap(() => this.review())
     );
 
-    this.source$ = scheduled([
+    const players$ = scheduled([
       fetch$,
       interval(1000).pipe(map(() => this.source))
     ], asyncScheduler).pipe(
@@ -64,6 +80,13 @@ export class PlayerRegistrarComponent implements OnInit {
       tap(r => r.forEach(p => p.session = new TimeWindow(p.sessionBegin, p.sessionEnd)))
     );
 
+    this.ctx$ = combineLatest([
+      game$,
+      players$,
+      gameapi.list({filter: ['future']})
+    ]).pipe(
+      map(([game, players, futures]) => ({game, players, futures}))
+    );
   }
 
   ngOnInit(): void {
@@ -102,6 +125,12 @@ export class PlayerRegistrarComponent implements OnInit {
       this.selected.push(player);
     }
     player.checked = !item;
+  }
+
+  clearSelected(): void {
+    this.source.forEach(p => p.checked = false);
+    this.selected = [];
+    this.advanceOptions = false;
   }
 
   view(u: Player): void {
@@ -151,10 +180,24 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   exportMailMeta(list: Player[]): void {
-// teamid, userid, name
+    const a = this.selected.length ? this.selected : list;
+    const ids = a.map(p => p.teamId);
+
+    this.api.getTeams(this.game.id)
+    .pipe(
+      map(r => r.filter(s => ids.find(i => s.id === i)))
+    )
+    .subscribe(data => {
+      this.clipboard.copyToClipboard(JSON.stringify(data, null, 2))
+    });
+
   }
 
-  asMailMeta(p: Player): string {
-    return ``;
+  advanceSelected(gid: string): void {
+    this.api.advanceTeams({
+      gameId: this.game.id,
+      nextGameId: gid,
+      teamIds: this.selected.map(p => p.teamId)
+    }).subscribe(() => this.clearSelected());
   }
 }

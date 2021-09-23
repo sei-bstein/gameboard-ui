@@ -107,7 +107,8 @@ export interface TeamInvitation {
 }
 
 export interface TeamAdvancement {
-  teamId: string;
+  teamIds: string[];
+  gameId: string;
   nextGameId: string;
 }
 
@@ -160,6 +161,13 @@ export interface TeamState {
   approvedName: string;
   sessionBegin: Date;
   sessionEnd: Date;
+}
+
+export interface TeamSummary {
+  id: string;
+  name: string;
+  sponsor: string;
+  members: string[];
 }
 
 export interface PlayerSearch extends Search {
