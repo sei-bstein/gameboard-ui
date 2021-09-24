@@ -59,7 +59,6 @@ export interface ChallengeStat {
   points: number;
   successCount: number;
   partialCount: number;
-  failureCount: number;
   averageTime: string;
   attemptCount: number;
 }
