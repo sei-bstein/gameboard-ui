@@ -5,41 +5,98 @@
   <fa-icon [icon]="faArrowLeft"></fa-icon>
   <span>Back</span>
 </a>
-  <h4>Players</h4>
+<h4>Players</h4>
 
-  <div>
-    <div class="input-group input-group-sm">
-      <div class="input-group-prepend">
-        <span class="input-group-text">
-          <fa-icon [icon]="faSearch"></fa-icon>
-          <span>Search</span>
-        </span>
-      </div>
-      <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+<ng-container *ngIf="ctx$ | async as ctx; else loading">
+
+<div>
+  <div class="input-group input-group-sm">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <fa-icon [icon]="faSearch"></fa-icon>
+        <span>Search</span>
+      </span>
     </div>
-    <div>
-      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('active')">
-        <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
-        <span>active-only</span>
+    <input type="search" [(ngModel)]="search.term" placeholder="term" class="form-control" (input)="refresh$.next(true)">
+  </div>
+  <div>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('active')">
+      <fa-icon [hidden]="filter!=='active'" [icon]="faFilter"></fa-icon>
+      <span>active-only</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('complete')">
+      <fa-icon [hidden]="filter!=='complete'" [icon]="faFilter"></fa-icon>
+      <span>complete-only</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('pending')">
+      <fa-icon [hidden]="filter!=='pending'" [icon]="faFilter"></fa-icon>
+      <span>names-pending</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('disallowed')">
+      <fa-icon [hidden]="filter!=='disallowed'" [icon]="faFilter"></fa-icon>
+      <span>names-disallowed</span>
+    </button>
+    <ng-container *ngIf="ctx.game.allowTeam">
+      <span class="text-warning"> | </span>
+      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleTeamView()">
+        <fa-icon [hidden]="teamView===''" [icon]="faFilter"></fa-icon>
+        <span>consolidate-teams</span>
       </button>
-      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('pending')">
-        <fa-icon [hidden]="filter!=='pending'" [icon]="faFilter"></fa-icon>
-        <span>names-pending</span>
+    </ng-container>
+    <span class="text-warning"> | </span>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleSort('time')">
+      <fa-icon [hidden]="search.sort!=='time'" [icon]="faArrowDown"></fa-icon>
+      <span>time</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleSort('rank')">
+      <fa-icon [hidden]="search.sort!=='rank'" [icon]="faArrowDown"></fa-icon>
+      <span>rank</span>
+    </button>
+  </div>
+</div>
+
+<small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
+<hr/>
+
+  <div class="mb-2">
+    <small class="text-warning mx-2">count: {{ctx.players.length}}</small>
+    <ng-container *ngIf="ctx.players.length">
+      <small class="text-warning mx-2">selected: {{selected.length}}</small>
+      <button *ngIf="selected.length" class="btn btn-sm btn-outline-warning py-0 mx-2" (click)="clearSelected()">x</button>
+      <span class="text-warning"> | </span>
+      <button class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="exportCsv(ctx.players)">
+        <fa-icon [icon]="faCopy"></fa-icon>
+        <span>csv</span>
       </button>
-      <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('disallowed')">
-        <fa-icon [hidden]="filter!=='disallowed'" [icon]="faFilter"></fa-icon>
-        <span>names-disallowed</span>
+      <button class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="exportMailMeta(ctx.players)">
+        <fa-icon [icon]="faCopy"></fa-icon>
+        <span>mail</span>
       </button>
+      <button *ngIf="selected.length" class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="advanceOptions=!advanceOptions">
+        <fa-icon [icon]="faStar"></fa-icon>
+        <span>advance</span>
+      </button>
+    </ng-container>
+  </div>
+
+  <div *ngIf="advanceOptions">
+    <div *ngFor="let g of ctx.futures" class="m-1">
+      <app-confirm-button btnClass="btn btn-sm btn-outline-info" (confirm)="advanceSelected(g.id)">
+        <span>Advance to {{g.name}}</span>
+      </app-confirm-button>
     </div>
   </div>
 
-  <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
-  <hr/>
-
-  <div *ngFor="let player of source$ | async; trackBy:trackById"
-    class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline bg-secondary">
+  <div *ngFor="let player of ctx.players; trackBy:trackById"
+    class="d-flex mb-1 mx-2 p-2 flex-wrap align-items-baseline rounded" [class.bg-secondary]="!player.checked"[class.pop-success]="player.checked">
+    <div class="mx-2">
+      <button class="btn btn-secondary btn-sm" (click)="toggleSelected(player)">
+        <fa-icon [icon]="player.checked ? faChecked : faUnChecked"></fa-icon>
+      </button>
+    </div>
     <div class="">
-      <span class="mr-2">{{player.approvedName}}</span>
+      <img [src]="player.sponsorLogo" [alt]="player.sponsor" width="48px">
+      <span class="mx-2">{{player.approvedName}}</span>
       <span class="text-muted">{{player.pendingName}}</span><br/>
       <small class="text-muted">
         <span>player: </span>&nbsp;
@@ -56,7 +113,6 @@
       <fa-icon [icon]="faCheck"></fa-icon>
       <span>Disapprove</span>
     </button>
-
     <div class="spacer"></div>
     <div [class.text-success]="player.session?.isDuring">
       {{player.rank}} |
@@ -67,27 +123,21 @@
       {{player.session.countdown | countdown }}
     </div>
     <div class="">
-
       <button class="btn btn-outline-info btn-sm mx-1" (click)="view(player)">
         <fa-icon [icon]="faList"></fa-icon>
         <span>View</span>
       </button>
-
       <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(player)">
         <fa-icon [icon]="faTrash"></fa-icon>
         <span>Delete</span>
       </app-confirm-button>
-
     </div>
-
     <div *ngIf="viewed === player" class="col-12">
-
         <div class="form-group">
           <label class="mb-0" for="name-input">Approved Name</label>
           <input id="name-input" class="form-control" type="text" [(ngModel)]="player.approvedName" (change)="update(player)">
           <small></small>
         </div>
-
         <div class="form-group">
           <label class="mb-0" for="reason-input">Disapproved Reason</label>
           <input id="reason-input" class="form-control" type="text" [(ngModel)]="player.nameStatus" (change)="update(player)">
@@ -95,7 +145,13 @@
             {{reason}}
           </button></small>
         </div>
-
         <app-player-session [id]="player.teamId"></app-player-session>
     </div>
   </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

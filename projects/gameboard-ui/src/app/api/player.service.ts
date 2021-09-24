@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, SessionChangeRequest, Standing, Team, TeamInvitation, TimeWindow } from './player-models';
+import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, SessionChangeRequest, Standing, Team, TeamAdvancement, TeamInvitation, TeamSummary, TimeWindow } from './player-models';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +72,17 @@ export class PlayerService {
   public getTeam(id: string): Observable<Team> {
     return this.http.get<Team>(`${this.url}/team/${id}`);
   }
+  public getTeams(id: string): Observable<TeamSummary[]> {
+    return this.http.get<TeamSummary[]>(`${this.url}/teams/${id}`).pipe(
+      map(r => {
+        r.forEach(s => this.transformSponsor(s));
+        return r;
+      })
+    );
+  }
+  public advanceTeams(model: TeamAdvancement): Observable<any> {
+    return this.http.post<any>(this.url + '/team/advance', model);
+  }
 
   public transform(p: Player): Player {
     p.sponsorLogo = p.sponsor
@@ -96,5 +107,12 @@ export class PlayerService {
     ;
     p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
     return p;
+  }
+
+  private transformSponsor(p: any): any {
+    p.sponsorLogo = p.sponsor
+      ? `${this.config.imagehost}/${p.sponsor}`
+      : `${this.config.basehref}assets/sponsor.svg`
+    ;
   }
 }
