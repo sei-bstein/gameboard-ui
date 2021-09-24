@@ -8,8 +8,14 @@
       {{ctx.game.name}}
     </span>
     <div class="spacer"></div>
-    <div [hidden]="!!ctx.user.id">
-      <app-login>
+    <div class="d-flex flex-column align-items-center">
+      <a [routerLink]="['../', 'scores', ctx.game.id]" class="p-4">
+        <span>
+          <fa-icon [icon]="faList"></fa-icon>
+          <span>Scoreboard</span>
+        </span>
+      </a>
+      <app-login [hidden]="!!ctx.user.id">
         <span class="">Login to enroll or play!</span>
       </app-login>
     </div>
