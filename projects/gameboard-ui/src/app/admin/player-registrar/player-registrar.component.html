@@ -28,6 +28,14 @@
       <fa-icon [hidden]="filter!=='complete'" [icon]="faFilter"></fa-icon>
       <span>complete-only</span>
     </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('advanced')">
+      <fa-icon [hidden]="filter!=='advanced'" [icon]="faFilter"></fa-icon>
+      <span>advanced</span>
+    </button>
+    <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('dismissed')">
+      <fa-icon [hidden]="filter!=='dismissed'" [icon]="faFilter"></fa-icon>
+      <span>dismissed</span>
+    </button>
     <button class="mr-1 btn btn-link text-warning btn-sm" (click)="toggleFilter('pending')">
       <fa-icon [hidden]="filter!=='pending'" [icon]="faFilter"></fa-icon>
       <span>names-pending</span>
@@ -58,7 +66,7 @@
 <small *ngIf="source.length === 100" class="text-warning">Results limited to 100. Refine search term if necessary.</small>
 <hr/>
 
-  <div class="mb-2">
+  <div class="mb-2 d-flex align-items-baseline">
     <small class="text-warning mx-2">count: {{ctx.players.length}}</small>
     <ng-container *ngIf="ctx.players.length">
       <small class="text-warning mx-2">selected: {{selected.length}}</small>
@@ -76,6 +84,11 @@
         <fa-icon [icon]="faStar"></fa-icon>
         <span>advance</span>
       </button>
+      <span class="spacer"></span>
+      <label class="btn btn-sm btn-outline-secondary py-0 mx-2" [(ngModel)]="autorefresh" btnCheckbox tabindex="0" role="button">
+        <fa-icon [icon]="faSync"></fa-icon>
+        <span>{{autorefresh ? 'auto' : 'off'}}</span>
+      </label>
     </ng-container>
   </div>
 
@@ -96,6 +109,9 @@
     </div>
     <div class="">
       <img [src]="player.sponsorLogo" [alt]="player.sponsor" width="48px">
+      <span *ngIf="player.advanced" class="text-success ml-2">
+        <fa-icon [icon]="faStar"></fa-icon>
+      </span>
       <span class="mx-2">{{player.approvedName}}</span>
       <span class="text-muted">{{player.pendingName}}</span><br/>
       <small class="text-muted">

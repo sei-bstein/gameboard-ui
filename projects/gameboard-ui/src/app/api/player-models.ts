@@ -24,6 +24,7 @@ export interface Player {
   correctCount: number;
   partialCount: number;
   isManager: boolean;
+  advanced: boolean;
 
   sponsorLogo: string;
   pendingName: string;
@@ -100,6 +101,7 @@ export interface Standing {
   partialCount: number;
   session: TimeWindow;
   sponsorLogo: string;
+  advanced: boolean;
 }
 
 export interface TeamInvitation {
