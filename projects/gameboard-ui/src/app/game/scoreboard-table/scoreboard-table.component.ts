@@ -2,6 +2,7 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { combineLatest, iif, interval, merge, Observable, Subject, timer } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { PlayerSearch, Standing, TimeWindow } from '../../api/player-models';
@@ -20,6 +21,7 @@ export class ScoreboardTableComponent implements OnInit, OnChanges, AfterViewIni
   scores$: Observable<Standing[]>;
   scores: Standing[] = [];
   search: PlayerSearch = { filter: ['scored']};
+  faStar = faStar;
 
   constructor(
     api: PlayerService

@@ -1,9 +1,10 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare, faClipboard, faCertificate } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare, faClipboard, faCertificate, faStar, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, BehaviorSubject, combineLatest, iif, interval, Observable, of, scheduled, timer } from 'rxjs';
 import { debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Game } from '../../api/game-models';
@@ -32,6 +33,7 @@ export class PlayerRegistrarComponent implements OnInit {
   scopes: string[] = [];
   reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
   advanceOptions = false;
+  autorefresh = true;
 
   faTrash = faTrash;
   faList = faList;
@@ -43,7 +45,8 @@ export class PlayerRegistrarComponent implements OnInit {
   faChecked = faCheckSquare;
   faUnChecked = faSquare;
   faCopy = faClipboard;
-  faStar = faCertificate;
+  faStar = faStar;
+  faSync = faSyncAlt;
 
   constructor(
     route: ActivatedRoute,
@@ -63,7 +66,9 @@ export class PlayerRegistrarComponent implements OnInit {
     const fetch$ = combineLatest([
       route.params,
       this.refresh$,
-      timer(0, 60000)
+      timer(0, 60000).pipe(
+        filter(i => i === 0 || (this.autorefresh && this.game.session.isDuring))
+      )
     ]).pipe(
       debounceTime(500),
       tap(([a, b, c]) => this.search.gid = a.id),
@@ -140,6 +145,10 @@ export class PlayerRegistrarComponent implements OnInit {
 
   review(): void {
     this.viewed = this.source.find(g => g.id === this.viewed?.id);
+    this.selected.forEach(s => {
+      const t = this.source.find(g => g.id === s.id);
+      if (!!t) { t.checked = true; }
+    })
   }
 
   delete(model: Player): void {

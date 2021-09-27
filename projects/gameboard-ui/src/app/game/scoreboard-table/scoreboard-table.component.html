@@ -17,6 +17,9 @@
         <td>{{s.rank}}</td>
         <td><img [src]="s.sponsorLogo" [alt]="s.sponsor" width="48px"></td>
         <td>
+          <span *ngIf="s.advanced" class="text-success ml-2">
+            <fa-icon [icon]="faStar"></fa-icon>
+          </span>
           <small *ngIf="s.session.countdown" class="bg-success px-2 rounded">{{s.session.countdown | countdown}}</small>
           <span> {{s.approvedName}}</span>
         </td>
