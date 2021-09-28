@@ -61,6 +61,7 @@ export interface ChallengeStat {
   partialCount: number;
   averageTime: string;
   attemptCount: number;
+  averageScore: number;
 }
 
 
