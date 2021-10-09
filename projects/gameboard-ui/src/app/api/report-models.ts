@@ -1,6 +1,8 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
+import { Challenge } from "./board-models";
+
 export interface UserReport {
   title: string ;
   timestamp: Date;
@@ -62,6 +64,21 @@ export interface ChallengeStat {
   averageTime: string;
   attemptCount: number;
   averageScore: number;
+}
+
+export interface ChallengeDetailReport {
+  challengeId: string;
+  parts: Part[];
+  attemptCount: number;
+}
+
+export interface ChallengeDetailReportView extends ChallengeDetailReport {
+  visible: boolean;
+}
+
+export interface Part {
+  text: string;
+  solveCount: number;
 }
 
 
