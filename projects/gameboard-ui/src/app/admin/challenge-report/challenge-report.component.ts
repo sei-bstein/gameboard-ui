@@ -13,7 +13,7 @@ import { debug } from 'console';
 import { FormGroup, NgForm } from '@angular/forms';
 import { Game } from '../../api/game-models';
 import { GameService } from '../../api/game.service';
-import { ChallengeReport, ChallengeStat } from '../../api/report-models';
+import { ChallengeReport, ChallengeDetailReportView } from '../../api/report-models';
 
 @Component({
   selector: 'app-challenge-report',
@@ -25,11 +25,11 @@ export class ChallengeReportComponent implements OnInit {
   games?: Game[];
   currentGame?: Game;
   challengeReport?: ChallengeReport;
-  challengeStats?: ChallengeStat[];
   search: Search = { term: '' };
   url = '';
-
   faArrowLeft = faArrowLeft;
+  faList = faList;
+  challengeDetailReports: { [id: string]: ChallengeDetailReportView } = {};
 
   constructor(
     private api: ReportService,
@@ -57,9 +57,21 @@ export class ChallengeReportComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  view(id: string): void {
+    if (!this.challengeDetailReports[id]) {
+      this.api.challengeDetails(id).subscribe(r => {          
+          this.challengeDetailReports[r.challengeId] = r as ChallengeDetailReportView;
+          this.challengeDetailReports[r.challengeId].visible = true;          
+      });
+    }
+    else {
+      this.challengeDetailReports[id].visible = !this.challengeDetailReports[id].visible;
+    }
+  }
+
   updateGame(id: string) {
     if (this.games) {
-      this.currentGame = this.games.find(g => g.id == id);
+      this.currentGame = this.games.find(g => g.id === id);
 
       if (this.currentGame) {
         this.api.challengeReport(this.currentGame.id).subscribe(

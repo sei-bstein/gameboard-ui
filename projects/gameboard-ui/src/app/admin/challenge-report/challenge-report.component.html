@@ -20,33 +20,46 @@
     </div>
   </div>
 </form>
-
-<table class="table table-bordered table-dark" *ngIf="challengeReport; else loading">
-  <thead>
-    <tr>
-      <th>Challenge</th>
-      <th>Tag</th>
-      <th>Points</th>
-      <th>Attempts #</th>
-      <th>Complete (# / %)</th>
-      <th>Partial (# / %)</th>
-      <th>Avg Time</th>
-      <th>Avg Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let c of challengeReport.stats">
-      <td>{{c.name}}</td>
-      <td>{{c.tag}}</td>
-      <td>{{c.points}}</td>
-      <td>{{c.attemptCount}}</td>
-      <td>{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</td>
-      <td>{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</td>
-      <td>{{c.averageTime}}</td>
-      <td>{{c.averageScore}}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="container table-dark border" *ngIf="challengeReport; else loading">
+  <div class="row">
+    <div class="col-2 p-2 border font-weight-bold">Challenge</div>
+    <div class="col p-2 border font-weight-bold">Tag</div>
+    <div class="col p-2 border font-weight-bold">Points</div>
+    <div class="col p-2 border font-weight-bold">Attempts #</div>
+    <div class="col p-2 border font-weight-bold">Complete (#/%)</div>
+    <div class="col p-2 border font-weight-bold">Partial (#/%)</div>
+    <div class="col p-2 border font-weight-bold">Avg Time</div>
+    <div class="col p-2 border font-weight-bold">Avg Score</div>
+  </div>
+  <div *ngFor="let c of challengeReport.stats">
+    <div class="row">
+      <div class="col-2 p-2 border font-weight-bold">
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="view(c.id)">
+          <fa-icon [icon]="faList"></fa-icon>
+          <span>{{c.name}}</span>
+        </button>
+      </div>
+      <div class="col p-2 border font-weight-bold">{{c.tag}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.points}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.attemptCount}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.averageTime}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.averageScore}}</div>
+    </div>
+    <div class="container pt-4 pb-4" *ngIf="challengeDetailReports && challengeDetailReports[c.id] && challengeDetailReports[c.id].visible && challengeDetailReports[c.id].parts">
+      <div class="row">
+        <div class="col-9 p-2 border font-weight-bold">Question</div>
+        <div class="col-3 p-2 border font-weight-bold">Solves / % of Attempts Correct</div>
+      </div>
+      <div class="row" *ngFor="let part of challengeDetailReports[c.id].parts; let i = index">
+        <div class="col-9 p-2 border">{{i + 1}}. {{part.text}}</div>
+        <div *ngIf="challengeDetailReports[c.id].attemptCount > 0" class="col-3 p-2 border">{{part.solveCount}} / {{part.solveCount / challengeDetailReports[c.id].attemptCount | percent}}</div>
+        <div *ngIf="challengeDetailReports[c.id].attemptCount == 0" class="col-3 p-2 border">{{0 | percent}}</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <ng-template #loading>
   <div class="text-center">
