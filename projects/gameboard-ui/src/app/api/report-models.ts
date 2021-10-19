@@ -79,6 +79,7 @@ export interface ChallengeDetailReportView extends ChallengeDetailReport {
 export interface Part {
   text: string;
   solveCount: number;
+  weight: number;
 }
 
 
