@@ -3,7 +3,7 @@
 
 import { ThrowStmt } from '@angular/compiler';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { faEdit, faMapMarker, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faMapMarker, faPlus, faSearch, faSyncAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Game } from '../../api/game-models';
@@ -42,13 +42,14 @@ export class GameMapperComponent implements OnInit, AfterViewInit {
   faEdit = faEdit;
   faMapMarker = faMapMarker;
   faPlus = faPlus;
+  faSync = faSyncAlt;
 
   show = false;
   viewing = 'edit';
   addedCount = 0;
 
   constructor(
-    api: SpecService,
+    private api: SpecService,
     private gameSvc: GameService,
     private renderer: Renderer2,
     private config: ConfigService
@@ -113,12 +114,19 @@ export class GameMapperComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
   clearImage(): void {
     this.gameSvc.deleteImage(this.game.id, 'map').subscribe(
       r => {
         this.game.background = r.filename;
         this.game.mapUrl = `${this.config.basehref}assets/map.png`;
       }
+    );
+  }
+
+  sync(): void {
+    this.api.sync(this.game.id).subscribe(
+      () => this.refresh()
     );
   }
 

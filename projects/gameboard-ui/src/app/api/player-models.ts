@@ -111,6 +111,7 @@ export interface TeamInvitation {
 export interface TeamAdvancement {
   teamIds: string[];
   gameId: string;
+  withScores: boolean;
   nextGameId: string;
 }
 

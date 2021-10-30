@@ -74,6 +74,10 @@ export class GameService {
     return this.http.delete(`${this.url}/game/${id}/${type}`);
   }
 
+  public rerank(id: string): Observable<any> {
+    return this.http.post<any>(`${this.url}/game/${id}/rerank`, null);
+  }
+
   private tryCache(id: string, limit: number = 20): Game | null {
     const item = this.cache.find(c => c.id === id);
     const entity = !!item ? item.latest(limit) : null;

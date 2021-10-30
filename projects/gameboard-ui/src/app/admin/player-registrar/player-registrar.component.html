@@ -80,6 +80,10 @@
         <fa-icon [icon]="faCopy"></fa-icon>
         <span>mail</span>
       </button>
+      <button class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="rerank(ctx.game.id)">
+        <fa-icon [icon]="faArrowDown"></fa-icon>
+        <span>rerank</span>
+      </button>
       <button *ngIf="selected.length" class="btn btn-sm btn-outline-warning py-0 ml-2" (click)="advanceOptions=!advanceOptions">
         <fa-icon [icon]="faStar"></fa-icon>
         <span>advance</span>
@@ -92,7 +96,11 @@
     </ng-container>
   </div>
 
-  <div *ngIf="advanceOptions">
+  <div *ngIf="advanceOptions && selected.length">
+    <button class="btn btn-secondary btn-sm m-1" (click)="advanceScores=!advanceScores">
+      <fa-icon [icon]="advanceScores ? faChecked : faUnChecked"></fa-icon>
+      <span>With Scores</span>
+    </button>
     <div *ngFor="let g of ctx.futures" class="m-1">
       <app-confirm-button btnClass="btn btn-sm btn-outline-info" (confirm)="advanceSelected(g.id)">
         <span>Advance to {{g.name}}</span>
