@@ -33,6 +33,7 @@ export class PlayerRegistrarComponent implements OnInit {
   scopes: string[] = [];
   reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
   advanceOptions = false;
+  advanceScores = false;
   autorefresh = true;
 
   faTrash = faTrash;
@@ -50,7 +51,7 @@ export class PlayerRegistrarComponent implements OnInit {
 
   constructor(
     route: ActivatedRoute,
-    gameapi: GameService,
+    private gameapi: GameService,
     private api: PlayerService,
     private clipboard: ClipboardService
   ) {
@@ -206,7 +207,14 @@ export class PlayerRegistrarComponent implements OnInit {
     this.api.advanceTeams({
       gameId: this.game.id,
       nextGameId: gid,
+      withScores: this.advanceScores,
       teamIds: this.selected.map(p => p.teamId)
     }).subscribe(() => this.clearSelected());
+  }
+
+  rerank(gid: string): void {
+    this.gameapi.rerank(gid).subscribe(
+      () => this.refresh$.next(true)
+    );
   }
 }

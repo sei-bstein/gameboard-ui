@@ -37,5 +37,7 @@ export class SpecService {
   public delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/challengespec/${id}`);
   }
-
+  public sync(id: string): Observable<any> {
+    return this.http.post<any>(`${this.url}/challengespecs/sync/${id}`, null);
+  }
 }
