@@ -4,8 +4,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { debounceTime, map, tap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
+import { ChallengeGate } from './board-models';
 import { ChangedGame, Game, NewGame, SessionForecast, UploadedFile } from './game-models';
 import { TimeWindow } from './player-models';
 import { Spec } from './spec-models';
@@ -76,6 +77,16 @@ export class GameService {
 
   public rerank(id: string): Observable<any> {
     return this.http.post<any>(`${this.url}/game/${id}/rerank`, null);
+  }
+
+  public getPrereqs(g: string): Observable<ChallengeGate[]> {
+    return this.http.get<ChallengeGate[]>(`${this.url}/challengegates`, {params: { g }});
+  }
+  public savePrereq(g: ChallengeGate): Observable<ChallengeGate> {
+    return this.http.post<ChallengeGate>(`${this.url}/challengegate`, g);
+  }
+  public deletePrereq(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/challengegate/${id}`);
   }
 
   private tryCache(id: string, limit: number = 20): Game | null {

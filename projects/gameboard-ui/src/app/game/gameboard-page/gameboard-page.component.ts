@@ -91,6 +91,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
         this.errors.push(err);
         return of(null as unknown as Challenge)
       }),
+      tap(c => this.deploying = false),
       filter(c => !!c),
       map(c => this.syncOne(c))
     );
@@ -161,7 +162,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   select(spec: BoardSpec): void {
-    if (!spec.disabled) {
+    if (!spec.disabled && !spec.locked) {
       this.selecting$.next(spec);
     }
   }
