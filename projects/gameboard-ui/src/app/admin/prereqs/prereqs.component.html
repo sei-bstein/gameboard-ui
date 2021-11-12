@@ -1,0 +1,27 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<h4>Prerequisites</h4>
+<div *ngFor="let p of list$ | async" class="mb-1">
+  <span class="mr-1 lead">{{p.targetTag}}</span>
+  <span class="mr-1">requires</span>
+  <span class="mr-1">{{p.requiredScore}}</span>
+  <span class="mr-1">on</span>
+  <span class="mr-1 lead">{{p.requiredTag}}</span>
+  <button class="btn btn-outline-warning" (click)="delete(p)">
+    <fa-icon [icon]="faTrash"></fa-icon>
+    <span>Delete</span>
+  </button>
+</div>
+
+<div class="form-inline mt-2">
+  <input type="text" class="mr-2 form-control" [(ngModel)]="newgate.targetTag" placeholder="tag">
+  <span class="mr-2">requires</span>
+  <input type="number" class="mr-2 form-control" [(ngModel)]="newgate.requiredScore">
+  <span class="mr-2">on</span>
+  <input type="text" class="mr-2 form-control" [(ngModel)]="newgate.requiredTag" placeholder="tag">
+  <button class="btn btn-outline-info" (click)="save()">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    <span>Add</span>
+  </button>
+</div>

@@ -26,6 +26,7 @@ import { PlayerSponsorReportComponent } from './player-sponsor-report/player-spo
 import { ChallengeReportComponent } from './challenge-report/challenge-report.component';
 import { AnnounceComponent } from './announce/announce.component';
 import { ConsoleObserverComponent } from './console-observer/console-observer.component';
+import { PrereqsComponent } from './prereqs/prereqs.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ConsoleObserverComponent } from './console-observer/console-observer.co
     PlayerSponsorReportComponent,
     ChallengeReportComponent,
     AnnounceComponent,
-    ConsoleObserverComponent
+    ConsoleObserverComponent,
+    PrereqsComponent
   ],
   imports: [
     CommonModule,

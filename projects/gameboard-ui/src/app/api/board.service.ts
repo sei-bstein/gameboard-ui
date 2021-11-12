@@ -76,6 +76,15 @@ export class BoardService {
       : `${this.config.basehref}assets/card.png`
     ;
 
+    b.game.specs.forEach(c => {
+      const p = b.game.prerequisites.filter(f => f.targetId === c.id);
+      let unlocked = true;
+      p.forEach(f => {
+        unlocked = unlocked && (b.challenges.find(d => d.specId === f.requiredId)?.score || 0) >= f.requiredScore;
+      });
+      c.locked = !unlocked;
+    });
+
     b.game.specs.forEach(s => {
       s.instance = b.challenges.find(c => c.specId == s.id);
       this.setColor(s);
@@ -94,7 +103,7 @@ export class BoardService {
   setColor(s: BoardSpec): void {
     s.c = !!s.instance?.state.id
         ? s.instance.state.endTime.match(/^0001/) ? 'white' : 'black'
-        : s.disabled ? 'black' : 'blue'
+        : s.disabled || s.locked ? 'black' : 'blue'
     ;
     if (!!s.instance){
       if (s.instance.result === 'success') { s.c = 'lime'; }
