@@ -20,6 +20,22 @@
     </div>
   </div>
 </form>
+<div class="container table-dark border mb-4" *ngIf="challengeReport && currentGame">
+  <div class="row">
+    <div class="col-8 p-2">
+    </div>
+    <div class="col-2 p-2 font-weight-bold">
+      <div>
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="downloadChallengeStatsReport(currentGame.id)">Export Challenge Stats to CSV</button>
+      </div>
+    </div>
+    <div class="col-2 p-2 font-weight-bold">
+      <div>
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="downloadChallengeDetailsReport(currentGame.id)">Export Challenge Details to CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="container table-dark border" *ngIf="challengeReport; else loading">
   <div class="row">
     <div class="col-2 p-2 border font-weight-bold">Challenge</div>

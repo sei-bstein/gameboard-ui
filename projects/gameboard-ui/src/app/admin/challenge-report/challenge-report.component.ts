@@ -69,6 +69,14 @@ export class ChallengeReportComponent implements OnInit {
     }
   }
 
+  downloadChallengeStatsReport(id: string) {
+    this.api.exportChallengeStats(id);
+  }
+
+  downloadChallengeDetailsReport(id: string) {
+    this.api.exportChallengeDetails(id);
+  }
+
   updateGame(id: string) {
     if (this.games) {
       this.currentGame = this.games.find(g => g.id === id);
