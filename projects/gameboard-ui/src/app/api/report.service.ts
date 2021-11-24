@@ -51,8 +51,8 @@ export class ReportService {
     return this.http.get<SponsorReport>(`${this.url}/report/sponsorstats`);
   }
 
-  public exportSponsorReport(): void {
-    this.http.get(`${this.url}/report/exportsponsorstats/`, { responseType: 'arraybuffer' })
+  public exportSponsorReport(id: string): void {
+    this.http.get(`${this.url}/report/exportsponsorstats/${id}`, { responseType: 'arraybuffer' })
       .subscribe(response => {
         const name: string = 'sponsor-report-' + this.timestamp() + '.csv';
         this.downloadFile(response, name, 'application/ms-excel');
@@ -66,7 +66,7 @@ export class ReportService {
   public exportGameSponsorReport(id: string): void {
     this.http.get(`${this.url}/report/exportgamesponsorstats/${id}`, { responseType: 'arraybuffer' })
       .subscribe(response => {
-        const name: string = 'game-sponsor-report-' + this.timestamp() + '.csv';
+        const name: string = 'board-report-' + this.timestamp() + '.csv';
         this.downloadFile(response, name, 'application/ms-excel');
       });
   }
@@ -82,7 +82,7 @@ export class ReportService {
   public exportChallengeStats(id: string): void {
     this.http.get(`${this.url}/report/exportchallengestats/${id}`, { responseType: 'arraybuffer' })
       .subscribe(response => {
-          const name: string = 'challenge-stats-report-' + this.timestamp() + '.csv';
+          const name: string = 'challenge-statistics-report-' + this.timestamp() + '.csv';
           this.downloadFile(response, name, 'application/ms-excel');
       });
   }
