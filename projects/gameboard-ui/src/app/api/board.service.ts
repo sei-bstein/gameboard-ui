@@ -83,6 +83,7 @@ export class BoardService {
         unlocked = unlocked && (b.challenges.find(d => d.specId === f.requiredId)?.score || 0) >= f.requiredScore;
       });
       c.locked = !unlocked;
+      c.lockedText = c.locked ? 'Locked' : c.disabled ? 'Disabled' : '';
     });
 
     b.game.specs.forEach(s => {

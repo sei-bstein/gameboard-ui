@@ -20,7 +20,7 @@
 
   <div class="d-flex align-items-center">
     <ng-container *ngIf="session && session.isDuring && state.isActive">
-      <ng-container *ngIf="!this.pending">
+      <ng-container *ngIf="!this.pending && state.challenge.questions?.length">
         <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="!state.isActive">
           <fa-icon [icon]="faSubmit"></fa-icon>
           <span>Submit</span>

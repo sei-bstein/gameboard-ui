@@ -91,6 +91,7 @@ export interface BoardSpec {
   c: string;
   instance: Challenge | undefined;
   locked: boolean;
+  lockedText: string;
 }
 
 export interface BoardPlayer {
