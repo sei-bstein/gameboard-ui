@@ -48,4 +48,12 @@ export class UserReportComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  downloadUserDetailsReport() {
+    this.api.exportUserStats();
+  }
+
+  downloadPlayerDetailsReport() {
+    this.api.exportPlayerStats();
+  }
 }
