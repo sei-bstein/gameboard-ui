@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
+import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
 
 @Injectable({
@@ -76,15 +76,7 @@ export class BoardService {
       : `${this.config.basehref}assets/card.png`
     ;
 
-    b.game.specs.forEach(c => {
-      const p = b.game.prerequisites.filter(f => f.targetId === c.id);
-      let unlocked = true;
-      p.forEach(f => {
-        unlocked = unlocked && (b.challenges.find(d => d.specId === f.requiredId)?.score || 0) >= f.requiredScore;
-      });
-      c.locked = !unlocked;
-      c.lockedText = c.locked ? 'Locked' : c.disabled ? 'Disabled' : '';
-    });
+    b.game.specs.forEach(c => this.checkPrereq(c, b));
 
     b.game.specs.forEach(s => {
       s.instance = b.challenges.find(c => c.specId == s.id);
@@ -110,5 +102,15 @@ export class BoardService {
       if (s.instance.result === 'success') { s.c = 'lime'; }
       if (s.instance.result === 'partial') { s.c = 'yellow'; }
     }
+  }
+
+  checkPrereq(spec: BoardSpec, board: BoardPlayer) {
+    const p = board.game.prerequisites.filter(f => f.targetId === spec.id);
+    let unlocked = true;
+    p.forEach(f => {
+      unlocked = unlocked && (board.challenges.find(d => d.specId === f.requiredId)?.score || 0) >= f.requiredScore;
+    });
+    spec.locked = !unlocked;
+    spec.lockedText = spec.locked ? 'Locked' : spec.disabled ? 'Disabled' : '';
   }
 }
