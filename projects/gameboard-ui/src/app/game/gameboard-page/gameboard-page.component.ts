@@ -156,7 +156,10 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     const s = this.ctx.game.specs.find(i => i.id === c.specId);
     if (!!s) {
       s.instance = c;
+      this.api.checkPrereq(s, this.ctx)
       this.api.setColor(s);
+      // TODO: revisit this temp solution for auto-grading sync
+      this.refresh$.next(this.ctx.id);
     }
     return s || {} as BoardSpec;
   }
