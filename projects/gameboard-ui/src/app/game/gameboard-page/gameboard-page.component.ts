@@ -70,7 +70,8 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       switchMap(id => api.load(id).pipe(
         catchError(err => of({} as BoardPlayer))
       )),
-      tap(b => this.startHub(b))
+      tap(b => this.startHub(b)),
+      tap(b => this.reselect())
     );
 
     // pull data
@@ -110,7 +111,8 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
             filter(c => !!c),
             map(c => this.syncOne({...c, specId: s.id }))
           )
-      )
+      ),
+      tap(s => this.selected = s)
     );
 
     // main feed
@@ -166,6 +168,14 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
 
   select(spec: BoardSpec): void {
     if (!spec.disabled && !spec.locked) {
+      this.selecting$.next(spec);
+    }
+  }
+
+  reselect(): void {
+    if (!this.selected) { return; }
+    const spec = this.ctx.game.specs.find(s => s.id === this.selected.id);
+    if (!!spec) {
       this.selecting$.next(spec);
     }
   }
