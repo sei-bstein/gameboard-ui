@@ -52,7 +52,9 @@ export class NotificationService {
   }
 
   init(id: string): void {
-    this.playerId$.next(id);
+    if (this.hubState?.id !== id) {
+      this.playerId$.next(id);
+    }
   }
 
   initActors(players: Actor[]): void {
