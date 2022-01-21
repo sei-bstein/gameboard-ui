@@ -3,7 +3,7 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { asyncScheduler, BehaviorSubject, combineLatest, interval, of, scheduled, Subscription } from 'rxjs';
+import { asyncScheduler, BehaviorSubject, combineLatest, interval, of, scheduled, Subject, Subscription, timer } from 'rxjs';
 import { catchError, debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { NewUser, ApiUser } from '../api/user-models';
 import { UserService as ApiUserService } from '../api/user.service';
@@ -17,6 +17,7 @@ export class UserService {
 
   user$ = new BehaviorSubject<ApiUser | null>(null);
   init$ = new BehaviorSubject<boolean>(false);
+  refresh$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private auth: AuthService,
@@ -27,17 +28,17 @@ export class UserService {
 
     // every half hour grab a fresh mks cookie if token still good
     combineLatest([
-      interval(1800000),
+      timer(3000, 1800000),
+      this.refresh$,
       auth.tokenState$
     ]).pipe(
-      map(([i, t]) => t),
+      map(([i, r, t]) => t),
       filter(t => t === AuthTokenState.valid),
-      ).subscribe(t => {
-        api.register(
-          auth.oidcUser?.profile as unknown as NewUser,
-          auth.auth_header()
-        );
-    });
+      switchMap(t => api.register(
+        auth.oidcUser?.profile as unknown as NewUser,
+        auth.auth_header()
+      ))
+    ).subscribe(p => this.user$.next(p));
 
     auth.tokenState$.pipe(
       filter(t => t === AuthTokenState.valid),
@@ -81,4 +82,7 @@ export class UserService {
     });
   }
 
+  refresh(): void {
+    this.refresh$.next(true);
+  }
 }

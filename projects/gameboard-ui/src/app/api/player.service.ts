@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, Standing, Team, TeamInvitation, TimeWindow } from './player-models';
+import { ChangedPlayer, NewPlayer, Player, PlayerEnlistment, SessionChangeRequest, Standing, Team, TeamAdvancement, TeamInvitation, TeamSummary, TimeWindow } from './player-models';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +47,9 @@ export class PlayerService {
       map(p => this.transform(p) as Player)
     );
   }
+  public updateSession(model: SessionChangeRequest): Observable<any> {
+    return this.http.put<any>(`${this.url}/team/session`, model);
+  }
   public delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/player/${id}`);
   }
@@ -61,7 +64,7 @@ export class PlayerService {
   public scores(search: any): Observable<Standing[]> {
     return this.http.get<Standing[]>(this.url + '/scores', {params: search}).pipe(
       map(r => {
-        r.forEach(s => this.transform(s));
+        r.forEach(s => this.transformStanding(s));
         return r;
       })
     );
@@ -69,13 +72,47 @@ export class PlayerService {
   public getTeam(id: string): Observable<Team> {
     return this.http.get<Team>(`${this.url}/team/${id}`);
   }
+  public getTeams(id: string): Observable<TeamSummary[]> {
+    return this.http.get<TeamSummary[]>(`${this.url}/teams/${id}`).pipe(
+      map(r => {
+        r.forEach(s => this.transformSponsor(s));
+        return r;
+      })
+    );
+  }
+  public advanceTeams(model: TeamAdvancement): Observable<any> {
+    return this.http.post<any>(this.url + '/team/advance', model);
+  }
 
-  private transform(p: Player | Standing): Player | Standing {
+  public transform(p: Player): Player {
+    p.sponsorLogo = p.sponsor
+      ? `${this.config.imagehost}/${p.sponsor}`
+      : `${this.config.basehref}assets/sponsor.svg`
+    ;
+
+    p.pendingName = p.approvedName !== p.name
+      ? p.name + (!!p.nameStatus ? `...${p.nameStatus}` : '...pending')
+      : ''
+    ;
+
+    p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
+
+    return p;
+  }
+
+  private transformStanding(p: Standing): Standing {
     p.sponsorLogo = p.sponsor
       ? `${this.config.imagehost}/${p.sponsor}`
       : `${this.config.basehref}assets/sponsor.svg`
     ;
     p.session = new TimeWindow(p.sessionBegin, p.sessionEnd);
     return p;
+  }
+
+  private transformSponsor(p: any): any {
+    p.sponsorLogo = p.sponsor
+      ? `${this.config.imagehost}/${p.sponsor}`
+      : `${this.config.basehref}assets/sponsor.svg`
+    ;
   }
 }

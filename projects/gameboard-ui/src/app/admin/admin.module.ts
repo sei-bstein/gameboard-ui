@@ -20,7 +20,13 @@ import { PlayerRegistrarComponent } from './player-registrar/player-registrar.co
 import { SponsorBrowserComponent } from './sponsor-browser/sponsor-browser.component';
 import { PlayerSessionComponent } from './player-session/player-session.component';
 import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser.component';
-
+import { UserReportComponent } from './user-report/user-report.component';
+import { ReportPageComponent } from './report-page/report-page.component';
+import { PlayerSponsorReportComponent } from './player-sponsor-report/player-sponsor-report.component';
+import { ChallengeReportComponent } from './challenge-report/challenge-report.component';
+import { AnnounceComponent } from './announce/announce.component';
+import { ConsoleObserverComponent } from './console-observer/console-observer.component';
+import { PrereqsComponent } from './prereqs/prereqs.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +40,14 @@ import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser
     DashboardComponent,
     SponsorBrowserComponent,
     PlayerSessionComponent,
-    ChallengeBrowserComponent
+    ChallengeBrowserComponent,
+    UserReportComponent,
+    ReportPageComponent,
+    PlayerSponsorReportComponent,
+    ChallengeReportComponent,
+    AnnounceComponent,
+    ConsoleObserverComponent,
+    PrereqsComponent
   ],
   imports: [
     CommonModule,
@@ -47,6 +60,11 @@ import { ChallengeBrowserComponent } from './challenge-browser/challenge-browser
         { path: 'registrar/sponsors', component: SponsorBrowserComponent },
         { path: 'registrar/users', component: UserRegistrarComponent },
         { path: 'registrar/:id', component: PlayerRegistrarComponent },
+        { path: 'observer/:id', component: ConsoleObserverComponent },
+        { path: 'report', component: ReportPageComponent },
+        { path: 'report/users', component: UserReportComponent },
+        { path: 'report/sponsors', component: PlayerSponsorReportComponent },
+        { path: 'report/challenges', component: ChallengeReportComponent },
         { path: 'support', component: ChallengeBrowserComponent }
         // { path: '**', redirectTo: 'dashboard' }
       ]},

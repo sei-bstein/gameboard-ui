@@ -2,9 +2,9 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { Component, OnInit } from '@angular/core';
-import { faArrowLeft, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject, interval, merge, Observable } from 'rxjs';
-import { debounceTime, filter, switchMap, tap } from 'rxjs/operators';
+import { faArrowLeft, faEllipsisV, faInfoCircle, faSearch, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, interval, merge, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { Challenge, ChallengeSummary } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { Search } from '../../api/models';
@@ -18,14 +18,21 @@ export class ChallengeBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
   source$: Observable<ChallengeSummary[]>;
   source: ChallengeSummary[] = [];
-  search: Search = { term: '', take: 50};
+  search: Search = { term: '', take: 100};
+  selected!: ChallengeSummary;
+  // audited$: Observable<any>;
+  // auditing$ = new Subject<ChallengeSummary>();
+  selectedAudit!: any;
+  errors: any[] = [];
 
   faSearch = faSearch;
   faArrowLeft = faArrowLeft;
   faDetail = faEllipsisV;
+  faInfo = faInfoCircle;
+  faSync = faSyncAlt;
 
   constructor(
-    api: BoardService
+    private api: BoardService
   ) {
     this.source$ = merge(
       this.refresh$,
@@ -37,13 +44,37 @@ export class ChallengeBrowserComponent implements OnInit {
       switchMap(() => api.list(this.search)),
       tap(r => this.source = r)
     );
+
+    // this.audited$ = this.auditing$.pipe(
+    //   debounceTime(500),
+    //   distinctUntilChanged(),
+    //   switchMap(c => api.audit(c.id)),
+    //   tap(r => this.selectedAudit = r)
+    // );
+
   }
 
   ngOnInit(): void {
   }
 
   select(c: ChallengeSummary): void {
+    this.selected = c;
+    this.selectedAudit = [];
     // todo: fetch challenge events / submissions
+  }
+
+  audit(c: ChallengeSummary): void {
+    this.api.audit(c.id).subscribe(
+      r => this.selectedAudit = r,
+      (err) => this.errors.push(err)
+    );
+  }
+
+  regrade(c: ChallengeSummary): void {
+    this.api.regrade(c.id).subscribe(
+      r => this.selectedAudit = r,
+      (err) => this.errors.push(err)
+    );
   }
 
   trackById(index: number, model: ChallengeSummary): string {

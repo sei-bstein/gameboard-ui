@@ -20,6 +20,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { SessionForecastComponent } from './session-forecast/session-forecast.component';
 import { ScoreboardPageComponent } from './scoreboard-page/scoreboard-page.component';
 import { ScoreboardTableComponent } from './scoreboard-table/scoreboard-table.component';
+import { PlayerPresenceComponent } from './player-presence/player-presence.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { ScoreboardTableComponent } from './scoreboard-table/scoreboard-table.co
     GamespaceQuizComponent,
     SessionForecastComponent,
     ScoreboardPageComponent,
-    ScoreboardTableComponent
+    ScoreboardTableComponent,
+    PlayerPresenceComponent
   ],
   exports: [
   ],

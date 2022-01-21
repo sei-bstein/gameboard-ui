@@ -6,6 +6,7 @@ export interface ConsoleRequest {
   sessionId?: string;
   action?: string;
   fullbleed?: boolean;
+  observer?: boolean;
 }
 
 export interface ConsolePresence {
@@ -20,6 +21,7 @@ export interface ConsoleSummary {
   name: string;
   url: string;
   isRunning?: boolean;
+  isObserver?: boolean;
   error?: string;
 }
 

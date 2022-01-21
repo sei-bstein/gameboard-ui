@@ -85,9 +85,17 @@ export class PlayerEnrollComponent implements OnInit {
   }
 
   update(p: Player): void {
+    if (!p.name.trim()) {
+      p.name = '';
+      return;
+    }
     const sub: Subscription = this.api.update(p).pipe(
       finalize(() => sub.unsubscribe())
-    ).subscribe();
+    ).subscribe(
+      () => {
+        this.api.transform(this.ctx.player);
+      }
+    );
   }
 
   delete(p: Player): void {

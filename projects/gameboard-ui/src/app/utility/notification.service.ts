@@ -4,7 +4,7 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel, HubConnectionState, IHttpConnectionOptions } from '@microsoft/signalr';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { AuthService, AuthTokenState } from './auth.service';
 import { UserService } from '../api/user.service';
@@ -17,6 +17,7 @@ export class NotificationService {
   private connection: HubConnection;
   private hubState: HubState = { id: '', initialized: false, connected: false, joined: false, actors: []};
   private playerId$ = new Subject<string>();
+  private initialActors: Actor[] = [];
 
   state$ = new BehaviorSubject<HubState>(this.hubState);
   announcements = new Subject<HubEvent>();
@@ -51,7 +52,26 @@ export class NotificationService {
   }
 
   init(id: string): void {
-    this.playerId$.next(id);
+    if (this.hubState?.id !== id) {
+      this.playerId$.next(id);
+    }
+  }
+
+  initActors(players: Actor[]): void {
+    this.initialActors = players;
+    players.forEach(p => {
+      const actor = this.hubState.actors.find(a => a.id === p.id);
+      if (!actor) {
+        p.pendingName = p.userApprovedName !== p.userName
+          ? p.userName
+          : ''
+        ;
+        p.online = p.id === this.hubState.id;
+        this.hubState.actors.push(p as Actor);
+      }
+    });
+
+    this.postState();
   }
 
   private async joinChannel(id: string): Promise<void> {
@@ -69,6 +89,7 @@ export class NotificationService {
         this.hubState.id = id;
         this.hubState.joined = true;
         this.postState();
+        this.initActors(this.initialActors);
       }
     } catch (e) {
       console.log(e);
@@ -81,6 +102,7 @@ export class NotificationService {
       this.hubState.id = '';
       this.hubState.joined = false;
       this.hubState.actors = [];
+      // this.initialActors = [];
       this.postState();
     }
   }
@@ -97,8 +119,8 @@ export class NotificationService {
       .configureLogging(LogLevel.Information)
       .build();
 
-    connection.onclose(err => this.setDiconnected());
-    connection.onreconnecting(err => this.setDiconnected());
+    connection.onclose(err => this.setDisconnected());
+    connection.onreconnecting(err => this.setDisconnected());
     connection.onreconnected(cid => this.setConnected());
 
     connection.on('presenceEvent', (event: HubEvent) => {
@@ -135,7 +157,7 @@ export class NotificationService {
     try {
       if (this.connection?.state === HubConnectionState.Connected) {
         await this.connection.stop();
-        this.setDiconnected();
+        this.setDisconnected();
       }
     } finally {}
   }
@@ -149,7 +171,7 @@ export class NotificationService {
     }
   }
 
-  private setDiconnected(): void {
+  private setDisconnected(): void {
     this.hubState.connected = false;
     this.hubState.joined = false;
     this.hubState.actors = [];
@@ -158,9 +180,14 @@ export class NotificationService {
 
   private updatePresence(event: HubEvent): void {
 
-    const actor = this.hubState.actors.find(a => a.id === event.model.id)
+    let actor = this.hubState.actors.find(a => a.id === event.model.id)
       ?? {...event.model} as Actor
     ;
+
+    actor.userName = event.model.userName;
+    actor.userApprovedName = event.model.userApprovedName;
+    actor.userNameStatus  = event.model.userNameStatus;
+    actor.sponsor = event.model.sponsor;
 
     actor.online = (
       event.action === HubEventAction.arrived ||
@@ -172,6 +199,10 @@ export class NotificationService {
       : `${this.config.basehref}assets/sponsor.svg`
     ;
 
+    actor.pendingName = actor.userApprovedName !== actor.userName
+      ? actor.userName
+      : ''
+    ;
     const i = this.hubState.actors.indexOf(actor);
 
     if (
@@ -212,17 +243,20 @@ export interface Actor {
   id: string;
   userName: string;
   userApprovedName: string;
+  userNameStatus: string;
   sponsor: string;
   sponsorLogo: string;
-  online?: boolean;
+  isManager: boolean;
+  pendingName: string;
+  online: boolean;
 }
 
 export enum HubEventAction
-    {
-      arrived = 0, //'Arrived',
-      greeted = 1, //'Greeted',
-      departed =2, // 'Departed',
-      created = 3, //'Created',
-      updated = 4, //'Updated',
-      deleted = 5, //'Deleted',
-    }
+{
+  arrived = 0, //'Arrived',
+  greeted = 1, //'Greeted',
+  departed =2, // 'Departed',
+  created = 3, //'Created',
+  updated = 4, //'Updated',
+  deleted = 5, //'Deleted',
+}

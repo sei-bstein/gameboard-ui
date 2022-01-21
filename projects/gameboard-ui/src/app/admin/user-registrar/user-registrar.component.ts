@@ -21,10 +21,12 @@ export class UserRegistrarComponent implements OnInit {
   selected: ApiUser[] = [];
   viewed: ApiUser | undefined = undefined;
   viewChange$ = new BehaviorSubject<ApiUser | undefined>(this.viewed);
-  search: Search = { term: '', take: 100};
+  search: Search = { term: '', take: 0};
   filter = '';
   scope = '';
   scopes: string[] = [];
+  reasons: string[] = ['disallowed', 'disallowed_pii', 'disallowed_unit', 'disallowed_agency', 'disallowed_explicit', 'disallowed_innuendo', 'disallowed_excessive_emojis', 'not_unique']
+  errors: any[] = [];
 
   faTrash = faTrash;
   faList = faList;
@@ -66,6 +68,7 @@ export class UserRegistrarComponent implements OnInit {
     this.refresh$.next(true);
   }
 
+
   // create(): void {
   //   this.api.update({
   //     name: this.search.term || 'NEW-USER'
@@ -102,7 +105,10 @@ export class UserRegistrarComponent implements OnInit {
   }
 
   update(model: ApiUser): void {
-    this.api.update(model).subscribe();
+    this.api.update(model).subscribe(
+      () => {},
+      (err) => this.errors.push(err)
+    );
   }
 
   approveName(model: ApiUser): void {
@@ -121,7 +127,10 @@ export class UserRegistrarComponent implements OnInit {
       a.push(r);
     }
 
-    model.role = a.join(', ') as UserRole;
+    model.role = !!a.length
+      ? a.join(', ') as UserRole
+      : UserRole.member
+    ;
 
     this.update(model);
   }

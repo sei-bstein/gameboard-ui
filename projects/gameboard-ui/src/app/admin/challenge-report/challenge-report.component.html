@@ -1,0 +1,87 @@
+<!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
+<!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
+
+<a class="btn btn-link" routerLink="../">
+  <fa-icon [icon]="faArrowLeft"></fa-icon>
+  <span>Back</span>
+</a>
+
+<h4>Challenge Reports</h4>
+
+<form #form="ngForm" autocomplete="off">
+  <div class="input-group mb-4" *ngIf="challengeReport; else loading">
+    <div class="pr-4">
+      <label for="gameSelect">Select a board: </label>
+    </div>
+    <div>
+      <select class="form-control" #selectGame (change)="updateGame(selectGame.value)">
+        <option *ngFor="let g of games" value="{{g.id}}">{{g.name}}</option>
+      </select>
+    </div>
+  </div>
+</form>
+<div class="container table-dark border mb-4" *ngIf="challengeReport && currentGame">
+  <div class="row">
+    <div class="col-8 p-2">
+    </div>
+    <div class="col-2 p-2 font-weight-bold">
+      <div>
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="downloadChallengeStatsReport(currentGame.id)">Export Challenge Stats to CSV</button>
+      </div>
+    </div>
+    <div class="col-2 p-2 font-weight-bold">
+      <div>
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="downloadChallengeDetailsReport(currentGame.id)">Export Challenge Details to CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container table-dark border" *ngIf="challengeReport; else loading">
+  <div class="row">
+    <div class="col-2 p-2 border font-weight-bold">Challenge</div>
+    <div class="col p-2 border font-weight-bold">Tag</div>
+    <div class="col p-2 border font-weight-bold">Points</div>
+    <div class="col p-2 border font-weight-bold">Attempts #</div>
+    <div class="col p-2 border font-weight-bold">Complete (#/%)</div>
+    <div class="col p-2 border font-weight-bold">Partial (#/%)</div>
+    <div class="col p-2 border font-weight-bold">Avg Time</div>
+    <div class="col p-2 border font-weight-bold">Avg Score</div>
+  </div>
+  <div *ngFor="let c of challengeReport.stats">
+    <div class="row">
+      <div class="col-2 p-2 border font-weight-bold">
+        <button class="btn btn-outline-info btn-sm mx-1" (click)="view(c.id)">
+          <fa-icon [icon]="faList"></fa-icon>
+          <span>{{c.name}}</span>
+        </button>
+      </div>
+      <div class="col p-2 border font-weight-bold">{{c.tag}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.points}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.attemptCount}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.successCount}} / {{c.successCount / c.attemptCount | percent}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.partialCount}} / {{c.partialCount / c.attemptCount | percent}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.averageTime}}</div>
+      <div class="col p-2 border font-weight-bold">{{c.averageScore}}</div>
+    </div>
+    <div class="container pt-4 pb-4" *ngIf="challengeDetailReports && challengeDetailReports[c.id] && challengeDetailReports[c.id].visible && challengeDetailReports[c.id].parts">
+      <div class="row">
+        <div class="col-7 p-2 border font-weight-bold">Question</div>
+        <div class="col-2 p-2 border font-weight-bold">Points / % of Total</div>
+        <div class="col-3 p-2 border font-weight-bold">Solves / % of Attempts Correct</div>
+      </div>
+      <div class="row" *ngFor="let part of challengeDetailReports[c.id].parts; let i = index">
+        <div class="col-7 p-2 border">{{i + 1}}. {{part.text}}</div>
+        <div class="col-2 p-2 border">{{ part.weight }} / {{ part.weight / c.points | percent}}
+        </div>
+        <div *ngIf="challengeDetailReports[c.id].attemptCount > 0" class="col-3 p-2 border">{{part.solveCount}} / {{part.solveCount / challengeDetailReports[c.id].attemptCount | percent}}</div>
+        <div *ngIf="challengeDetailReports[c.id].attemptCount == 0" class="col-3 p-2 border">{{0 | percent}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="text-center">
+    <app-spinner></app-spinner>
+  </div>
+</ng-template>

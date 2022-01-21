@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
+import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameState, NewChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
 
 @Injectable({
@@ -43,6 +43,9 @@ export class BoardService {
   public grade(model: SectionSubmission): Observable<Challenge> {
     return this.http.put<Challenge>(`${this.url}/challenge/grade`, model);
   }
+  public regrade(id: string): Observable<Challenge> {
+    return this.http.put<Challenge>(`${this.url}/challenge/regrade`, {id});
+  }
   public start(model: ChangedChallenge): Observable<Challenge> {
     return this.http.put<Challenge>(`${this.url}/challenge/start`, model);
   }
@@ -55,6 +58,12 @@ export class BoardService {
   public delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/challenge/${id}`);
   }
+  public audit(id: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/challenge/${id}/audit`);
+  }
+  public actormap(gid: string): Observable<ConsoleActor[]> {
+    return this.http.get<ConsoleActor[]>(`${this.url}/challenge/consoles`, { params: {gid}});
+  }
 
   private transform(b: BoardPlayer): BoardPlayer {
     b.game.mapUrl = b.game.background
@@ -66,6 +75,8 @@ export class BoardService {
       ? `${this.config.imagehost}/${b.game.logo}`
       : `${this.config.basehref}assets/card.png`
     ;
+
+    b.game.specs.forEach(c => this.checkPrereq(c, b));
 
     b.game.specs.forEach(s => {
       s.instance = b.challenges.find(c => c.specId == s.id);
@@ -85,11 +96,21 @@ export class BoardService {
   setColor(s: BoardSpec): void {
     s.c = !!s.instance?.state.id
         ? s.instance.state.endTime.match(/^0001/) ? 'white' : 'black'
-        : s.disabled ? 'black' : 'blue'
+        : s.disabled || s.locked ? 'black' : 'blue'
     ;
     if (!!s.instance){
       if (s.instance.result === 'success') { s.c = 'lime'; }
       if (s.instance.result === 'partial') { s.c = 'yellow'; }
     }
+  }
+
+  checkPrereq(spec: BoardSpec, board: BoardPlayer) {
+    const p = board.game.prerequisites.filter(f => f.targetId === spec.id);
+    let unlocked = true;
+    p.forEach(f => {
+      unlocked = unlocked && (board.challenges.find(d => d.specId === f.requiredId)?.score || 0) >= f.requiredScore;
+    });
+    spec.locked = !unlocked;
+    spec.lockedText = spec.locked ? 'Locked' : spec.disabled ? 'Disabled' : '';
   }
 }

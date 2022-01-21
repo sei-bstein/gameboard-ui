@@ -2,7 +2,30 @@
 <!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
 
 <ng-container *ngIf="team$ | async as team; else loading">
-  <pre>{{team | yaml}}</pre>
+
+  <div class="form-group">
+    <label class="mb-0" for="reason-input">Extend Session</label>
+    <div class="input-group">
+      <input id="reason-input" class="form-control" type="text" [(ngModel)]="team.sessionEnd">
+      <div class="input-group-append">
+        <button class="btn btn-outline-info" (click)="extend(team)">
+          <!-- <fa-icon [icon]="faPaste"></fa-icon> -->
+          <span>Extend</span>
+        </button>
+      </div>
+    </div>
+    <small></small>
+  </div>
+
+  <app-error-div [errors]="errors"></app-error-div>
+
+  <app-announce [teamId]="team.teamId"></app-announce>
+
+  <button class="btn btn-info btn-sm" (click)="showRaw=!showRaw">
+    <fa-icon [icon]="faInfo"></fa-icon>
+    <span>Data</span>
+  </button>
+  <pre *ngIf="showRaw">{{team | yaml}}</pre>
 </ng-container>
 
 <ng-template #loading>

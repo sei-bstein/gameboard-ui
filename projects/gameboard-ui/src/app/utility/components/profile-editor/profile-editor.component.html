@@ -8,13 +8,27 @@
     <p>
         Choose a <em>default</em> name for public display that is suitable for all audiences.
     </p>
-    <div class="form-group w-50 d-inline-block">
-        <label for="nameInput">Requested Display Name</label>
-        <input id="nameInput" class="form-control" [(ngModel)]="ctx.user.name" (input)="updating$.next(ctx.user)"  placeholder="display name" maxlength="64">
-    </div>
-    <div class="form-group w-50 d-inline-block">
-        <label for="">Approved Display Name</label>
-        <span class="form-control bg-light text-dark">{{ctx.user.approvedName}}</span>
+    <div class="row">
+        <div class="form-group w-25 d-inline-block">
+            <label for="nameInput">Requested Display Name</label>
+            <input id="nameInput" class="form-control" [(ngModel)]="ctx.user.name" (input)="updating$.next(ctx.user)"  placeholder="display name" maxlength="64">
+        </div>
+        <ng-container *ngIf="ctx.user.name !== ctx.user.approvedName">
+            <div class="form-group w-25 d-inline-block">
+                <label for="">Approved Display Name</label>
+                <span class="form-control bg-light text-dark">{{ctx.user.approvedName}}</span>
+            </div>
+            <div class="form-group w-25 d-inline-block">
+                <label for="">Display Name Status</label>
+                <span class="form-control bg-light text-dark">{{ctx.user.nameStatus}}</span>
+            </div>
+            <div class="form-group w-25 d-inline-block">
+                <button class="btn btn-secondary" (click)="refresh(ctx.user)">
+                    <fa-icon [icon]="faSync"></fa-icon>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </ng-container>
     </div>
 
     <h4>Select your sponsoring organization</h4>

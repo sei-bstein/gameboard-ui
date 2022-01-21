@@ -8,7 +8,7 @@ import { finalize, map, tap } from 'rxjs/operators';
 import { GameContext } from '../../api/models';
 import { Player, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
-import { HubEvent, HubState, NotificationService } from '../../utility/notification.service';
+import { HubEvent, HubEventAction, HubState, NotificationService } from '../../utility/notification.service';
 
 @Component({
   selector: 'app-player-session',
@@ -21,6 +21,7 @@ export class PlayerSessionComponent implements OnInit {
   ctx$: Observable<GameContext>;
   hub$: Observable<HubState>;
   teamEvents$: Observable<HubEvent>;
+  doublechecking = false;
 
   faBolt = faBolt;
   faTrash = faTrash;
@@ -42,13 +43,23 @@ export class PlayerSessionComponent implements OnInit {
 
     // listen for hub session events (update / start) to keep team sync'd
     this.teamEvents$ = hub.teamEvents.pipe(
-      tap(e => this.ctx.player = ({...this.ctx.player, ...e.model}))
+      tap(e => {
+        this.ctx.player = ({...this.ctx.player, ...e.model});
+        this.api.transform(this.ctx.player);
+        if (e.action === HubEventAction.deleted) {
+          console.log(e);
+          this.ctx.player = ({ userId: this.ctx.user.id }) as Player
+        }
+      })
     );
   }
 
   ngOnInit(): void {
-    if (this.ctx.game.allowTeam && !!this.ctx.player && !this.ctx.player.session.isAfter) {
-      this.hub.init(this.ctx.player.id);
+    if (this.ctx.game.allowTeam) {
+      if (!!this.ctx.player && !this.ctx.player.session.isAfter) {
+        this.hub.init(this.ctx.player.id);
+      }
+
     }
   }
 
@@ -58,7 +69,8 @@ export class PlayerSessionComponent implements OnInit {
       finalize(() => sub.unsubscribe())
     ).subscribe(
       p => this.ctx.player = p,
-      err => this.errors.push(err)
+      err => this.errors.push(err),
+      () => this.doublechecking = false
     );
   }
 

@@ -10,8 +10,9 @@ export interface Player {
   userId: string;
   userName: string;
   gameId: string;
-  approvedName: string;
   name: string;
+  nameStatus: string;
+  approvedName: string;
   sponsor: string;
   role: PlayerRole;
   sessionBegin: Date;
@@ -23,9 +24,12 @@ export interface Player {
   correctCount: number;
   partialCount: number;
   isManager: boolean;
+  advanced: boolean;
 
   sponsorLogo: string;
+  pendingName: string;
   session: TimeWindow;
+  checked: boolean;
 }
 
 export class TimeWindow {
@@ -62,14 +66,20 @@ export interface NewPlayer {
 export interface ChangedPlayer {
   id: string;
   name: string;
-  sponsor: string;
+  nameStatus: string;
   approvedName: string;
+  sponsor: string;
   role: PlayerRole;
 }
 
 export interface SelfChangedPlayer {
   id: string;
   name: string;
+}
+
+export interface SessionChangeRequest {
+  teamId: string;
+  sessionEnd: Date;
 }
 
 export interface PlayerEnlistment {
@@ -91,6 +101,7 @@ export interface Standing {
   partialCount: number;
   session: TimeWindow;
   sponsorLogo: string;
+  advanced: boolean;
 }
 
 export interface TeamInvitation {
@@ -98,7 +109,9 @@ export interface TeamInvitation {
 }
 
 export interface TeamAdvancement {
-  teamId: string;
+  teamIds: string[];
+  gameId: string;
+  withScores: boolean;
   nextGameId: string;
 }
 
@@ -136,11 +149,13 @@ export interface TeamPlayer {
   userName: string;
   userApprovedName: string;
   name: string;
+  nameStatus: string;
   approvedName: string;
   sponsor: string;
   role: PlayerRole;
   isManager: boolean;
   sponsorLogo: string;
+  pendingName: string;
 }
 
 export interface TeamState {
@@ -149,6 +164,13 @@ export interface TeamState {
   approvedName: string;
   sessionBegin: Date;
   sessionEnd: Date;
+}
+
+export interface TeamSummary {
+  id: string;
+  name: string;
+  sponsor: string;
+  members: string[];
 }
 
 export interface PlayerSearch extends Search {

@@ -2,8 +2,9 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { Component, OnInit } from '@angular/core';
+import { faSync, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, combineLatest, Observable, of, scheduled, Subject, throwError } from 'rxjs';
-import { catchError, debounceTime, filter, map, mergeAll, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Sponsor } from '../../../api/sponsor-models';
 import { SponsorService } from '../../../api/sponsor.service';
 import { ApiUser } from '../../../api/user-models';
@@ -20,9 +21,11 @@ export class ProfileEditorComponent implements OnInit {
   updating$ = new Subject<ApiUser>();
   errors = [];
 
+  faSync = faSyncAlt;
+
   constructor(
     api: ApiUserService,
-    userSvc: UserService,
+    private userSvc: UserService,
     sponsorSvc: SponsorService
   ) {
 
@@ -53,5 +56,9 @@ export class ProfileEditorComponent implements OnInit {
 
   setSponsor(u: ApiUser, s: Sponsor): void {
     this.updating$.next({...u, sponsor: s.logo});
+  }
+
+  refresh(u: ApiUser): void {
+    this.userSvc.refresh();
   }
 }

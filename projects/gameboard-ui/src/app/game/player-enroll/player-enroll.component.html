@@ -71,19 +71,20 @@
 
         <div *ngIf="ctx.player.isManager" class="form-group mb-0">
           <label for="name-input">Set {{ctx.game.maxTeamSize > 1 ? 'Team' : 'Game'}} Display Name</label>
-          <div class="input-group mb-3">
+          <div class="input-group mb-0">
             <input id="name-input" type="text" class="form-control" [(ngModel)]="ctx.player.name" maxlength="64" autocomplete="off"
-              placeholder="display name" aria-label="display name" aria-describedby="name-update-button">
+              placeholder="display name">
             <div class="input-group-append">
               <button id="name-update-button" class="btn btn-outline-info" (click)="update(ctx.player)">
                 <span>Update</span>
               </button>
             </div>
-            <small>
-              This will show on the public scoreboard.
-              Your requested display name is subject to approval and a generic moniker is used until that time.
-            </small>
           </div>
+          <div><small class="text-warning">{{ctx.player.nameStatus}}</small></div>
+          <small>
+            This will show on the public scoreboard.
+            Your requested display name is subject to approval and a generic moniker is used until that time.
+          </small>
         </div>
 
         <ng-container *ngIf="ctx.game.allowTeam">

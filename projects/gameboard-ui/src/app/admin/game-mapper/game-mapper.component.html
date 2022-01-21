@@ -46,6 +46,12 @@
     <!-- edit game specs -->
     <div  [hidden]="viewing!=='edit'">
       <h4>Challenge Specs</h4>
+
+      <button class="mb-1 btn btn-sm btn-outline-secondary" (click)="sync()">
+        <fa-icon [icon]="faSync"></fa-icon>
+        <span>Sync with Source</span>
+      </button>
+
       <div *ngFor="let item of list$ | async; trackBy:trackById">
         <div class="row align-items-center bg-secondary mb-2">
           <div class="col-4">
@@ -82,6 +88,8 @@
           </div>
         </div>
       </div>
+      <!-- pre reqs -->
+      <app-prereqs [gameId]="game.id" [specs]="list"></app-prereqs>
     </div>
 
     <!-- search external specs -->

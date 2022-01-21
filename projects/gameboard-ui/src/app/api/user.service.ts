@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { ApiUser, ChangedUser, NewUser, TreeNode } from './user-models';
+import { Announcement, ApiUser, ChangedUser, NewUser, TreeNode } from './user-models';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,12 @@ export class UserService {
   }
 
   public list(filter: any): Observable<ApiUser[]> {
-    return this.http.get<ApiUser[]>(this.url + '/users', {params: filter});
+    return this.http.get<ApiUser[]>(this.url + '/users', {params: filter}).pipe(
+      map(r => {
+        r.forEach(u => this.transform(u));
+        return r;
+      })
+    );
   }
   public retrieve(id: string): Observable<ApiUser> {
     return this.http.get<ApiUser>(`${this.url}/user/${id}`).pipe(
@@ -62,6 +67,10 @@ export class UserService {
     );
   }
 
+  public announce(model: Announcement): Observable<any> {
+    return this.http.post<any>(`${this.url}/announce`, model);
+  }
+
   private mapToTree(list: string[]): TreeNode {
     const root: TreeNode = {name: '', path: `${this.config.apphost}doc`, folders: [], files: []};
     list.forEach(f => {
@@ -92,6 +101,20 @@ export class UserService {
     user.sponsorLogo = user.sponsor
       ? `${this.config.imagehost}/${user.sponsor}`
       : `${this.config.basehref}assets/sponsor.svg`
+    ;
+
+    if (!user.nameStatus && user.approvedName !== user.name) {
+      user.nameStatus = 'pending';
+    }
+
+    user.pendingName = user.approvedName !== user.name
+      ? user.name + (!!user.nameStatus ? `...${user.nameStatus}` : '...pending')
+      : ''
+    ;
+
+    user.roleTag = user.role.split(', ')
+      .map(a => a.substring(0, 1).toUpperCase() + (a.startsWith('d') ? a.substring(1, 2) : ''))
+      .join('')
     ;
     return user;
   }

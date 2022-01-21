@@ -1,0 +1,28 @@
+.fixed {
+  height: 75vh;
+  position: relative;
+  // display: flex;
+}
+
+.browser {
+  display: inline-block;
+  position: relative;
+  width: 25%;
+  height: 75vh;
+  overflow-y: scroll;
+
+}
+.detail {
+  display: inline-block;
+  position: relative;
+  width: 75%;
+  height: 75vh;
+  overflow-y: scroll;
+}
+.clickable {
+  cursor: pointer;
+  padding: .5rem;
+}
+.clickable:hover {
+  background-color: darkslategrey;
+}

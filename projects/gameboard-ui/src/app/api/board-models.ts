@@ -19,6 +19,7 @@ export interface Challenge {
   result: ChallengeResult;
   state: GameState;
 }
+
 export interface ChallengeSummary {
   id: string;
   name: string;
@@ -67,6 +68,7 @@ export interface BoardGame {
   allowPreview: boolean;
   allowTeam: boolean;
   specs: BoardSpec[];
+  prerequisites: ChallengeGate[];
   mapUrl: string;
   cardUrl: string;
   modeUrl: string;
@@ -88,6 +90,8 @@ export interface BoardSpec {
   r: number;
   c: string;
   instance: Challenge | undefined;
+  locked: boolean;
+  lockedText: string;
 }
 
 export interface BoardPlayer {
@@ -184,4 +188,25 @@ export interface VmConsole {
   name: string;
   isRunning: boolean;
   url: string;
+}
+
+export interface ConsoleActor {
+  userId: string;
+  userName: string;
+  playerName: string;
+  challengeName: string;
+  challengeId: string;
+  gameId: string;
+  vmName: string;
+  timestamp: Date;
+}
+
+export interface ChallengeGate {
+  id: string;
+  gameId: string;
+  targetId: string;
+  requiredId: string;
+  requiredScore: number;
+  targetTag: string;
+  requiredTag: string;
 }
