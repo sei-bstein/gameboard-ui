@@ -24,6 +24,9 @@ export class GameEditorComponent implements OnInit, AfterViewInit {
   loaded$!: Observable<Game>;
   updated$!: Observable<boolean>;
   dirty = false;
+  refreshFeedback = false;
+  feedbackMessage?: string = undefined;
+  feedbackWarning: boolean = false;
   viewing = 1;
 
   faCaretDown = faCaretDown;
@@ -46,7 +49,10 @@ export class GameEditorComponent implements OnInit, AfterViewInit {
       map(p => p.id),
       filter(id => !!id),
       switchMap(id => api.retrieve(id)),
-      tap(g => this.game = g)
+      tap(g => {
+        this.game = g;
+        this.updateFeedbackMessage();
+      })
     );
   }
 
@@ -60,9 +66,22 @@ export class GameEditorComponent implements OnInit, AfterViewInit {
       tap(g => this.dirty = true),
       debounceTime(5000),
       switchMap(g => this.api.update(this.game)),
-      tap(r => this.dirty = false)
+      tap(r => this.dirty = false),
+      filter(f => this.refreshFeedback),
+      switchMap(g => this.api.retrieve(this.game.id).pipe(
+        tap(game => {
+          this.game.feedbackTemplate = game.feedbackTemplate;
+          this.updateFeedbackMessage();
+          this.refreshFeedback = false;
+        }))
+      ),
+      map(g => false)
     );
 
+  }
+
+  yamlChanged() {
+    this.refreshFeedback = true;
   }
 
   show(i: number): void {
@@ -85,6 +104,33 @@ export class GameEditorComponent implements OnInit, AfterViewInit {
         this.game.cardUrl = `${this.config.basehref}assets/card.png`;
       }
     );
+  }
+
+  
+  updateFeedbackMessage() {
+    this.feedbackWarning = false;
+    if (!this.game.feedbackConfig || this.game.feedbackConfig.trim().length == 0) {
+      this.feedbackMessage = "No questions configured";
+    } else if (this.game.feedbackTemplate) {
+      if (!this.checkFeedbackIds()) {
+        this.feedbackMessage = "IDs not unique in each list";
+        this.feedbackWarning = true;
+      } else {
+        this.feedbackMessage = `${this.game.feedbackTemplate?.game?.length ?? 0} game, ${this.game.feedbackTemplate?.challenge?.length ?? 0} challenge questions configured`;
+      }
+    } else {
+      this.feedbackMessage = "Invalid YAML format";
+      this.feedbackWarning = true;
+    }
+  }
+
+  checkFeedbackIds(): boolean {
+    const boardIds = new Set(this.game.feedbackTemplate.game?.map(q => q.id));   
+    const challengeIds = new Set(this.game.feedbackTemplate.challenge?.map(q => q.id));   
+    if ([...boardIds].length != (this.game.feedbackTemplate.game?.length ?? 0) || [...challengeIds].length != (this.game.feedbackTemplate.challenge?.length ?? 0)) {
+      return false;
+    }
+    return true;
   }
 
 }
