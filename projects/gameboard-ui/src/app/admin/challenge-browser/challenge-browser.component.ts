@@ -2,9 +2,9 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { Component, OnInit } from '@angular/core';
-import { faArrowLeft, faEllipsisV, faInfoCircle, faSearch, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faEllipsisV, faInfoCircle, faSearch, faSyncAlt, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject, interval, merge, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { Challenge, ChallengeSummary } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { Search } from '../../api/models';
@@ -16,9 +16,11 @@ import { Search } from '../../api/models';
 })
 export class ChallengeBrowserComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
-  source$: Observable<ChallengeSummary[]>;
-  source: ChallengeSummary[] = [];
-  search: Search = { term: '', take: 100};
+  challenges$: Observable<ChallengeSummary[]>;
+  challenges: ChallengeSummary[] = [];
+  archived$: Observable<ChallengeSummary[]>;
+  archiveMap = new Map<string, ChallengeSummary>(); // alternative to calling `/audit` endpoint
+  search: Search = { term: '', take: 100 };
   selected!: ChallengeSummary;
   // audited$: Observable<any>;
   // auditing$ = new Subject<ChallengeSummary>();
@@ -30,11 +32,12 @@ export class ChallengeBrowserComponent implements OnInit {
   faDetail = faEllipsisV;
   faInfo = faInfoCircle;
   faSync = faSyncAlt;
+  faCircle = faCircle;
 
   constructor(
     private api: BoardService
   ) {
-    this.source$ = merge(
+    this.challenges$ = merge(
       this.refresh$,
       interval(60000).pipe(
         filter(i => !this.search.term)
@@ -42,7 +45,25 @@ export class ChallengeBrowserComponent implements OnInit {
     ).pipe(
       debounceTime(500),
       switchMap(() => api.list(this.search)),
-      tap(r => this.source = r)
+      tap(r => this.challenges = r)
+    );
+    this.archived$ = merge(
+      this.refresh$,
+      interval(60000).pipe(
+        filter(i => !this.search.term)
+      )
+    ).pipe(
+      debounceTime(500),
+      switchMap(() => api.archived(this.search)),
+      tap(a => this.archiveMap = new Map(a.map(i => [i.id, i]))),
+      map(a => {
+        // remove properties that aren't displayed for current challenges for consistency
+        return a.map(i => {
+          let {submissions, gameId, ...rest} = i as any;
+          rest.archived = true;
+          return rest;
+        })
+      }),
     );
 
     // this.audited$ = this.auditing$.pipe(
@@ -64,10 +85,15 @@ export class ChallengeBrowserComponent implements OnInit {
   }
 
   audit(c: ChallengeSummary): void {
-    this.api.audit(c.id).subscribe(
-      r => this.selectedAudit = r,
-      (err) => this.errors.push(err)
-    );
+    if (c.archived) {
+      // archived challenges already contain submissions, so no need for API call
+      this.selectedAudit = this.archiveMap.get(c.id)?.submissions;
+    } else {
+      this.api.audit(c.id).subscribe(
+        r => this.selectedAudit = r,
+        (err) => this.errors.push(err)
+      );
+    }
   }
 
   regrade(c: ChallengeSummary): void {

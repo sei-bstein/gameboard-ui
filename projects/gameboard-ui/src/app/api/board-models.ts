@@ -28,6 +28,7 @@ export interface ChallengeSummary {
   gameName: string;
   playerName: string;
   playerId: string;
+  userId: string;
   tag: string;
   startTime: Date;
   endTime: Date;
@@ -38,6 +39,18 @@ export interface ChallengeSummary {
   score: number;
   duration: number;
   result: ChallengeResult;
+  events: ChallengeEvent[];
+  teamMembers: string[];
+  isActive: boolean;
+  archived: boolean;
+  submissions: SectionSubmission[];
+}
+
+export interface ChallengeEvent {
+  userId: string;
+  text: string;
+  type: string;
+  timestamp: Date;
 }
 
 export interface NewChallenge {

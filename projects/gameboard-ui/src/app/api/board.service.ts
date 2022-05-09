@@ -26,6 +26,9 @@ export class BoardService {
     return this.http.get<ChallengeSummary[]>(this.url + '/challenges', {params: filter});
   }
 
+  public archived(filter: any): Observable<ChallengeSummary[]> {
+    return this.http.get<ChallengeSummary[]>(this.url + '/challenges/archived', {params: filter});
+  }
   public load(id: string): Observable<BoardPlayer> {
     return this.http.get<BoardPlayer>(`${this.url}/board/${id}`).pipe(
       map(b => this.transform(b))
