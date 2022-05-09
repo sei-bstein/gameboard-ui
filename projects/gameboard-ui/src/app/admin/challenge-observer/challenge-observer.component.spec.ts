@@ -3,21 +3,21 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConsoleObserverComponent } from './console-observer.component';
+import { ChallengeObserverComponent } from './challenge-observer.component';
 
-describe('ConsoleObserverComponent', () => {
-  let component: ConsoleObserverComponent;
-  let fixture: ComponentFixture<ConsoleObserverComponent>;
+describe('ChallengeObserverComponent', () => {
+  let component: ChallengeObserverComponent;
+  let fixture: ComponentFixture<ChallengeObserverComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConsoleObserverComponent ]
+      declarations: [ ChallengeObserverComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConsoleObserverComponent);
+    fixture = TestBed.createComponent(ChallengeObserverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -225,3 +225,30 @@ export interface ChallengeGate {
   targetTag: string;
   requiredTag: string;
 }
+
+
+export interface ObserveChallenge {
+  id: string;
+  name: string;
+  tag: string;
+  teamId: string;
+  playerId: string;
+  playerName: string;
+  duration: number;
+  gameRank: number;
+  gameScore: number;
+  challengeScore: number;
+  isActive: boolean;
+  consoles: ObserveVM[];
+  expanded: boolean;
+  pinned: boolean;
+}
+
+export interface ObserveVM {
+  id: string;
+  name: string;
+  challengeId: string;
+  isRunning: boolean;
+  fullWidth: boolean;
+  minimized: boolean;
+}

@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { interval, Observable, of } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-import { ConsoleRequest, ConsoleSummary, KeyValuePair, VmAnswer, VmOperation, VmOptions } from './api.models';
+import { ConsoleActor, ConsoleRequest, ConsoleSummary, KeyValuePair, VmAnswer, VmOperation, VmOptions } from './api.models';
 
 @Injectable({
   providedIn: 'root'
@@ -66,5 +66,9 @@ export class ApiService {
 
   blur(model: ConsoleRequest): Observable<any> {
     return this.http.put<any>(this.url + `/challenge/console`, ({...model, name: ''}));
+  }
+
+  findConsole(uid: string): Observable<ConsoleActor> {
+    return this.http.get<ConsoleActor>(this.url + `/challenge/consoleactor`, { params: {uid}});
   }
 }

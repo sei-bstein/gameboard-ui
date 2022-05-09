@@ -7,6 +7,7 @@ export interface ConsoleRequest {
   action?: string;
   fullbleed?: boolean;
   observer?: boolean;
+  userId?: string;
 }
 
 export interface ConsolePresence {
@@ -23,6 +24,17 @@ export interface ConsoleSummary {
   isRunning?: boolean;
   isObserver?: boolean;
   error?: string;
+}
+
+export interface ConsoleActor {
+  userId: string;
+  userName: string;
+  playerName: string;
+  challengeName: string;
+  challengeId: string;
+  gameId: string;
+  vmName: string;
+  timestamp: Date;
 }
 
 export interface VmOperation {

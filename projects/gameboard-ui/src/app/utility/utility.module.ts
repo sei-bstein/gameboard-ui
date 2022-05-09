@@ -26,6 +26,9 @@ import { ClockPipe } from './pipes/clock.pipe';
 import { ProfileEditorComponent } from './components/profile-editor/profile-editor.component';
 import { FormsModule } from '@angular/forms';
 import { MessageBoardComponent } from './components/message-board/message-board.component';
+import { SafeUrlPipe } from './pipes/safe-url.pipe';
+import { ObserveOrderPipe } from './pipes/observe-order.pipe';
+import { MatchesTermPipe } from './pipes/matches-term.pipe';
 
 const components = [
   ClipspanComponent,
@@ -44,7 +47,10 @@ const components = [
   ShortTimePipe,
   UntagPipe,
   YamlPipe,
-  ClockPipe
+  ClockPipe,
+  SafeUrlPipe,
+  ObserveOrderPipe,
+  MatchesTermPipe
 ]
 
 @NgModule({
@@ -55,7 +61,7 @@ const components = [
     FormsModule,
     FontAwesomeModule,
     AlertModule,
-    TooltipModule,
+    TooltipModule.forRoot(),
     ButtonsModule
   ],
 })

@@ -83,6 +83,9 @@ export class PlayerService {
   public advanceTeams(model: TeamAdvancement): Observable<any> {
     return this.http.post<any>(this.url + '/team/advance', model);
   }
+  public observeTeams(id: string): Observable<any> {
+    return this.http.get<Team>(`${this.url}/teams/observe/${id}`);
+  }
 
   public transform(p: Player): Player {
     p.sponsorLogo = p.sponsor

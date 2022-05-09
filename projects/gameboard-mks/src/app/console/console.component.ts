@@ -5,13 +5,13 @@ import {
   Component, OnInit, ViewChild, AfterViewInit,
   ElementRef, Input, Injector, HostListener, OnDestroy, Renderer2
 } from '@angular/core';
-import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, distinctUntilChanged, tap, finalize, switchMap, filter } from 'rxjs/operators';
 import { throwError as ObservableThrower, fromEvent, Subscription, timer, Observable, of, Subject } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { MockConsoleService } from './services/mock-console.service';
 import { WmksConsoleService } from './services/wmks-console.service';
 import { ConsoleService } from './services/console.service';
-import { ConsolePresence, ConsoleRequest, ConsoleSummary } from '../api.models';
+import { ConsoleActor, ConsolePresence, ConsoleRequest, ConsoleSummary } from '../api.models';
 import { ApiService } from '../api.service';
 import { ClipboardService } from '../clipboard.service';
 import { HubService } from '../hub.service';
@@ -98,7 +98,15 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleSvc.setTitle(`console: ${this.request.name}`);
     }
 
-    setTimeout(() => this.reload(), 1);
+    if (!!this.request.observer) {
+      this.showCog = false;
+    }
+
+    if (!!this.request.observer && !!this.request.userId) {
+      this.initCheckConsoleSwitch();
+    } else {
+      setTimeout(() => this.reload(), 1);
+    }
     // TODO: restore audience hub
     // setTimeout(() => this.hubSvc.init(this.request), 100);
 
@@ -281,6 +289,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.hotspot.x = window.innerWidth - this.hotspot.w;
     this.subs.push(
       fromEvent<MouseEvent>(document, 'mousemove').pipe(
+        filter(_ => !this.request.observer),
         tap((e: MouseEvent) => {
           if (this.showTools && e.clientX > 400) {
             this.showTools = false;
@@ -299,6 +308,28 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  initCheckConsoleSwitch() {
+    this.subs.push(
+      timer(0, 5_000).pipe(
+        switchMap(a => this.api.findConsole(this.request.userId!))
+      ).subscribe(
+        (c: ConsoleActor) => {
+          if (!c) { // no active console for this user yet
+            this.changeState('failed');
+          } else if (this.request.sessionId != c.challengeId || this.request.name != c.vmName) {
+            this.request.sessionId = c.challengeId;
+            this.request.name = c.vmName;
+            this.titleSvc.setTitle(`console: ${c.vmName}`);
+            this.reload();
+          }
+        }, 
+        (err) => {
+          this.changeState('failed')
+        }
+      )
+    );
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     // this.hotspot.x = event.target.innerWidth - this.hotspot.w;
@@ -307,12 +338,15 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:focus', ['$event'])
   onFocus(): void {
-    this.api.focus(this.request);
+    if (!this.request.observer) {
+      this.api.focus(this.request).subscribe();
+    }
   }
 
   @HostListener('window:blur', ['$event'])
   onBlur(): void {
-    this.api.blur(this.request);
+    // don't set actor map on blur
+    // this.api.blur(this.request);
   }
 
   @HostListener('document:mouseup', ['$event'])
