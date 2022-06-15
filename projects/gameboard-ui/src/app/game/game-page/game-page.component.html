@@ -28,7 +28,7 @@
     </div>
 
      <!-- if auth'd, enrolled, game ended, and certificate defined -->
-    <ng-container *ngIf="!!ctx.user.id && !!ctx.player.id && ctx.game.hasEnded && !!ctx.game.certificateTemplate">
+     <ng-container *ngIf="!!ctx.user.id && !!ctx.player.id && ctx.game.hasEnded && !!ctx.game.certificateTemplate">
       <div class="row justify-content-center">
         <div class="col panel">
           <div tabindex="0" (click)="showCert = !showCert">
@@ -46,7 +46,7 @@
       </div>
     </ng-container>
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-start">
       <!-- if auth'd -->
       <ng-container *ngIf="!!ctx.user.id">
         <!-- if enrolled -->
@@ -65,12 +65,12 @@
         </ng-container>
 
       </ng-container>
-      <div class="col panel">
+      <div class="col panel max-half">
         <h2>Info</h2>
         <app-game-info [game]="ctx.game"></app-game-info>
       </div>
     </div>
-
+    
     <div class="row">
       <div class="col scoreboard">
         <h2 id="scoreboard" class="text-center my-4">

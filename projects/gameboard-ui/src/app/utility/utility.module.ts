@@ -9,7 +9,6 @@ import { ErrorDivComponent } from './components/error-div/error-div.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AgedDatePipe } from './pipes/aged-date.pipe';
 import { CamelspacePipe } from './pipes/camelspace.pipe';
 import { CountdownPipe } from './pipes/countdown.pipe';
@@ -18,7 +17,9 @@ import { ShortDatePipe } from './pipes/short-date.pipe';
 import { ShortTimePipe } from './pipes/short-time.pipe';
 import { UntagPipe } from './pipes/untag.pipe';
 import { DropzoneComponent } from './components/dropzone/dropzone.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { YamlPipe } from './pipes/yaml.pipe';
 import { LoginComponent } from './components/login/login.component';
@@ -30,6 +31,7 @@ import { MessageBoardComponent } from './components/message-board/message-board.
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
 import { ObserveOrderPipe } from './pipes/observe-order.pipe';
 import { MatchesTermPipe } from './pipes/matches-term.pipe';
+import { UntilPipe } from './pipes/until-date.pipe';
 import { RouterModule } from '@angular/router';
 
 const components = [
@@ -43,6 +45,7 @@ const components = [
   ProfileEditorComponent,
   MessageBoardComponent,
   AgedDatePipe,
+  UntilPipe,
   CamelspacePipe,
   CountdownPipe,
   CountdownColorPipe,
@@ -64,8 +67,9 @@ const components = [
     FormsModule,
     FontAwesomeModule,
     AlertModule,
-    TooltipModule.forRoot(),
+    TooltipModule,
     ButtonsModule,
+    BsDropdownModule,
     RouterModule
   ],
 })

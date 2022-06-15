@@ -10,7 +10,9 @@ import { GameDesignerComponent } from './game-designer/game-designer.component';
 import { UserRegistrarComponent } from './user-registrar/user-registrar.component';
 import { UtilityModule } from '../utility/utility.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ApiModule } from '../api/api.module';
 import { FormsModule } from '@angular/forms';
 import { GameEditorComponent } from './game-editor/game-editor.component';
@@ -78,7 +80,9 @@ import { FeedbackReportComponent } from './feedback-report/feedback-report.compo
     ApiModule,
     UtilityModule,
     FontAwesomeModule,
-    ButtonsModule
+    TooltipModule,
+    ButtonsModule,
+    BsDropdownModule
   ]
 })
 export class AdminModule { }

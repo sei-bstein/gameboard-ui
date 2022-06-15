@@ -5,8 +5,11 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { Observable } from 'rxjs';
 import { ApiModule } from './api/api.module';
@@ -24,12 +27,15 @@ import { UtilityModule } from './utility/utility.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
     ApiModule,
     UtilityModule,
+    TooltipModule.forRoot(),
     ButtonsModule.forRoot(),
+    BsDropdownModule.forRoot(),
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {
@@ -44,6 +50,7 @@ import { UtilityModule } from './utility/utility.module';
     UtilityModule,
     FontAwesomeModule,
     ButtonsModule,
+    BsDropdownModule,
     MarkdownModule
   ],
   providers: [
