@@ -31,6 +31,8 @@ import { ChallengeObserverComponent } from './challenge-observer/challenge-obser
 import { TeamObserverComponent } from './team-observer/team-observer.component';
 import { PrereqsComponent } from './prereqs/prereqs.component';
 import { FeedbackReportComponent } from './feedback-report/feedback-report.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SupportReportComponent } from './support-report/support-report.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,8 @@ import { FeedbackReportComponent } from './feedback-report/feedback-report.compo
     ChallengeObserverComponent,
     TeamObserverComponent,
     PrereqsComponent,
-    FeedbackReportComponent
+    FeedbackReportComponent,
+    SupportReportComponent
   ],
   imports: [
     CommonModule,
@@ -73,6 +76,7 @@ import { FeedbackReportComponent } from './feedback-report/feedback-report.compo
         { path: 'report/sponsors', component: PlayerSponsorReportComponent },
         { path: 'report/challenges', component: ChallengeReportComponent },
         { path: 'report/feedback', component: FeedbackReportComponent },
+        { path: 'report/support', component: SupportReportComponent },
         { path: 'support', component: ChallengeBrowserComponent }
         // { path: '**', redirectTo: 'dashboard' }
       ]},
@@ -80,8 +84,9 @@ import { FeedbackReportComponent } from './feedback-report/feedback-report.compo
     ApiModule,
     UtilityModule,
     FontAwesomeModule,
-    TooltipModule,
     ButtonsModule,
+    ModalModule,
+    TooltipModule,
     BsDropdownModule
   ]
 })

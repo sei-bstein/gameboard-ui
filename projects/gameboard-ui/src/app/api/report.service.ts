@@ -107,7 +107,6 @@ export class ReportService {
   public exportFeedbackStats(params: any, exportName: string): void {
     this.http.get(`${this.url}/report/exportfeedbackstats`, { responseType: 'arraybuffer', params: params })
       .subscribe(response => {
-        console.log(response);
         const name: string = exportName + this.timestamp() + '.csv';
         this.downloadFile(response, name, 'application/ms-excel');
       });
@@ -115,6 +114,18 @@ export class ReportService {
 
   public feedbackStats(params: any): Observable<FeedbackStats> {
     return this.http.get<FeedbackStats>(`${this.url}/report/feedbackstats/`, { params: params });
+  }
+
+  public supportDays(params: any): Observable<any> {
+    return this.http.get<any>(`${this.url}/report/supportdaystats/`, { params: params });
+  }
+
+  public supportLabels(params: any): Observable<any> {
+    return this.http.get<any>(`${this.url}/report/supportlabelstats/`, { params: params });
+  }
+
+  public supportChallenges(params: any): Observable<any> {
+    return this.http.get<any>(`${this.url}/report/supportchallengestats/`, { params: params });
   }
 
   private downloadFile(data: any, name: string, type: string) {

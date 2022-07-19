@@ -31,6 +31,10 @@ import { MessageBoardComponent } from './components/message-board/message-board.
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
 import { ObserveOrderPipe } from './pipes/observe-order.pipe';
 import { MatchesTermPipe } from './pipes/matches-term.pipe';
+import { ImageManagerComponent } from './components/image-manager/image-manager.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { InplaceEditorComponent } from './components/inplace-editor/inplace-editor.component';
+import { TextToColorPipe } from './pipes/text-to-color.pipe';
 import { UntilPipe } from './pipes/until-date.pipe';
 import { RouterModule } from '@angular/router';
 
@@ -40,10 +44,12 @@ const components = [
   ErrorDivComponent,
   SpinnerComponent,
   DropzoneComponent,
+  ImageManagerComponent,
   GameCardComponent,
   LoginComponent,
   ProfileEditorComponent,
   MessageBoardComponent,
+  InplaceEditorComponent,
   AgedDatePipe,
   UntilPipe,
   CamelspacePipe,
@@ -56,7 +62,8 @@ const components = [
   ClockPipe,
   SafeUrlPipe,
   ObserveOrderPipe,
-  MatchesTermPipe
+  MatchesTermPipe,
+  TextToColorPipe
 ]
 
 @NgModule({
@@ -67,6 +74,7 @@ const components = [
     FormsModule,
     FontAwesomeModule,
     AlertModule,
+    ModalModule,
     TooltipModule,
     ButtonsModule,
     BsDropdownModule,

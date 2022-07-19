@@ -1,0 +1,67 @@
+<div class="container-xl">
+
+  <a class="btn btn-link ml-0 pl-0" routerLink="../">
+    <fa-icon [icon]="faArrowLeft"></fa-icon>
+    <span>Back</span>
+  </a>
+
+
+  <div class="section-header">
+      <h2 class="d-inline">New Ticket</h2>
+  </div>
+
+  <form #form="ngForm" class="pop-light p-4 mt-2">
+
+    <app-error-div [errors]="errors"></app-error-div>
+    
+    <ng-container *ngIf="canManage$ | async as canManage">
+      <div *ngIf="canManage" class="mb-3">
+        <label class="mb-0" for="form-requester">Requested By</label>
+        <app-inplace-editor [editData]="requesters" [currentText]="(!!ticket.requester ? ticket.requester.approvedName + ' ('+(ticket.requesterId | slice:0:8)+')' : 'Me')"
+        (startEditFunc)="startEditRequesters()" (selectOptionFunc)="selectRequester($event)"></app-inplace-editor>
+        <p class="mb-0 pt-0 align-items-center small">Select the user this request is coming from</p>
+      </div>
+    </ng-container>
+
+    <div class="mb-3">
+      <label class="mb-0" for="form-challenges">Challenge</label>
+      
+      <div class="input-group">
+        <select [(ngModel)]="ticket.challengeId" class="form-control" name="challenges" id="challenges">
+          <option value="" selected>n/a</option>
+          <option *ngFor="let challenge of challengeOptions" [value]="challenge.id">{{challenge.name}} ({{(challenge?.id | slice:0:8) + ' ' + challenge?.tag}}), {{challenge?.gameName}}</option>
+        </select>
+      </div>
+      <p class="mb-0 pt-0 align-items-center small">If applicable, select one of your recent challenges</p>
+    </div>
+
+  
+    <div class="mb-3">
+      <label class="mb-0" for="form-summary">Summary</label>
+      <input type="text" class="form-control" id="form-summary" name="form-summary" autocomplete="off" [maxlength]="summaryLimit"
+      [(ngModel)]="ticket.summary">
+      <small class="d-flex justify-content-between" [class]="ticket.summary.length == summaryLimit ? 'text-warning' : 'text-muted'">
+        <span class="text-dark">A short way to summarize the problem</span>
+        <span>{{summaryLimit - ticket.summary.length}}</span>
+      </small>
+    </div>
+    <div class="mb-3">
+      <label class="mb-0" for="form-description">
+        Description
+      </label>
+      <textarea rows="3" type="text" class="form-control" id="form-description" name="form-description"
+      [(ngModel)]="ticket.description" rows="6"></textarea>
+      <small class="text-dark">All the details that would help resolve this issue</small>
+    </div>
+    <div class="mb-0">
+      <label class="mb-0" for="form-attachments">Attachments</label>
+      <app-image-manager (added)="attachments($event)" [defaultHeight]="100" id="form-attachments"></app-image-manager>
+      <small class="text-dark">Screenshots will help this ticket be resolved more quickly</small>
+    </div>
+
+    <div class="mt-3">
+      <button class="btn btn-dark" (click)="submit()" [disabled]="!ticket.summary.length">Submit</button>
+    </div>
+
+  </form>
+</div>

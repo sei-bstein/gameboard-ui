@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { Observable } from 'rxjs';
@@ -35,6 +36,7 @@ import { UtilityModule } from './utility/utility.module';
     UtilityModule,
     TooltipModule.forRoot(),
     ButtonsModule.forRoot(),
+    ModalModule.forRoot(),
     BsDropdownModule.forRoot(),
     MarkdownModule.forRoot({
       loader: HttpClient,
@@ -50,8 +52,10 @@ import { UtilityModule } from './utility/utility.module';
     UtilityModule,
     FontAwesomeModule,
     ButtonsModule,
+    ModalModule,
     BsDropdownModule,
-    MarkdownModule
+    MarkdownModule,
+    TooltipModule
   ],
   providers: [
     {

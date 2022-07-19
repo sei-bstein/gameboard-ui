@@ -85,6 +85,10 @@ export class ConfigService {
     return this.settings.tochost || `${this.basehref}doc`;
   }
 
+  get supporthost(): string {
+    return this.settings.supporthost || `${this.basehref}supportfiles`;
+  }
+
   load(): Observable<any> {
     return this.http.get<Settings>(this.basehref + this.url)
       .pipe(
@@ -156,6 +160,7 @@ export interface Settings {
   mkshost?: string;
   imghost?: string;
   tochost?: string;
+  supporthost?: string;
   tocfile?: string;
   countdownStartSecondsAtMinute?: number;
   oidc: AppUserManagerSettings;

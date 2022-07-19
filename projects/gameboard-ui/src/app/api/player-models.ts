@@ -12,6 +12,7 @@ export interface Player {
   userId: string;
   userName: string;
   gameId: string;
+  gameName: string;
   name: string;
   nameStatus: string;
   approvedName: string;
@@ -32,6 +33,14 @@ export interface Player {
   pendingName: string;
   session: TimeWindow;
   checked: boolean;
+}
+
+export interface PlayerOverview {
+  id: string;
+  teamId: string;
+  gameId: string;
+  gameName: string;
+  approvedName: string;
 }
 
 export class TimeWindow {

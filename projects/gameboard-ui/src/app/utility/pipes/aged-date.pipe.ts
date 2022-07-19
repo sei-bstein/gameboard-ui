@@ -26,7 +26,6 @@ export class AgedDatePipe implements PipeTransform {
                 r = d + tag[i];
             }
         }
-        // console.log(a);
-        return r + ' ago';
+        return (r || '1s') + ' ago';
     }
 }

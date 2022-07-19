@@ -23,6 +23,7 @@ import { ScoreboardPageComponent } from './scoreboard-page/scoreboard-page.compo
 import { ScoreboardTableComponent } from './scoreboard-table/scoreboard-table.component';
 import { PlayerPresenceComponent } from './player-presence/player-presence.component';
 import { FeedbackFormComponent } from './feedback-form/feedback-form.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { CertificateComponent } from './certificate/certificate.component';
 
 
@@ -58,7 +59,8 @@ import { CertificateComponent } from './certificate/certificate.component';
     FontAwesomeModule,
     AlertModule,
     MarkdownModule,
-    ButtonsModule
+    ButtonsModule,
+    ModalModule
   ]
 })
 export class GameModule { }
