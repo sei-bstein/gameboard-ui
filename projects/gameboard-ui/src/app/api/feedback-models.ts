@@ -49,6 +49,9 @@ export interface FeedbackQuestion {
   max?: number;
   minLabel?: string;
   maxLabel?: string;
+  options?: string[];
+  display?: string;
+  specify?: QuestionSpecify;
 }
 
 export interface FeedbackTemplate {
@@ -59,7 +62,9 @@ export interface FeedbackTemplate {
 
 export enum QuestionType {
   likert = 'likert',
-  text = 'text'
+  text = 'text',
+  selectOne = 'selectOne',
+  selectMany = 'selectMany'
 }
 
 export interface QuestionStats {
@@ -75,12 +80,19 @@ export interface QuestionStats {
   highest?: string; 
 }
 
+export interface QuestionSpecify {
+  key?: string,
+  prompt?: string
+}
+
 export interface FeedbackStats {
   gameId: number;
   challengeSpecId: number; 
   configuredCount: number;
   likertCount: number;
   textCount: number;
+  selectOneCount: number;
+  selectManyCount: number;
   requiredCount: number;
   responsesCount: number;
   maxResponseCount: number;
