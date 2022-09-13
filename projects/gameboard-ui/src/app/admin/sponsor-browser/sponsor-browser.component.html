@@ -12,18 +12,27 @@
 <h4>Sponsors</h4>
 
 <app-dropzone (dropped)="dropped($event)">
-  <span>or drag sponsor images here. (Filename should be the sponsor key.)</span>
+  <span> or drag sponsor images here. (Filename should be the sponsor key.)</span>
+  <br>
+  <span>Acceptable file types: .png, .jpeg, .jpg, .gif, .webp, .svg</span>
 </app-dropzone>
 
 <ng-container *ngIf="source$ | async as sponsors; else loading">
-  <div *ngFor="let s of sponsors" class="panel">
-    <img [src]="s.logoUrl" class="img-fluid">
-    <span class="mx-2">{{s.id}}</span>
-    <input type="text" class="form-control mx-2" placeholder="title" [(ngModel)]="s.name" (blur)="update(s)">
-    <app-confirm-button btnClass="btn btn-outline-danger" (confirm)="delete(s)">
-      <fa-icon [icon]="faTrash"></fa-icon>
-      <span>Delete</span>
-    </app-confirm-button>
+  <br>
+  <div style="display: table-row-group">
+    <div *ngFor="let s of sponsors" class="panel" style="display: table-row">
+      <div style="display: table-cell; padding: 8px">
+        <img [src]="s.logoUrl" class="img-fluid">
+        <span class="mx-2">{{s.id}}</span>
+      </div>
+      <div style="display: table-cell">
+        <input type="text" class="form-control mx-2" placeholder="title" [(ngModel)]="s.name" (blur)="update(s)">
+        <app-confirm-button btnClass="btn btn-outline-danger" (confirm)="delete(s)">
+          <fa-icon [icon]="faTrash"></fa-icon>
+          <span>Delete</span>
+        </app-confirm-button>
+      </div>
+  </div>
   </div>
 </ng-container>
 
