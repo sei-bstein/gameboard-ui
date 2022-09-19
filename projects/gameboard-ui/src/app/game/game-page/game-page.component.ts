@@ -25,6 +25,7 @@ export class GamePageComponent implements OnInit {
   faList = faListOl;
   faCaretDown = faCaretDown; 
   faCaretRight = faCaretRight;
+  minDate = new Date(1, 1, 1, 0, 0, 0, 0);
   constructor(
     router: Router,
     route: ActivatedRoute,
