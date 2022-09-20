@@ -7,7 +7,7 @@
       <input id="fileSelector" type="file" style="display:none;" multiple (change)="filesSelected($event)">
       <span class="btn btn-sm" [class]="browseButtonStyle">Browse</span>
     </label>
-    <small> or drag files here. {{maxCombinedSizeMB}}MB limit.</small>
+    <small> or drag files here. {{maxCombinedSizeMB}}MB limit. Acceptable file types: .png, .jpeg, .jpg, .gif, .webp, .svg, .txt</small>
   </div>
   <div class="d-flex overflow-auto my-auto">
     <fa-icon *ngIf="showIcon && !files.size" class="background-icon mx-auto align-middle" [icon]="faUpload" size="lg"></fa-icon> 

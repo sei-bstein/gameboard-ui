@@ -70,6 +70,25 @@ export class ConfigService {
     {...this.datedisplay_options, timeZoneName: 'short'}
   );
 
+  datedisplay_options_with_seconds: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  };
+
+  _shortdate_formatter_with_seconds = new Intl.DateTimeFormat(
+    'en-US',
+    this.datedisplay_options_with_seconds
+  );
+
+  _shorttz_formatter_with_seconds = new Intl.DateTimeFormat(
+    'en-US',
+    {...this.datedisplay_options_with_seconds, timeZoneName: 'short' }
+  );
+
   constructor(
     private http: HttpClient,
     private location: Location,
@@ -117,6 +136,10 @@ export class ConfigService {
 
   get shorttz_formatter(): any {
     return this._shorttz_formatter;
+  }
+
+  get shorttz_formatter_with_seconds(): any {
+    return this._shorttz_formatter_with_seconds;
   }
 
   get lastSeenSupport(): Date {
