@@ -267,3 +267,17 @@ export interface ObserveVM {
   fullWidth: boolean;
   minimized: boolean;
 }
+
+//#region GAMEBRAIN MODELS
+export interface GameStarterData {
+  gamespaceId: string;
+  headless_ip: string;
+  vms: VMStruct[];
+}
+
+export interface VMStruct {
+  id: string;
+  url: string;
+  name: string;
+}
+//#endregion

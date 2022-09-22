@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameState, NewChallenge, ObserveChallenge, SectionSubmission, VmConsole } from './board-models';
+import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameStarterData, GameState, NewChallenge, ObserveChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
 
 @Injectable({
@@ -14,12 +14,14 @@ import { TimeWindow } from './player-models';
 })
 export class BoardService {
   url = '';
+  gamebrainUrl = '';
 
   constructor(
     private http: HttpClient,
     private config: ConfigService
   ) {
     this.url = config.apphost + 'api';
+    this.gamebrainUrl = config.gamebrainhost + 'api';
   }
 
   public list(filter: any): Observable<ChallengeSummary[]> {
@@ -70,6 +72,16 @@ export class BoardService {
   public consoleActors(gid: string): Observable<ConsoleActor[]> {
     return this.http.get<ConsoleActor[]>(`${this.url}/challenge/consoleactors`, { params: {gid}});
   }
+
+  //#region GAMEBRAIN METHODS
+  public retrieveGameServerIP(teamId: string): Observable<string> {
+    return this.http.get<string>(`${this.gamebrainUrl}/admin/headless_client/${teamId}`);
+  }
+
+  public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
+    return this.http.get<GameStarterData>(`${this.gamebrainUrl}/admin/deploy/${gameId}/${teamId}`);
+  }
+  //#endregion
 
   private transform(b: BoardPlayer): BoardPlayer {
     b.game.mapUrl = b.game.background

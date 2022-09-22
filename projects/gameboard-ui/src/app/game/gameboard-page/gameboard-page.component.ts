@@ -2,11 +2,12 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { AfterViewInit, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowLeft, faBolt, faExclamationTriangle, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
 import { catchError, combineAll, debounceTime, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
+import { BoardPlayer, BoardSpec, Challenge, GameStarterData, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { ApiUser } from '../../api/user-models';
 import { ConfigService } from '../../utility/config.service';
@@ -32,6 +33,18 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   launching$ = new Subject<BoardSpec>();
   gameOver$ = new Subject<boolean>();
   specs$: Observable<BoardSpec>;
+  //#region GAMEBRAIN VARIABLES
+  // Game Link
+  unityGameLink!: string;
+  unityGameLinkSubject$ = new Subject<string>();
+  unityGameLink$: Observable<string>;
+  // Initial info structure
+  /*
+  unityGameInfo!: GameStarterData;
+  unityGameInfoSubject$ = new Subject<GameStarterData>();
+  unityGameInfo$: Observable<GameStarterData>;
+  */
+  //#endregion
   etd$!: Observable<number>;
   errors: any[] = [];
   faTv = faTv;
@@ -45,6 +58,10 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   hubstate$: Observable<HubState>;
   hubsub: Subscription;
 
+  // TODO: Retrieve/set the link to the Unity instance
+  unityLink = "";
+  unityClientLink: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityLink);
+
   constructor(
     route: ActivatedRoute,
     private router: Router,
@@ -52,7 +69,8 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     private renderer: Renderer2,
     private config: ConfigService,
     private hub: NotificationService,
-    usersvc: UserService
+    usersvc: UserService,
+    private sanitizer: DomSanitizer
   ) {
 
     this.user$ = usersvc.user$;
@@ -83,7 +101,9 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     ]).pipe(
         map(([b, i]) => api.setTimeWindow(b)),
         tap(b => this.ctx = b),
-        tap(b => {if (b.session.isAfter) {this.gameOver$.next(true); }})
+        tap(b => {if (b.session.isAfter) {this.gameOver$.next(true); }}),
+        // After context is established, if this is a Unity game and we don't have a link yet, try to get one
+        tap(b => b.game.mode == 'unity' && this.unityGameLink == null ? this.unityGameLinkSubject$.next(b.teamId) : '')
     );
 
     const launched$ = this.launching$.pipe(
@@ -115,6 +135,21 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       ),
       tap(s => this.selected = s)
     );
+    
+    //#region GAMEBRAIN ITEMS
+    this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
+      switchMap(s => api.retrieveGameServerIP(s).pipe(
+        // This will not get pushed if the server does not exist
+        catchError(err => {
+          this.errors.push(err);
+          return of(null as unknown as string)
+        })
+      )),
+      tap(link => this.unityGameLink = link),
+      // Set the link to the Unity game server here
+      tap(link => window.localStorage.setItem("gameServerLink", link))
+    );
+    //#endregion
 
     // main feed
     this.specs$ = scheduled(
@@ -168,7 +203,11 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   select(spec: BoardSpec): void {
-    if (!spec.disabled && !spec.locked) {
+    if (this.ctx.game.mode == 'unity') {
+      // retrieveGameServerIP
+      // retrieveGameInfo
+    }
+    else if (!spec.disabled && !spec.locked) {
       this.selecting$.next(spec);
     }
   }

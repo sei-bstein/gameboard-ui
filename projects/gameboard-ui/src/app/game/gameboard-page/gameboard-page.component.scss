@@ -39,3 +39,11 @@
 .countdown-red {
   color: rgb(255, 53, 53);
 }
+
+// Uses a 16 : 9 ratio, but can be changed here
+iframe {
+  aspect-ratio: 16 / 9;
+  height: 100%;
+  margin: auto;
+  display: block
+}

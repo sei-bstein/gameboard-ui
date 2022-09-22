@@ -110,6 +110,14 @@ export class ConfigService {
     return path;
   }
 
+  get gamebrainhost(): string {
+    let path = this.settings.gamebrainhost || this.basehref;
+    if (!path.endsWith('/')) {
+      path += '/'
+    }
+    return path;
+  }
+
   get mkshost(): string {
     let path = this.settings.mkshost || `${this.basehref}mks`;
     if (!path.endsWith('/')) {
@@ -224,6 +232,7 @@ export interface Settings {
   imghost?: string;
   tochost?: string;
   supporthost?: string;
+  gamebrainhost?: string;
   tocfile?: string;
   custom_background?: string;
   countdownStartSecondsAtMinute?: number;
