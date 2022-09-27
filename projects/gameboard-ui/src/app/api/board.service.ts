@@ -74,8 +74,12 @@ export class BoardService {
   }
 
   //#region GAMEBRAIN METHODS
-  public retrieveGameServerIP(teamId: string): Observable<string> {
+  /*public retrieveGameServerIP(teamId: string): Observable<string> {
     return this.http.get<string>(`${this.gamebrainUrl}/admin/headless_client/${teamId}`);
+  }*/
+
+  public retrieveGameServerIP(teamId: string): Observable<string> {
+    return this.http.get<string>(`${this.url}/game/headless/${teamId}`);
   }
 
   public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
