@@ -11,7 +11,8 @@ export const environment = {
     imghost: 'http://localhost:5002/img',
     tochost: 'http://localhost:5002/doc',
     supporthost: 'http://localhost:5002/supportfiles',
-    gamebrainhost: 'https://foundry.local/gamebrain',
+    gamebrainhost: 'https://launchpad.cisa.gov/test/gamebrain/api',
+    unityclienthost: 'https://launchpad.cisa.gov/test/cubespace',
     tocfile: 'toc.json',
     countdownStartSecondsAtMinute: 5,
     oidc: {

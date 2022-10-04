@@ -118,6 +118,14 @@ export class ConfigService {
     return path;
   }
 
+  get unityclienthost(): string {
+    let path = this.settings.unityclienthost || this.basehref;
+    if (!path.endsWith('/')) {
+      path += '/'
+    }
+    return path;
+  }
+
   get mkshost(): string {
     let path = this.settings.mkshost || `${this.basehref}mks`;
     if (!path.endsWith('/')) {
@@ -233,6 +241,7 @@ export interface Settings {
   tochost?: string;
   supporthost?: string;
   gamebrainhost?: string;
+  unityclienthost?: string;
   tocfile?: string;
   custom_background?: string;
   countdownStartSecondsAtMinute?: number;
