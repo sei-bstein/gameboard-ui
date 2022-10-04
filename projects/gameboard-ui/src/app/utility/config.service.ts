@@ -118,6 +118,14 @@ export class ConfigService {
     return path;
   }
 
+  get unityclienthost(): string {
+    let path = this.settings.unityclienthost || this.basehref;
+    if (!path.endsWith('/')) {
+      path += '/'
+    }
+    return path;
+  }
+
   get mkshost(): string {
     let path = this.settings.mkshost || `${this.basehref}mks`;
     if (!path.endsWith('/')) {
@@ -136,10 +144,6 @@ export class ConfigService {
 
   get supporthost(): string {
     return this.settings.supporthost || `${this.basehref}supportfiles`;
-  }
-
-  get unityclienthost(): string {
-    return this.settings.unityclienthost || `${this.basehref}unityclienthost`;
   }
 
   get shortdate_formatter(): any {
