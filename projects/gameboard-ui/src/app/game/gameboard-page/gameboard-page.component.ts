@@ -59,7 +59,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   hubsub: Subscription;
 
   // TODO: Retrieve/set the link to the Unity instance
-  unityLink = "";
+  unityLink = `${this.config.apphost}/cubespace/`;
   unityClientLink: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityLink);
 
   constructor(
