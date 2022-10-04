@@ -55,7 +55,7 @@
     <app-error-div [errors]="errors"></app-error-div>
     <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
     <div *ngIf="ctx.game.mode == 'unity'">
-      <ng-container *ngIf="unityGameLink$ | async as serverLink">
+      <ng-container *ngIf="unityGameLink$ | async as serverLink; else loadingUnity">
         <!-- TODO: put client link here for the link -->
         <iframe [src]="unityClientLink" title="Unity Game Window" frameborder="0" width="960" height="540"></iframe>
         <br>
@@ -172,6 +172,10 @@
   </div>
 
 </ng-container>
+
+<ng-template #loadingUnity>
+  <p>Connecting to {{ unityLink }}...</p>
+</ng-template>
 
 <ng-template #loading>
   <div class="text-center">
