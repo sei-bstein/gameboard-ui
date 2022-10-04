@@ -119,7 +119,8 @@ export class ConfigService {
   }
 
   get unityclienthost(): string {
-    let path = this.settings.unityclienthost || this.basehref;
+    let path = this.settings.unityclienthost;
+    if (path == null || path == '') path = this.basehref;
     if (!path.endsWith('/')) {
       path += '/'
     }
