@@ -138,7 +138,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     
     //#region GAMEBRAIN ITEMS
     this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
-      tap(link => window.localStorage.setItem("oidcLink", `oidc:user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`)),
+      tap(link => window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`)),
       switchMap(s => api.retrieveGameServerIP(s).pipe(
         // This will not get pushed if the server does not exist
         catchError(err => {
