@@ -103,7 +103,14 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
         tap(b => this.ctx = b),
         tap(b => {if (b.session.isAfter) {this.gameOver$.next(true); }}),
         // After context is established, if this is a Unity game and we don't have a link yet, try to get one
-        tap(b => b.game.mode == 'unity' && this.unityGameLink == null ? this.unityGameLinkSubject$.next(b.teamId) : '')
+        tap(b => {
+          if (b.game.mode == 'unity') {
+            window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`);
+            if (this.unityGameLink == null && window.localStorage.getItem("oidcLink") != null && window.localStorage.getItem(`oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`) != null) {
+              this.unityGameLinkSubject$.next(b.teamId);
+            }
+          }
+        })
     );
 
     const launched$ = this.launching$.pipe(
@@ -135,10 +142,9 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       ),
       tap(s => this.selected = s)
     );
-    
+
     //#region GAMEBRAIN ITEMS
     this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
-      tap(link => window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`)),
       switchMap(s => api.retrieveGameServerIP(s).pipe(
         // This will not get pushed if the server does not exist
         catchError(err => {
