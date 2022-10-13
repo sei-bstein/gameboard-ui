@@ -85,10 +85,12 @@ export class BoardService {
   public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
     return this.http.get<string>(`${this.url}/deployunityspace/${gameId}/${teamId}`).pipe(
       tap(s => console.log("RECEIVED: " + s)),
-      tap(s => console.log("string: " + s.toString())),
+      tap(s => console.log("toString: " + s.toString())),
       tap(s => console.log("LENGTH: " + s.length)),
+      tap(s => console.log("toString LENGTH: " + s.toString().length)),
       tap(s => console.log("NULL? " + (s == null))),
       tap(s => console.log("UNDEFINED? " + (s == undefined))),
+      tap(s => console.log("TYPE? " + (typeof s))),
       switchMap(async (s) => JSON.parse(s) as GameStarterData)
     );
   }

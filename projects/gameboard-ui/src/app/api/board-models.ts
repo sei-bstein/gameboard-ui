@@ -271,7 +271,7 @@ export interface ObserveVM {
 //#region GAMEBRAIN MODELS
 export interface GameStarterData {
   gamespaceId: string;
-  headless_ip: string;
+  headless_url: string;
   vms: VMStruct[];
   // vms: string[];
 }
