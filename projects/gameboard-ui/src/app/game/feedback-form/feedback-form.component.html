@@ -74,7 +74,7 @@
     </ng-container>
   </div>
 
-  <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="feedbackForm.submitted! || !feedbackForm?.questions?.length">
+  <app-confirm-button btnClass="btn btn-sm btn-secondary" (confirm)="submit()" [disabled]="feedbackForm.submitted! || !feedbackForm.questions.length">
     <fa-icon [icon]="faSubmit"></fa-icon>
     <span>{{feedbackForm.submitted ? "Submitted" : "Submit"}}</span>
   </app-confirm-button>

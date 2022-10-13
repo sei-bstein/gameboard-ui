@@ -22,7 +22,7 @@ export class ChallengeBrowserComponent implements OnInit {
   archived$: Observable<ChallengeSummary[]>;
   archiveMap = new Map<string, ChallengeSummary>(); // alternative to calling `/audit` endpoint
   search: Search = { term: '', take: 100 };
-  selected!: ChallengeSummary;
+  selected?: ChallengeSummary;
   // audited$: Observable<any>;
   // auditing$ = new Subject<ChallengeSummary>();
   selectedAudit!: any;
