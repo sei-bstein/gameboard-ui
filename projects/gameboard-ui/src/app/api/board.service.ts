@@ -4,7 +4,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
 import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameStarterData, GameState, NewChallenge, ObserveChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
@@ -83,7 +83,9 @@ export class BoardService {
   }
 
   public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
-    return this.http.get<GameStarterData>(`${this.gamebrainUrl}/admin/deploy/${gameId}/${teamId}`);
+    return this.http.get<string>(`${this.url}/deployunityspace/${gameId}/${teamId}`).pipe(
+      switchMap(async (s) => JSON.parse(s) as GameStarterData)
+    );
   }
   //#endregion
 

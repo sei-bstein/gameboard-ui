@@ -6,7 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowLeft, faBolt, faExclamationTriangle, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
-import { catchError, combineAll, debounceTime, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { catchError, combineAll, concatMap, debounceTime, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { BoardPlayer, BoardSpec, Challenge, GameStarterData, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { ApiUser } from '../../api/user-models';
@@ -36,8 +36,9 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   //#region GAMEBRAIN VARIABLES
   // Game Link
   unityGameLink!: string;
-  unityGameLinkSubject$ = new Subject<string>();
-  unityGameLink$: Observable<string>;
+  unityGameLinkSubject$ = new Subject<string[]>();
+  unityGameLink$: Observable<GameStarterData>;
+  origS: string[] = [];
   // Initial info structure
   /*
   unityGameInfo!: GameStarterData;
@@ -107,7 +108,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
           if (b.game.mode == 'unity') {
             window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`);
             if (this.unityGameLink == null && window.localStorage.getItem("oidcLink") != null && window.localStorage.getItem(`oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`) != null) {
-              this.unityGameLinkSubject$.next(b.teamId);
+              this.unityGameLinkSubject$.next([b.teamId, b.gameId]);
             }
           }
         })
@@ -145,7 +146,9 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
 
     //#region GAMEBRAIN ITEMS
     this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
-      switchMap(s => api.retrieveGameServerIP(s).pipe(
+      tap(s => this.origS = s),
+      switchMap(s => api.retrieveGameServerIP(s[0]).pipe(
+        tap(st => console.log("st = " + st)),
         // This will not get pushed if the server does not exist
         catchError(err => {
           this.errors.push(err);
@@ -154,8 +157,37 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       )),
       tap(link => this.unityGameLink = link),
       // Set the link to the Unity game server here
-      tap(link => window.localStorage.setItem("gameServerLink", link))
+      tap(link => window.localStorage.setItem("gameServerLink", link)),
+      concatMap(s => api.retrieveGameInfo(this.origS[1], this.origS[0]).pipe(
+        tap(s => console.log("info = " + s)),
+        tap(s => console.log("origS = " + this.origS[0] + ", " + this.origS[1])),
+        catchError(err => {
+          this.errors.push(err);
+          return of(null as unknown as GameStarterData)
+        })
+      )),
+      tap(data => {
+        if (data == null) {
+          console.log("data is null; should not happen.");
+        }
+        else {
+          for (let i = 0; i < data.vms.length; i++) {
+            window.localStorage.setItem("VM" + i, data.vms[i]);
+          }
+        }
+      })
     );
+
+    /*this.unityGameLinkSubject$.pipe(
+      switchMap(s => api.retrieveGameInfo(s[1], s[0]).pipe(
+        tap(st2 => console.log("st2 = " + st2)),
+        catchError(err => {
+          this.errors.push(err);
+          return of(null as unknown as string)
+        })
+      )),
+      tap(st => console.log("ye: " + st))
+    );*/
     //#endregion
 
     // main feed
