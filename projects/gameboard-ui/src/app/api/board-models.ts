@@ -272,8 +272,8 @@ export interface ObserveVM {
 export interface GameStarterData {
   gamespaceId: string;
   headless_ip: string;
-  // vms: VMStruct[];
-  vms: string[];
+  vms: VMStruct[];
+  // vms: string[];
 }
 
 export interface VMStruct {
