@@ -277,8 +277,8 @@ export interface GameStarterData {
 }
 
 export interface VMStruct {
-  id: string;
-  url: string;
-  name: string;
+  Id: string;
+  Url: string;
+  Name: string;
 }
 //#endregion
