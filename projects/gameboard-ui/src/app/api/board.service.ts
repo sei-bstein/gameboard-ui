@@ -84,6 +84,7 @@ export class BoardService {
 
   public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
     return this.http.get<string>(`${this.url}/deployunityspace/${gameId}/${teamId}`).pipe(
+      tap(s => console.log("RECEIVED: " + s)),
       switchMap(async (s) => JSON.parse(s) as GameStarterData)
     );
   }
