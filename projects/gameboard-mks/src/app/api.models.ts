@@ -2,12 +2,12 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 export interface ConsoleRequest {
-  name?: string;
-  sessionId?: string;
-  action?: string;
-  fullbleed?: boolean;
-  observer?: boolean;
-  userId?: string;
+  name?: string;          // The name of the VM (v=abc)
+  sessionId?: string;     // The hexadecimal string of the Gamespace ID (s=7cd...)
+  action?: string;        // 
+  fullbleed?: boolean;    // Whether this window covers the whole page (f=0 or f=1)
+  observer?: boolean;     // Whether this challenge is being observed (o=0 or o=1)
+  userId?: string;        // The hexadecimal ID of the user trying to access the VM (u=e3c...)
 }
 
 export interface ConsolePresence {
