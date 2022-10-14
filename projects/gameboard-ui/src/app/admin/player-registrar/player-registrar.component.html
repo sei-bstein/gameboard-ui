@@ -150,7 +150,13 @@
         <fa-icon [icon]="faList"></fa-icon>
         <span>View</span>
       </button>
-      <app-confirm-button btnClass="btn btn-outline-danger btn-sm" (confirm)="delete(player)">
+      <ng-container *ngIf="ctx.game.mode == 'unity'">
+        <app-confirm-button btnClass="btn btn-outline-warning btn-sm mx-1" (confirm)="undeploy(player)">
+          <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+          <span>Undeploy</span>
+        </app-confirm-button>
+      </ng-container>
+      <app-confirm-button btnClass="btn btn-outline-danger btn-sm mx-1" (confirm)="delete(player)">
         <fa-icon [icon]="faTrash"></fa-icon>
         <span>Delete</span>
       </app-confirm-button>

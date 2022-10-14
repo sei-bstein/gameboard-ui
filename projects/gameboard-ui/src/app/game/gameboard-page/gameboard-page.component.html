@@ -53,14 +53,21 @@
 
   <div class="container-fluid">
     <app-error-div [errors]="errors"></app-error-div>
-    <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
-    <div *ngIf="ctx.game.mode == 'unity'">
-      <ng-container *ngIf="unityGameLink$ | async as serverLink; else loadingUnity">
-        <!-- TODO: put client link here for the link -->
-        <iframe [src]="unityClientLink" title="Unity Game Window" frameborder="0" width="960" height="540"></iframe>
-        <br>
-      </ng-container>
-    </div>
+    <ng-container *ngIf="etd$ | async as etd">
+      <div *ngIf="etd > 0">
+        <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
+        <div *ngIf="ctx.game.mode == 'unity'">
+          <ng-container *ngIf="unityGameLink$ | async as serverLink; else loadingUnity">
+            <!-- TODO: put client link here for the link -->
+            <iframe [src]="unityClientLink" title="Unity Game Window" frameborder="0" width="960" height="540"></iframe>
+            <br>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="etd <= 0">
+        <p>Time's up! The game has ended.</p>
+      </div>
+    </ng-container>
 
     <!-- If the game mode is not Unity, then it's a normal challenge space -->
     <div *ngIf="ctx.game.mode != 'unity'">

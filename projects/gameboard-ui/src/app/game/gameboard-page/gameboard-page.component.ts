@@ -39,13 +39,6 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   unityGameLinkSubject$ = new Subject<string[]>();
   unityGameLink$: Observable<GameStarterData>;
   origS: string[] = [];
-  // Initial info structure
-  /*
-  unityGameInfo!: GameStarterData;
-  unityGameInfoSubject$ = new Subject<GameStarterData>();
-  unityGameInfo$: Observable<GameStarterData>;
-  */
-  //#endregion
   etd$!: Observable<number>;
   errors: any[] = [];
   faTv = faTv;
@@ -58,6 +51,10 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   user$: Observable<ApiUser | null>;
   hubstate$: Observable<HubState>;
   hubsub: Subscription;
+
+  // Stored team and game info, relevant only to Unity
+  teamId: string = "";
+  gameId: string = "";
 
   // TODO: Retrieve/set the link to the Unity instance
   unityLink = this.config.unityclienthost;
@@ -102,12 +99,19 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     ]).pipe(
         map(([b, i]) => api.setTimeWindow(b)),
         tap(b => this.ctx = b),
-        tap(b => {if (b.session.isAfter) {this.gameOver$.next(true); }}),
+        tap(b => {if (b.session.isAfter) {
+          api.undeployGame(this.teamId).pipe(
+            tap(res => console.log("Undeploy result: " + res))
+          ).subscribe();
+          this.gameOver$.next(true);
+        }}),
         // After context is established, if this is a Unity game and we don't have a link yet, try to get one
         tap(b => {
           if (b.game.mode == 'unity') {
             window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`);
             if (this.unityGameLink == null && window.localStorage.getItem("oidcLink") != null && window.localStorage.getItem(`oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`) != null) {
+              this.teamId = b.teamId;
+              this.gameId = b.gameId;
               this.unityGameLinkSubject$.next([b.teamId, b.gameId]);
             }
           }
@@ -148,7 +152,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
       tap(s => this.origS = s),
       switchMap(s => api.retrieveGameServerIP(s[0]).pipe(
-        tap(st => console.log("st = " + st)),
+        tap(st => console.log("link = " + st)),
         // This will not get pushed if the server does not exist
         catchError(err => {
           this.errors.push(err);

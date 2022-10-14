@@ -3,9 +3,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare, faClipboard, faCertificate, faStar, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faList, faSearch, faFilter, faCheck, faArrowLeft, faLongArrowAltDown, faCheckSquare, faSquare, faClipboard, faCertificate, faStar, faSyncAlt, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, BehaviorSubject, combineLatest, iif, interval, Observable, of, scheduled, timer } from 'rxjs';
 import { debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
+import { BoardService } from '../../api/board.service';
 import { Game } from '../../api/game-models';
 import { GameService } from '../../api/game.service';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
@@ -37,6 +38,7 @@ export class PlayerRegistrarComponent implements OnInit {
 
   faTrash = faTrash;
   faList = faList;
+  faTriangleExclamation = faTriangleExclamation;
   faSearch = faSearch;
   faFilter = faFilter;
   faCheck = faCheck;
@@ -52,6 +54,7 @@ export class PlayerRegistrarComponent implements OnInit {
     route: ActivatedRoute,
     private gameapi: GameService,
     private api: PlayerService,
+    private boardApi: BoardService,
     private clipboard: ClipboardService
   ) {
 
@@ -162,6 +165,12 @@ export class PlayerRegistrarComponent implements OnInit {
       }
     });
 
+  }
+
+  undeploy(model: Player): void {
+    this.boardApi.undeployGame(model.teamId).pipe(
+      tap(res => console.log("Undeploy result: " + res))
+    ).subscribe();
   }
 
   update(model: Player): void {
