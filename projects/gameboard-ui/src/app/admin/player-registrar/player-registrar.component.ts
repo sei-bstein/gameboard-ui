@@ -168,7 +168,7 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   undeploy(model: Player): void {
-    this.boardApi.undeployGame(model.teamId).pipe(
+    this.boardApi.undeployGame(model.gameId, model.teamId).pipe(
       tap(res => console.log("Undeploy result: " + res))
     ).subscribe();
   }
