@@ -175,9 +175,12 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
           console.log("data is null; should not happen.");
         }
         else {
-          for (let i = 0; i < data.vms.length; i++) {
-            window.localStorage.setItem("VM" + i, data.vms[i].Url);
+          if (data.vms != undefined) {
+            for (let i = 0; i < data.vms.length; i++) {
+              window.localStorage.setItem("VM" + i, data.vms[i].Url);
+            }
           }
+          else console.log("VM links are undefined");
         }
       })
     );
