@@ -100,7 +100,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
         map(([b, i]) => api.setTimeWindow(b)),
         tap(b => this.ctx = b),
         tap(b => {if (b.session.isAfter) {
-          api.undeployGame(this.teamId).pipe(
+          api.undeployGame(this.gameId, this.teamId).pipe(
             tap(res => console.log("Undeploy result: " + res))
           ).subscribe();
           this.gameOver$.next(true);
@@ -112,7 +112,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
             if (this.unityGameLink == null && window.localStorage.getItem("oidcLink") != null && window.localStorage.getItem(`oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`) != null) {
               this.teamId = b.teamId;
               this.gameId = b.gameId;
-              this.unityGameLinkSubject$.next([b.teamId, b.gameId]);
+              this.unityGameLinkSubject$.next([b.gameId, b.teamId]);
             }
           }
         })
@@ -151,7 +151,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     //#region GAMEBRAIN ITEMS
     this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
       tap(s => this.origS = s),
-      switchMap(s => api.retrieveGameServerIP(s[0]).pipe(
+      switchMap(s => api.retrieveGameServerIP(s[0], s[1]).pipe(
         tap(st => console.log("link = " + st)),
         // This will not get pushed if the server does not exist
         catchError(err => {
@@ -162,9 +162,8 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       tap(link => this.unityGameLink = link),
       // Set the link to the Unity game server here
       tap(link => window.localStorage.setItem("gameServerLink", link)),
-      concatMap(s => api.retrieveGameInfo(this.origS[1], this.origS[0]).pipe(
+      concatMap(s => api.retrieveGameInfo(this.origS[0], this.origS[1]).pipe(
         tap(s => console.log("info = " + s)),
-        tap(s => console.log("origS = " + this.origS[0] + ", " + this.origS[1])),
         catchError(err => {
           this.errors.push(err);
           return of(null as unknown as GameStarterData)

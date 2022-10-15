@@ -80,7 +80,7 @@ export class PlayerSessionComponent implements OnInit {
     this.api.delete(p.id).subscribe(() => {
       if (this.ctx.game.mode == 'unity') {
         console.log("kill");
-        this.boardApi.undeployGame(p.teamId).pipe(
+        this.boardApi.undeployGame(p.gameId, p.teamId).pipe(
           tap(res => console.log("Undeploy Result: " + res)),
           tap(() => window.location.reload())
         ).subscribe()

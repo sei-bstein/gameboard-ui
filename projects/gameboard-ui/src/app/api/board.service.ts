@@ -74,12 +74,8 @@ export class BoardService {
   }
 
   //#region GAMEBRAIN METHODS
-  /*public retrieveGameServerIP(teamId: string): Observable<string> {
-    return this.http.get<string>(`${this.gamebrainUrl}/admin/headless_client/${teamId}`);
-  }*/
-
-  public retrieveGameServerIP(teamId: string): Observable<string> {
-    return this.http.get<string>(`${this.url}/game/headless/${teamId}`);
+  public retrieveGameServerIP(gameId: string, teamId: string): Observable<string> {
+    return this.http.get<string>(`${this.url}/game/headless/${teamId}`, { params: {gameId}});
   }
 
   public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
@@ -88,13 +84,16 @@ export class BoardService {
     );
   }
 
-  public undeployGame(teamId: string): Observable<any> {
-    return this.http.get<any>(`${this.url}/undeployunityspace/${teamId}`);
+  public undeployGame(gameId: string, teamId: string): Observable<any> {
+    return this.http.get<any>(`${this.url}/undeployunityspace/${teamId}`, { params: {gameId}});
   }
 
-  public unassignGame(teamId: string): Observable<any> {
+  // Unused
+  /*
+  public unassignGame(gameId: string, teamId: string): Observable<any> {
     return this.http.get<any>(`${this.url}/unassignunityspace/${teamId}`);
   }
+  */
   //#endregion
 
   private transform(b: BoardPlayer): BoardPlayer {
