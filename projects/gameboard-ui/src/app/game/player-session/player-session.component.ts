@@ -77,17 +77,18 @@ export class PlayerSessionComponent implements OnInit {
   }
 
   reset(p: Player): void {
-    this.api.delete(p.id).subscribe(() => {
-      if (this.ctx.game.mode == 'unity') {
-        console.log("kill");
-        this.boardApi.undeployGame(p.gameId, p.teamId).pipe(
-          tap(res => console.log("Undeploy Result: " + res)),
-          tap(() => window.location.reload())
-        ).subscribe()
-      }
-      else {
-        window.location.reload()
-      }
-    });
+    if (this.ctx.game.mode == 'unity') {
+      this.boardApi.undeployGame(p.gameId, p.teamId).pipe(
+        tap(res => console.log("Undeploy Result: " + res)),
+        tap(() => this.api.delete(p.id).subscribe(() => {
+          window.location.reload();
+        }))
+      ).subscribe();
+    }
+    else {
+      this.api.delete(p.id).subscribe(() => {
+        window.location.reload();
+      });
+    }
   }
 }
