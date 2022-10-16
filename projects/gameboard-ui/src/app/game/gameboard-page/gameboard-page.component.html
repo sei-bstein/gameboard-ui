@@ -56,8 +56,7 @@
     <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
     <div *ngIf="ctx.game.mode == 'unity'">
       <!-- unityGameLink$ | async as serverLink -->
-      <ng-container *ngIf="true; else loadingUnity">
-        <!-- TODO: put client link here for the link -->
+      <ng-container *ngIf="unityGameLink$ | async as serverLink; else loadingUnity">
         <iframe [src]="unityClientLink" id="unity-game-window" title="Unity Game Window" frameborder="0" width="960" height="638" scrolling="no"></iframe>
         <br>
       </ng-container>
