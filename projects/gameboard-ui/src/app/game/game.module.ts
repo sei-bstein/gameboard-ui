@@ -26,6 +26,7 @@ import { FeedbackFormComponent } from './feedback-form/feedback-form.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { CertificateComponent } from './certificate/certificate.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { UnityModule } from '../unity/unity.module';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
     MarkdownModule,
     ButtonsModule,
     ModalModule,
-    BsDropdownModule
+    BsDropdownModule,
+    UnityModule,
   ]
 })
 export class GameModule { }

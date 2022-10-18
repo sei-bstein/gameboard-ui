@@ -59,7 +59,7 @@ export class PlayerEnrollComponent implements OnInit {
     // Delay needed to prevent an enroll refresh error; 2 seconds should be enough
     this.ctxDelayed$ = this.ctx$.pipe(
       delay(this.delayMs)
-    )
+    );
   }
 
 
