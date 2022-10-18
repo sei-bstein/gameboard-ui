@@ -2,9 +2,9 @@
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
 import { Component, OnInit } from '@angular/core';
-import { faSync, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { asyncScheduler, combineLatest, Observable, of, scheduled, Subject, throwError } from 'rxjs';
-import { catchError, debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, mergeAll, switchMap, tap } from 'rxjs/operators';
 import { Sponsor } from '../../../api/sponsor-models';
 import { SponsorService } from '../../../api/sponsor.service';
 import { ApiUser } from '../../../api/user-models';
@@ -25,6 +25,7 @@ export class ProfileEditorComponent implements OnInit {
 
   disallowedName: string | null = null;
   disallowedReason: string | null = null;
+  userSponsor: string | null = null;
 
   constructor(
     api: ApiUserService,
@@ -34,7 +35,7 @@ export class ProfileEditorComponent implements OnInit {
 
     const currentUser$ = scheduled([
       userSvc.user$.pipe(
-        filter(u => !!u)
+        filter(u => !!u),
       ),
       this.updating$.pipe(
         debounceTime(500),
@@ -45,7 +46,7 @@ export class ProfileEditorComponent implements OnInit {
           // Otherwise, if there is a disallowed reason as well, mark it as that reason
           else if (this.disallowedReason) u.nameStatus = this.disallowedReason;
         }),
-        switchMap(u => api.update(u, this.disallowedName))
+        switchMap(u => api.update(u, this.disallowedName)),
         // todo handle errors
       )
     ], asyncScheduler).pipe(
@@ -57,7 +58,9 @@ export class ProfileEditorComponent implements OnInit {
       sponsorSvc.list('')
     ]).pipe(
       map(([user, sponsors]) => ({user, sponsors})),
-      tap((us) => {
+      tap(us => {
+        this.userSponsor = us.user.sponsor;
+        
         if (us.user.nameStatus && us.user.nameStatus != 'pending') {
           if (this.disallowedName == null) {
             this.disallowedName = us.user.name;
@@ -72,7 +75,9 @@ export class ProfileEditorComponent implements OnInit {
   }
 
   setSponsor(u: ApiUser, s: Sponsor): void {
-    this.updating$.next({...u, sponsor: s.logo});
+    const updatedUser = {...u, sponsor: s.logo};
+    this.updating$.next(updatedUser);
+    this.userSvc.user$.next(updatedUser);
   }
 
   refresh(u: ApiUser): void {

@@ -78,7 +78,7 @@
     <br>
 
     <ng-container *ngFor="let s of ctx.sponsors">
-        <div class="card" [class.active]="ctx.user.sponsor===s.logo" (click)="setSponsor(ctx.user, s)">
+        <div class="card" [class.active]="userSponsor===s.logo" (click)="setSponsor(ctx.user, s)">
             <div class="card-body p-1">
                 <div class="card-title">{{s.name || s.id}}</div>
             </div>
