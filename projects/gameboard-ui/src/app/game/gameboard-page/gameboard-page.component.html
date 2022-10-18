@@ -1,8 +1,7 @@
 <!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
 <!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
 
-<ng-container *ngIf="ctx$ | async as ctx; else loading">
-
+<ng-container *ngIf="ctx as ctx; else loading">
   <div class="jumbotron d-flex align-items-center">
     <a [routerLink]="['../../', ctx.game.id]">
       <img [src]="ctx.game.cardUrl" class="img-fluid" alt="{{ctx.game.name}} logo">
@@ -53,13 +52,10 @@
 
   <div class="container-fluid">
     <app-error-div [errors]="errors"></app-error-div>
+
     <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
     <div *ngIf="ctx.game.mode == 'unity'">
-      <!-- unityGameLink$ | async as serverLink -->
-      <ng-container *ngIf="unityGameLink$ | async as serverLink; else loadingUnity">
-        <iframe [src]="unityClientLink" id="unity-game-window" title="Unity Game Window" frameborder="0" width="960" height="638" scrolling="no"></iframe>
-        <br>
-      </ng-container>
+      <app-unity-board [gameContext]="unityBoardContext"></app-unity-board>
     </div>
 
     <!-- If the game mode is not Unity, then it's a normal challenge space -->
@@ -117,7 +113,7 @@
 
             <markdown [data]="spec.instance!.state.markdown ||''"></markdown>
 
-            <markdown [data]="spec.instance!.state.challenge?.text || ''"></markdown>
+            <markdown [data]="spec.instance!.state.challenge.text || ''"></markdown>
 
             <ng-container *ngIf="!!spec.instance!.state && spec.instance!.state.isActive">
               <h3>Gamespace Resources</h3>
@@ -142,7 +138,6 @@
 
             <h3 *ngIf="spec.instance!.state.challenge?.questions?.length">Challenge Questions</h3>
             <app-gamespace-quiz [spec]="spec!" [session]="ctx.session" (graded)="graded()"></app-gamespace-quiz>
-
 
             <div *ngIf="spec.instance?.id" class="text-right m-4 ">
               <div class="mb-1">
@@ -172,10 +167,6 @@
   </div>
 
 </ng-container>
-
-<ng-template #loadingUnity>
-  <p>Connecting to {{ unityLink }}...</p>
-</ng-template>
 
 <ng-template #loading>
   <div class="text-center">

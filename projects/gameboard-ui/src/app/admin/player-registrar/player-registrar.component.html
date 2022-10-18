@@ -137,7 +137,7 @@
       <span>Disapprove</span>
     </button>
     <div class="spacer"></div>
-    <div [class.text-success]="player.session?.isDuring">
+    <div [class.text-success]="player.session.isDuring">
       {{player.rank}} |
       {{player.score}} |
       {{player.time | clock}} |

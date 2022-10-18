@@ -1,15 +1,15 @@
 // Copyright 2021 Carnegie Mellon University. All Rights Reserved.
 // Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.
 
-import { AfterViewInit, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowLeft, faBolt, faExclamationTriangle, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
-import { asyncScheduler, combineLatest, interval, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
-import { catchError, combineAll, concatMap, debounceTime, filter, map, mergeAll, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { BoardPlayer, BoardSpec, Challenge, GameStarterData, NewChallenge, VmState } from '../../api/board-models';
+import { asyncScheduler, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
+import { catchError, debounceTime, filter, map, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { ApiUser } from '../../api/user-models';
+import { UnityBoardContext } from '../../unity/unity-models';
 import { ConfigService } from '../../utility/config.service';
 import { HubState, NotificationService } from '../../utility/notification.service';
 import { UserService } from '../../utility/user.service';
@@ -19,26 +19,20 @@ import { UserService } from '../../utility/user.service';
   templateUrl: './gameboard-page.component.html',
   styleUrls: ['./gameboard-page.component.scss']
 })
-export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GameboardPageComponent implements OnDestroy {
   // @ViewChild('mapbox') mapboxRef!: ElementRef;
   // @ViewChild('callout') calloutRef!: ElementRef;
   // mapbox!: HTMLDivElement;
   // callout!: HTMLDivElement;
   refresh$ = new Subject<string>();
-  ctx$: Observable<BoardPlayer>;
   ctx!: BoardPlayer;
   hoveredItem: BoardSpec | null = null;
   selected!: BoardSpec;
   selecting$ = new Subject<BoardSpec>();
   launching$ = new Subject<BoardSpec>();
-  gameOver$ = new Subject<boolean>();
   specs$: Observable<BoardSpec>;
+
   //#region GAMEBRAIN VARIABLES
-  // Game Link
-  unityGameLink!: string;
-  unityGameLinkSubject$ = new Subject<string[]>();
-  unityGameLink$: Observable<GameStarterData>;
-  origS: string[] = [];
   etd$!: Observable<number>;
   errors: any[] = [];
   faTv = faTv;
@@ -51,14 +45,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   user$: Observable<ApiUser | null>;
   hubstate$: Observable<HubState>;
   hubsub: Subscription;
-
-  // Stored team and game info, relevant only to Unity
-  teamId: string = "";
-  gameId: string = "";
-
-  // TODO: Retrieve/set the link to the Unity instance
-  unityLink = this.config.unityclienthost;
-  unityClientLink: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityLink);
+  unityBoardContext!: UnityBoardContext;
 
   constructor(
     route: ActivatedRoute,
@@ -67,14 +54,11 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     private renderer: Renderer2,
     private config: ConfigService,
     private hub: NotificationService,
-    usersvc: UserService,
-    private sanitizer: DomSanitizer
+    usersvc: UserService
   ) {
 
     this.user$ = usersvc.user$;
-
     this.hubstate$ = hub.state$;
-
     this.hubsub = hub.challengeEvents.subscribe(ev => this.syncOne(ev.model as Challenge));
 
     const fetch$ = merge(
@@ -86,40 +70,21 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       switchMap(id => api.load(id).pipe(
         catchError(err => of({} as BoardPlayer))
       )),
+      tap(b => this.ctx = b),
       tap(b => this.startHub(b)),
+      tap(b => {
+        console.log("we have unity stuff");
+        this.unityBoardContext = {
+          gameId: b.gameId,
+          teamId: b.teamId,
+          sessionExpirationTime: b.sessionEnd
+        }
+      }),
       tap(b => this.reselect())
-    );
-
-    // pull data
-    this.ctx$ = combineLatest([
-      fetch$,
-      interval(1000).pipe(
-        takeUntil(this.gameOver$)
-      )
-    ]).pipe(
-        map(([b, i]) => api.setTimeWindow(b)),
-        tap(b => this.ctx = b),
-        tap(b => {if (b.session.isAfter) {
-          api.undeployGame(this.gameId, this.teamId).pipe(
-            tap(res => console.log("Undeploy result: " + res))
-          ).subscribe();
-          this.gameOver$.next(true);
-        }}),
-        // After context is established, if this is a Unity game and we don't have a link yet, try to get one
-        tap(b => {
-          if (b.game.mode == 'unity') {
-            window.localStorage.setItem("oidcLink", `oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`);
-            if (this.unityGameLink == null && window.localStorage.getItem("oidcLink") != null && window.localStorage.getItem(`oidc.user:${config.settings.oidc.authority}:${config.settings.oidc.client_id}`) != null) {
-              this.teamId = b.teamId;
-              this.gameId = b.gameId;
-              this.unityGameLinkSubject$.next([b.gameId, b.teamId]);
-            }
-          }
-        })
-    );
+    ).subscribe();
 
     const launched$ = this.launching$.pipe(
-      switchMap(s => api.launch({playerId: this.ctx.id, specId: s.id, variant: this.variant})),
+      switchMap(s => api.launch({ playerId: this.ctx.id, specId: s.id, variant: this.variant })),
       catchError(err => {
         this.errors.push(err);
         return of(null as unknown as Challenge)
@@ -135,74 +100,26 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
         ? of(s)
         : (!!s.instance
           ? api.retrieve(s.instance.id)
-          : api.preview({playerId: this.ctx.id, specId: s.id} as NewChallenge)
-          ).pipe(
-            catchError(err => {
-              this.errors.push(err);
-              return of(null as unknown as Challenge)
-            }),
-            filter(c => !!c),
-            map(c => this.syncOne({...c, specId: s.id }))
-          )
+          : api.preview({ playerId: this.ctx.id, specId: s.id } as NewChallenge)
+        ).pipe(
+          catchError(err => {
+            this.errors.push(err);
+            return of(null as unknown as Challenge)
+          }),
+          filter(c => !!c),
+          map(c => this.syncOne({ ...c, specId: s.id }))
+        )
       ),
       tap(s => this.selected = s)
     );
 
-    //#region GAMEBRAIN ITEMS
-    this.unityGameLink$ = this.unityGameLinkSubject$.pipe(
-      tap(s => this.origS = s),
-      switchMap(s => api.retrieveGameServerIP(s[0], s[1]).pipe(
-        tap(st => console.log("link = " + st)),
-        // This will not get pushed if the server does not exist
-        catchError(err => {
-          this.errors.push(err);
-          return of(null as unknown as string)
-        })
-      )),
-      tap(link => this.unityGameLink = link),
-      // Set the link to the Unity game server here
-      tap(link => window.localStorage.setItem("gameServerLink", link)),
-      concatMap(s => api.retrieveGameInfo(this.origS[0], this.origS[1]).pipe(
-        tap(s => console.log("info = " + s)),
-        catchError(err => {
-          this.errors.push(err);
-          return of(null as unknown as GameStarterData)
-        })
-      )),
-      tap(data => {
-        if (data == null) {
-          console.log("data is null; should not happen.");
-        }
-        else {
-          if (data.vms != undefined) {
-            for (let i = 0; i < data.vms.length; i++) {
-              window.localStorage.setItem("VM" + i, data.vms[i].Url);
-            }
-          }
-          else console.log("VM links are undefined");
-        }
-      })
-    );
-
-    /*this.unityGameLinkSubject$.pipe(
-      switchMap(s => api.retrieveGameInfo(s[1], s[0]).pipe(
-        tap(st2 => console.log("st2 = " + st2)),
-        catchError(err => {
-          this.errors.push(err);
-          return of(null as unknown as string)
-        })
-      )),
-      tap(st => console.log("ye: " + st))
-    );*/
-    //#endregion
-
     // main feed
     this.specs$ = scheduled(
-      [ selected$, launched$],
+      [selected$, launched$],
       asyncScheduler).pipe(
-      mergeAll(),
-      // tap(a => console.log(a))
-    );
+        mergeAll(),
+        // tap(a => console.log(a))
+      );
 
   }
 
@@ -212,17 +129,10 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       this.router.navigateByUrl('/');
     } else {
       this.ctx = b;
+      
     }
-
   }
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    // this.mapbox = this.mapboxRef.nativeElement as HTMLDivElement;
-    // this.callout = this.calloutRef.nativeElement as HTMLDivElement;
-  }
-
+  
   ngOnDestroy(): void {
     if (!this.hubsub.closed) {
       this.hubsub.unsubscribe();
@@ -234,6 +144,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
       this.hub.init(b.id);
     }
   }
+
   syncOne = (c: Challenge): BoardSpec => {
     this.deploying = false;
     const s = this.ctx.game.specs.find(i => i.id === c.specId);
@@ -248,11 +159,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   select(spec: BoardSpec): void {
-    if (this.ctx.game.mode == 'unity') {
-      // retrieveGameServerIP
-      // retrieveGameInfo
-    }
-    else if (!spec.disabled && !spec.locked) {
+    if (!spec.disabled && !spec.locked) {
       this.selecting$.next(spec);
     }
   }
@@ -308,55 +215,55 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     this.hoveredItem = spec;
     spec.c = 'purple';
 
-      // const middle = this.mapbox.clientWidth / 2;
-      // const centerr = spec.r * this.mapbox.clientWidth;
-      // const centerx = spec.x * this.mapbox.clientWidth + centerr;
-      // const centery = spec.y * this.mapbox.clientHeight + centerr;
-      // const deltaX = middle - centerx;
-      // const deltaY = middle - centery;
-      // const vectorX = deltaX / Math.abs(deltaX);
-      // const vectorY = deltaY / Math.abs(deltaY);
-      // let left=0, top=0, right=0, bottom=0;
-      // if (vectorX > 0) {
-      //   left = centerx + centerr;
-      //   if (vectorY > 0) {
-      //     top = centery + centerr;
-      //   } else {
-      //     bottom = middle*2 - centery + (2* centerr);
-      //   }
-      // } else {
-      //   right = middle*2 - centerx + (2*centerr);
-      //   if (vectorY > 0) {
-      //     top = centery + centerr;
-      //   } else {
-      //     bottom = middle*2 - centery + (2* centerr);
-      //   }
-      // }
+    // const middle = this.mapbox.clientWidth / 2;
+    // const centerr = spec.r * this.mapbox.clientWidth;
+    // const centerx = spec.x * this.mapbox.clientWidth + centerr;
+    // const centery = spec.y * this.mapbox.clientHeight + centerr;
+    // const deltaX = middle - centerx;
+    // const deltaY = middle - centery;
+    // const vectorX = deltaX / Math.abs(deltaX);
+    // const vectorY = deltaY / Math.abs(deltaY);
+    // let left=0, top=0, right=0, bottom=0;
+    // if (vectorX > 0) {
+    //   left = centerx + centerr;
+    //   if (vectorY > 0) {
+    //     top = centery + centerr;
+    //   } else {
+    //     bottom = middle*2 - centery + (2* centerr);
+    //   }
+    // } else {
+    //   right = middle*2 - centerx + (2*centerr);
+    //   if (vectorY > 0) {
+    //     top = centery + centerr;
+    //   } else {
+    //     bottom = middle*2 - centery + (2* centerr);
+    //   }
+    // }
 
-      // // console.log(`delta: ${deltaX}x${deltaY} r: ${centerr}`);
+    // // console.log(`delta: ${deltaX}x${deltaY} r: ${centerr}`);
 
-      // if (!!left) {
-      //   this.renderer.setStyle(this.callout, 'left', left+'px');
-      // } else {
-      //   this.renderer.removeStyle(this.callout, 'left');
-      // }
-      // if (!!top) {
-      //   this.renderer.setStyle(this.callout, 'top', top+'px');
-      // } else {
-      //   this.renderer.removeStyle(this.callout, 'top');
-      // }
-      // if (!!right) {
-      //   this.renderer.setStyle(this.callout, 'right', right+'px');
-      // } else {
-      //   this.renderer.removeStyle(this.callout, 'right');
-      // }
-      // if (!!bottom) {
-      //   this.renderer.setStyle(this.callout, 'bottom', bottom+'px');
-      // } else {
-      //   this.renderer.removeStyle(this.callout, 'bottom');
-      // }
+    // if (!!left) {
+    //   this.renderer.setStyle(this.callout, 'left', left+'px');
+    // } else {
+    //   this.renderer.removeStyle(this.callout, 'left');
+    // }
+    // if (!!top) {
+    //   this.renderer.setStyle(this.callout, 'top', top+'px');
+    // } else {
+    //   this.renderer.removeStyle(this.callout, 'top');
+    // }
+    // if (!!right) {
+    //   this.renderer.setStyle(this.callout, 'right', right+'px');
+    // } else {
+    //   this.renderer.removeStyle(this.callout, 'right');
+    // }
+    // if (!!bottom) {
+    //   this.renderer.setStyle(this.callout, 'bottom', bottom+'px');
+    // } else {
+    //   this.renderer.removeStyle(this.callout, 'bottom');
+    // }
 
-      // console.log(`middle: ${middle} pos: ${top} ${right} ${bottom} ${left}`);
+    // console.log(`middle: ${middle} pos: ${top} ${right} ${bottom} ${left}`);
 
   }
   mouseleave(e: MouseEvent, spec: BoardSpec) {
@@ -364,7 +271,7 @@ export class GameboardPageComponent implements OnInit, AfterViewInit, OnDestroy 
     this.api.setColor(spec);
   }
 
-  mousedown(e:MouseEvent, spec: BoardSpec) {
+  mousedown(e: MouseEvent, spec: BoardSpec) {
     this.select(spec);
   }
 }

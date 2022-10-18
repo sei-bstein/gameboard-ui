@@ -4,9 +4,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, scheduled } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ConfigService } from '../utility/config.service';
-import { BoardGame, BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, GameStarterData, GameState, NewChallenge, ObserveChallenge, SectionSubmission, VmConsole } from './board-models';
+import { BoardPlayer, BoardSpec, Challenge, ChallengeGate, ChallengeResult, ChallengeSummary, ChallengeView, ChangedChallenge, ConsoleActor, NewChallenge, ObserveChallenge, SectionSubmission, VmConsole } from './board-models';
 import { TimeWindow } from './player-models';
 
 @Injectable({
@@ -14,14 +14,12 @@ import { TimeWindow } from './player-models';
 })
 export class BoardService {
   url = '';
-  gamebrainUrl = '';
 
   constructor(
     private http: HttpClient,
     private config: ConfigService
   ) {
     this.url = config.apphost + 'api';
-    this.gamebrainUrl = config.gamebrainhost + 'api';
   }
 
   public list(filter: any): Observable<ChallengeSummary[]> {
@@ -72,29 +70,6 @@ export class BoardService {
   public consoleActors(gid: string): Observable<ConsoleActor[]> {
     return this.http.get<ConsoleActor[]>(`${this.url}/challenge/consoleactors`, { params: {gid}});
   }
-
-  //#region GAMEBRAIN METHODS
-  public retrieveGameServerIP(gameId: string, teamId: string): Observable<string> {
-    return this.http.get<string>(`${this.url}/game/headless/${teamId}`, { params: {gameId}});
-  }
-
-  public retrieveGameInfo(gameId: string, teamId: string): Observable<GameStarterData> {
-    return this.http.get<string>(`${this.url}/deployunityspace/${gameId}/${teamId}`).pipe(
-      switchMap(async (s) => JSON.parse(JSON.stringify(s)) as GameStarterData)
-    );
-  }
-
-  public undeployGame(gameId: string, teamId: string): Observable<any> {
-    return this.http.get<any>(`${this.url}/undeployunityspace/${teamId}`, { params: {gameId}});
-  }
-
-  // Unused
-  /*
-  public unassignGame(gameId: string, teamId: string): Observable<any> {
-    return this.http.get<any>(`${this.url}/unassignunityspace/${teamId}`);
-  }
-  */
-  //#endregion
 
   private transform(b: BoardPlayer): BoardPlayer {
     b.game.mapUrl = b.game.background

@@ -1,0 +1,14 @@
+<p>unity-board works!</p>
+
+<ng-container *ngIf="unityActiveGame; else loadingUnity">
+    <iframe [src]="unityClientLink" id="unity-game-window" title="Unity Game Window" frameborder="0" width="960"
+        height="638" scrolling="no"></iframe>
+    <br />
+</ng-container>
+
+<ng-template #loadingUnity>
+    <div class="loading-unity">
+        <app-spinner></app-spinner>
+        <p>Connecting to {{ unityHost }}...</p>
+    </div>
+</ng-template>

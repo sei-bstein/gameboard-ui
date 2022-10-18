@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'projects/gameboard-ui/src/environments/environment';
+import { environment } from '../../environments/environment';
 import { Location, PlatformLocation } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 // import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
@@ -118,8 +118,8 @@ export class ConfigService {
     return path;
   }
 
-  get unityclienthost(): string {
-    let path = this.settings.unityclienthost || this.basehref;
+  get unityHost(): string {
+    let path = this.settings.unityhost || this.basehref;
     if (!path.endsWith('/')) {
       path += '/'
     }
@@ -241,7 +241,7 @@ export interface Settings {
   tochost?: string;
   supporthost?: string;
   gamebrainhost?: string;
-  unityclienthost?: string;
+  unityhost?: string;
   tocfile?: string;
   custom_background?: string;
   countdownStartSecondsAtMinute?: number;
