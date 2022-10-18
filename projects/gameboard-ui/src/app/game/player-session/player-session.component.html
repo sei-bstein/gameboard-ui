@@ -37,15 +37,6 @@
         <app-player-presence [id]="ctx.player.teamId"></app-player-presence>
       </ng-container>
 
-      <!-- <ng-container *ngIf="hub$ | async as hub">
-        <div *ngFor="let actor of hub.actors" [class.text-muted]="!actor.online" [class.text-success]="actor.online">
-          <img [src]="actor.sponsorLogo" width="48px" class="mr-2">
-          <fa-icon [icon]="faDot"></fa-icon>
-          <span class="mr-2">{{actor.userApprovedName}}</span>
-          <small *ngIf="!!actor.pendingName" class="text-muted">({{actor.pendingName}})</small>
-        </div>
-      </ng-container> -->
-
       <table class="table mt-2 text-center">
         <tbody>
           <tr>

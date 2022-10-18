@@ -6,17 +6,16 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UserManagerSettings } from 'oidc-client';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'projects/gameboard-ui/src/environments/environment';
+import { environment } from '../../environments/environment';
 import { Location, PlatformLocation } from '@angular/common';
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
-// import { MarkedRenderer, MarkedOptions } from 'ngx-markdown';
+import { LocalStorageService, StorageKey } from './local-storage.service';
 
 @Injectable({providedIn: 'root'})
 export class ConfigService {
 
   private url = 'assets/settings.json';
   private restorationComplete = false;
-  storageKey = 'gameboard';
   basehref = '';
   settings: Settings = environment.settings;
   local: LocalAppSettings = {};
@@ -92,6 +91,7 @@ export class ConfigService {
   constructor(
     private http: HttpClient,
     private location: Location,
+    private storage: LocalStorageService,
     platform: PlatformLocation
   ) {
     this.basehref = platform.getBaseHrefFromDOM();
@@ -118,7 +118,7 @@ export class ConfigService {
     return path;
   }
 
-  get unityclienthost(): string {
+  get unityHost(): string {
     let path = this.settings.unityclienthost || this.basehref;
     if (!path.endsWith('/')) {
       path += '/'
@@ -169,10 +169,10 @@ export class ConfigService {
           return of({} as Settings);
         }),
         tap(s => {
+          console.log("loading settings", this.basehref + this.url);
           this.settings = {...this.settings, ...s};
           this.settings.oidc = {...this.settings.oidc, ...s.oidc};
           this.settings$.next(this.settings);
-          // console.log(this.settings);
         })
       );
   }
@@ -204,21 +204,19 @@ export class ConfigService {
 
   storeLocal(model: LocalAppSettings): void {
     try {
-      window.localStorage[this.storageKey] = JSON.stringify(model);
+      this.storage.add(StorageKey.Gameboard, JSON.stringify(model));
     } catch (e) {
     }
   }
   getLocal(): LocalAppSettings {
     try {
-        return JSON.parse(window.localStorage[this.storageKey] || {});
+        return JSON.parse(this.storage.get(StorageKey.Gameboard)!) || {};
     } catch (e) {
         return {};
     }
   }
   clearStorage(): void {
-    try {
-        window.localStorage.removeItem(this.storageKey);
-    } catch (e) { }
+    this.storage.clear(StorageKey.Gameboard);
   }
 }
 

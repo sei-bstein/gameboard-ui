@@ -11,6 +11,7 @@ import { Game } from '../../api/game-models';
 import { GameService } from '../../api/game.service';
 import { Player, PlayerSearch, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
+import { UnityService } from '../../unity/unity.service';
 import { ClipboardService } from '../../utility/clipboard.service';
 
 @Component({
@@ -55,7 +56,8 @@ export class PlayerRegistrarComponent implements OnInit {
     private gameapi: GameService,
     private api: PlayerService,
     private boardApi: BoardService,
-    private clipboard: ClipboardService
+    private clipboard: ClipboardService,
+    private unityService: UnityService
   ) {
 
     const game$ = route.params.pipe(
@@ -168,7 +170,7 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   undeploy(model: Player): void {
-    this.boardApi.undeployGame(model.gameId, model.teamId).pipe(
+    this.unityService.undeployGame({ gameId: model.gameId, teamId: model.teamId }).pipe(
       tap(res => console.log("Undeploy result: " + res))
     ).subscribe();
   }
