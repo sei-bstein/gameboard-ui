@@ -8,26 +8,30 @@ import { LocalStorageService, StorageKey } from '../utility/local-storage.servic
 @Injectable({ providedIn: 'root' })
 export class UnityService {
   private API_ROOT = `${this.config.apphost}api`;
+  private activeGame: UnityBoardContext | null = null;
+
   activeGame$ = new Subject<UnityActiveGame>();
   gameOver$ = new Observable();
+  error$ = new Subject<any>();
 
   constructor(
     private config: ConfigService,
     private http: HttpClient,
     private storage: LocalStorageService) { }
 
-  public endGame(ctx: UnityBoardContext): void {
+  public endGame(ctx: UnityDeployContext): void {
     this.clearLocalStorageKeys();
     this.activeGame$.complete();
     this.undeployGame(ctx).subscribe(m => this.log("Undeploy result:", m))
   }
 
   public async startGame(ctx: UnityBoardContext) {
+    this.log("Starting unity game...", ctx);
+
     if (!ctx.sessionExpirationTime) {
-      this.logError("Can't start the game - no session expiration time.");
+      this.reportError("Can't start the game - no session expiration time.");
     }
 
-    this.log("Starting unity game...");
     const storageKey = `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`;
     this.log(`Retrieving storage key ${storageKey}`);
     const oidcUserToken = this.storage.getArbitrary(storageKey);
@@ -36,24 +40,14 @@ export class UnityService {
     this.log("Stuff is set.");
 
     if (oidcUserToken == null) {
-      console.error("Can't start a Unity game if the user doesn't have an OIDC token.");
+      this.reportError("Can't start a Unity game if the user doesn't have an OIDC token.");
     }
 
     this.log("Starting unity game...");
-    this.http.get<any>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`).subscribe(deployed => {
-      this.log("Deployed this ->", deployed);
-      forkJoin([
-        of({
-          gamespaceId: deployed.gamespaceId,
-          headlessUrl: deployed.headless_url,
-          vms: deployed.vms
-        } as UnityActiveGame),
-        this.retrieveHeadlessUrl(ctx)
-      ]).subscribe(([game, headlessUrl]) => this.launchGame(game, headlessUrl));
-    });
+    this.launchGame({ gameId: ctx.gameId, teamId: ctx.teamId })
   }
 
-  public retrieveHeadlessUrl(ctx: UnityBoardContext): Observable<string> {
+  public retrieveHeadlessUrl(ctx: UnityDeployContext): Observable<string> {
     this.log("Getting headlessUrl...")
     return this.http.get<string>(`${this.API_ROOT}/game/headless/${ctx.teamId}?gid=${ctx.gameId}`);
   }
@@ -62,10 +56,6 @@ export class UnityService {
     this.log("Undeploying game...");
     this.log(`... @ ${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`)
     return this.http.get<string>(`${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
-  }
-
-  public hasActiveGame() {
-    return this.storage.get(StorageKey.UnityGameLink) && this.storage.get(StorageKey.UnityOidcLink);
   }
 
   private createLocalStorageKeys(game: UnityActiveGame) {
@@ -81,32 +71,49 @@ export class UnityService {
     this.storage.removeIf((key, value) => key.startsWith("VM"));
   }
 
-  private launchGame(game: UnityActiveGame, headlessUrl: string) {
-    this.log("Launching game", game, "with headlessUrl", headlessUrl);
-    game.headlessUrl = headlessUrl;
+  private launchGame(ctx: UnityDeployContext) {
+    this.http.get<any>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`).subscribe(deployed => {
+      this.log("Deployed this ->", deployed);
+      forkJoin([
+        of({
+          gamespaceId: deployed.gamespaceId,
+          headlessUrl: deployed.headless_url,
+          vms: deployed.vms
+        } as UnityActiveGame),
+        this.retrieveHeadlessUrl(ctx)
+      ]).subscribe(([game, headlessUrl]) => {
+        this.log("Launching game", game, "with headlessUrl", headlessUrl);
+        game.headlessUrl = headlessUrl;
 
-    // validation - did we make it?
-    if (!game.headlessUrl) {
-      throw new Error(`Couldn't resolve the headless url for the game: ${game}`)
-    }
+        try {
+          // validation - did we make it?
+          if (!game.headlessUrl) {
+            this.reportError(`Couldn't resolve the headless url for the game: ${JSON.stringify(game)}`)
+          }
 
-    if (!game.vms?.length) {
-      this.logError(`Couldn't resolve VMs for the game: ${game}`);
-    }
+          if (!game.vms?.length) {
+            this.reportError(`Couldn't resolve VMs for the game: ${JSON.stringify(game)}`);
+          }
 
-    // add necessary items to local storage
-    this.createLocalStorageKeys(game);
+          // add necessary items to local storage
+          this.createLocalStorageKeys(game);
+        }
+        catch {
+          this.endGame(ctx)
+        }
 
-    // emit the result
-    this.log("Game is active!", game);
-    this.activeGame$.next(game);
-  }
-
-  private logError(...messages: (string | any)[]) {
-    console.error("[UnityService]:", ...messages);
+        // emit the result
+        this.log("Game is active!", game);
+        this.activeGame$.next(game);
+      });
+    });
   }
 
   private log(...messages: (string | any)[]) {
     console.log("[UnityService]:", ...messages);
+  }
+
+  private reportError(error: string) {
+    this.error$.next(error);
   }
 }

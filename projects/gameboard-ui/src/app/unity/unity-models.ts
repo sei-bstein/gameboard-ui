@@ -10,7 +10,10 @@ export interface UnityActiveGame
     headlessUrl: string;
     vms: VMStruct[];
     serverIp: string,
-    gameBrainUrl: string
+    gameBrainUrl: string;
+    gameId: string;
+    teamId: string;
+    sessionExpirationTime: Date;
 }
 
 export interface UnityDeployContext {

@@ -13,6 +13,7 @@ import { UnityService } from '../unity.service';
 export class UnityBoardComponent implements OnInit {
   @Input('gameContext') public ctx!: UnityBoardContext;
   @Output() public gameOver = new EventEmitter();
+  @Output() public error = new EventEmitter<string>();
 
   unityHost = this.config.unityHost;
   unityClientLink: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.config.unityHost);
@@ -24,11 +25,9 @@ export class UnityBoardComponent implements OnInit {
     private unityService: UnityService) { }
 
   ngOnInit(): void {
-    console.log("Starting game from the UnityBoard component...", this.config);
-    this.unityService.startGame(this.ctx);
-
-    // start the game when the service says it's ok
     this.unityService.activeGame$.subscribe(game => this.unityActiveGame);
+    this.unityService.error$.subscribe(err => this.error.emit(err));
+    this.unityService.startGame(this.ctx);
 
     combineLatest([
       interval(1000),
