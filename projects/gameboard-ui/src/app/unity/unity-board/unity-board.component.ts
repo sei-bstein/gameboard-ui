@@ -16,7 +16,6 @@ export class UnityBoardComponent implements OnInit {
   @Output() public gameOver = new EventEmitter();
   @Output() public error = new EventEmitter<string>();
 
-  // unityHost = this.config.unityHost;
   unityHost: string | null = null;
   unityClientLink: SafeResourceUrl | null = null;
   unityActiveGame: UnityActiveGame | null = null;
@@ -27,22 +26,19 @@ export class UnityBoardComponent implements OnInit {
     private unityService: UnityService) { }
 
   ngOnInit(): void {
-    if (!this.config.settings.unityhost) {
+    if (!this.config.settings.unityclienthost) {
       console.log("Unity host error", this.config.settings);
 
-      const errorMessage = `Unity host is not set: ${JSON.stringify(this.config.settings)}`;
+      const errorMessage = `Unity host is not set: ${this.config.settings.unityclienthost}`;
       this.error.emit(errorMessage);
       throw new Error(errorMessage)
     }
 
-    this.unityHost = this.config.settings.unityhost;
-    this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost);
+    this.unityHost = this.config.settings.unityclienthost || null;
+    this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost!);
     this.unityService.activeGame$.subscribe(game => this.unityActiveGame = game);
     this.unityService.error$.subscribe(err => this.error.emit(err));
     this.unityService.startGame(this.ctx);
-
-    console.log('config is', this.config.unityHost);
-    console.log('env is', environment.settings);
 
     combineLatest([
       interval(1000),

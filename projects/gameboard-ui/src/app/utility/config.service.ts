@@ -119,7 +119,7 @@ export class ConfigService {
   }
 
   get unityHost(): string {
-    let path = this.settings.unityhost || this.basehref;
+    let path = this.settings.unityclienthost || this.basehref;
     if (!path.endsWith('/')) {
       path += '/'
     }
@@ -173,7 +173,6 @@ export class ConfigService {
           this.settings = {...this.settings, ...s};
           this.settings.oidc = {...this.settings.oidc, ...s.oidc};
           this.settings$.next(this.settings);
-          // console.log(this.settings);
         })
       );
   }
@@ -240,7 +239,7 @@ export interface Settings {
   tochost?: string;
   supporthost?: string;
   gamebrainhost?: string;
-  unityhost?: string;
+  unityclienthost?: string;
   tocfile?: string;
   custom_background?: string;
   countdownStartSecondsAtMinute?: number;

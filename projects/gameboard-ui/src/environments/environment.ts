@@ -12,7 +12,7 @@ export const environment = {
     tochost: 'http://localhost:5002/doc',
     supporthost: 'http://localhost:5002/supportfiles',
     gamebrainhost: 'https://launchpad.cisa.gov/test/gamebrain/api',
-    unityhost: 'https://launchpad.cisa.gov/test/cubespace',
+    unityclienthost: 'https://launchpad.cisa.gov/test/cubespace',
     tocfile: 'toc.json',
     countdownStartSecondsAtMinute: 5,
     oidc: {
