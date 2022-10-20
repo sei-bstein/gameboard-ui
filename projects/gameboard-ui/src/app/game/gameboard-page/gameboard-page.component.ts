@@ -4,6 +4,7 @@
 import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faArrowLeft, faBolt, faExclamationTriangle, faTrash, faTv } from '@fortawesome/free-solid-svg-icons';
+import { ConsoleComponent } from 'projects/gameboard-mks/src/app/console/console.component';
 import { asyncScheduler, merge, Observable, of, scheduled, Subject, Subscription, timer } from 'rxjs';
 import { catchError, debounceTime, filter, map, mergeAll, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
@@ -73,12 +74,12 @@ export class GameboardPageComponent implements OnDestroy {
       tap(b => this.ctx = b),
       tap(b => this.startHub(b)),
       tap(b => {
-        console.log("we have unity stuff");
         this.unityBoardContext = {
           gameId: b.gameId,
           teamId: b.teamId,
           sessionExpirationTime: b.sessionEnd
         }
+        console.log("Unity board context set.")
       }),
       tap(b => this.reselect())
     ).subscribe();

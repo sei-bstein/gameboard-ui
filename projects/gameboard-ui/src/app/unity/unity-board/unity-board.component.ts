@@ -24,9 +24,8 @@ export class UnityBoardComponent implements OnInit {
     private unityService: UnityService) { }
 
   ngOnInit(): void {
-    console.log("Starting game from the UnityBoard component...");
+    console.log("Starting game from the UnityBoard component...", this.config);
     this.unityService.startGame(this.ctx);
-    console.log("By the way, this is config", this.config);
 
     // start the game when the service says it's ok
     this.unityService.activeGame$.subscribe(game => this.unityActiveGame);

@@ -59,7 +59,8 @@ export class UnityService {
   }
 
   public undeployGame(ctx: UnityDeployContext): Observable<string> {
-    this.log("Undeploying...")
+    this.log("Undeploying game...");
+    this.log(`... @ ${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`)
     return this.http.get<string>(`${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
@@ -81,23 +82,23 @@ export class UnityService {
   }
 
   private launchGame(game: UnityActiveGame, headlessUrl: string) {
-    this.log("launching game", game, "with headlessUrl", headlessUrl);
+    this.log("Launching game", game, "with headlessUrl", headlessUrl);
     game.headlessUrl = headlessUrl;
 
     // validation - did we make it?
     if (!game.headlessUrl) {
-      this.logError("Couldn't resolve the headless url for game", game);
+      throw new Error(`Couldn't resolve the headless url for the game: ${game}`)
     }
 
     if (!game.vms?.length) {
-      this.logError("Couldn't resolve VMs for game", game);
+      this.logError(`Couldn't resolve VMs for the game: ${game}`);
     }
 
     // add necessary items to local storage
     this.createLocalStorageKeys(game);
 
     // emit the result
-    this.log("Active game emit!", game);
+    this.log("Game is active!", game);
     this.activeGame$.next(game);
   }
 
