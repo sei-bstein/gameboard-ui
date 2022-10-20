@@ -115,5 +115,6 @@ export class UnityService {
 
   private reportError(error: string) {
     this.error$.next(error);
+    throw new Error(error);
   }
 }
