@@ -9,9 +9,9 @@ export class MorphingTextComponent implements OnInit, AfterViewInit {
   @ViewChild("text1") text1!: ElementRef<HTMLSpanElement>;
   @ViewChild("text2") text2!: ElementRef<HTMLSpanElement>;
 
-  private const MORPH_TIME = 1;
-  private const COOLDOWN_TIME = 0.25;
-  private const START_TIME = new Date();
+  private readonly MORPH_TIME = 1;
+  private readonly COOLDOWN_TIME = 0.25;
+  private readonly START_TIME = new Date();
 
   private _cooldown = this.COOLDOWN_TIME;
   private _morph = 0;
@@ -36,7 +36,7 @@ export class MorphingTextComponent implements OnInit, AfterViewInit {
     this.updateTextIndex(0);
     
     
-    animate();
+    this.animate();
   }
 
   ngOnInit(): void {
@@ -83,7 +83,7 @@ export class MorphingTextComponent implements OnInit, AfterViewInit {
   }
 
   private animate() {
-    requestAnimationFrame(animate);
+    requestAnimationFrame(this.animate);
 
     const shouldIncrementIndex = this._cooldown > 0;
     const newTime = new Date();

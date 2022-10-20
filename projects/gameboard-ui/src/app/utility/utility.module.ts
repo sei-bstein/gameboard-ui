@@ -66,11 +66,12 @@ const components = [
   ObserveOrderPipe,
   MatchesTermPipe,
   TextToColorPipe,
-  ImagestackComponent
+  ImagestackComponent,
+  MorphingTextComponent
 ]
 
 @NgModule({
-  declarations: [...components, MorphingTextComponent],
+  declarations: [...components],
   exports: [...components],
   imports: [
     CommonModule,
