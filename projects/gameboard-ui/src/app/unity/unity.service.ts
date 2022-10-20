@@ -54,8 +54,8 @@ export class UnityService {
 
   public undeployGame(ctx: UnityDeployContext): Observable<string> {
     this.log("Undeploying game...");
-    this.log(`... @ ${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`)
-    return this.http.get<string>(`${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
+    this.log(`... ${this.API_ROOT}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`);
+    return this.http.get<string>(`${this.API_ROOT}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
   private createLocalStorageKeys(game: UnityActiveGame) {
@@ -84,13 +84,14 @@ export class UnityService {
         } as UnityActiveGame),
         this.retrieveHeadlessUrl(ctx)
       ]).subscribe(([game, headlessUrl]) => {
-        this.log("Launching game", game, "with headlessUrl", headlessUrl);
+        
+        console.log("Starting pre-launch validation...")
         game.headlessUrl = headlessUrl;
 
         try {
           // validation - did we make it?
           if (!game.headlessUrl) {
-            this.reportError(`Couldn't resolve the headless url for the context: ${JSON.stringify(game)}`)
+            this.reportError(`Couldn't resolve the headless url for the context: ${JSON.stringify(game)}`);
           }
 
           if (!game.vms?.length) {
@@ -101,7 +102,8 @@ export class UnityService {
           this.createLocalStorageKeys(game);
         }
         catch {
-          this.endGame(ctx)
+          this.endGame(ctx);
+          return;
         }
 
         // emit the result
