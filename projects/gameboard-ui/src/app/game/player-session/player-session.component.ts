@@ -9,6 +9,7 @@ import { BoardService } from '../../api/board.service';
 import { GameContext } from '../../api/models';
 import { Player, TimeWindow } from '../../api/player-models';
 import { PlayerService } from '../../api/player.service';
+import { UnityService } from '../../unity/unity.service';
 import { HubEvent, HubEventAction, HubState, NotificationService } from '../../utility/notification.service';
 
 @Component({
@@ -31,7 +32,8 @@ export class PlayerSessionComponent implements OnInit {
   constructor(
     private api: PlayerService,
     private boardApi: BoardService,
-    private hub: NotificationService
+    private hub: NotificationService,
+    private unityService: UnityService
   ) {
     this.ctx$ = timer(0, 1000).pipe(
       map(i => this.ctx),
@@ -61,7 +63,6 @@ export class PlayerSessionComponent implements OnInit {
       if (!!this.ctx.player && !this.ctx.player.session.isAfter) {
         this.hub.init(this.ctx.player.id);
       }
-
     }
   }
 
@@ -78,7 +79,7 @@ export class PlayerSessionComponent implements OnInit {
 
   reset(p: Player): void {
     if (this.ctx.game.mode == 'unity') {
-      this.boardApi.undeployGame(p.gameId, p.teamId).pipe(
+      this.unityService.undeployGame({ gameId: p.gameId, teamId: p.teamId }).pipe(
         tap(res => console.log("Undeploy Result: " + res)),
         tap(() => this.api.delete(p.id).subscribe(() => {
           window.location.reload();

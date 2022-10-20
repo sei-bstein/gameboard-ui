@@ -18,7 +18,7 @@ import { UserService as LocalUserService } from '../../utility/user.service';
   templateUrl: './game-page.component.html',
   styleUrls: ['./game-page.component.scss']
 })
-export class GamePageComponent implements OnInit {
+export class GamePageComponent {
   ctx$: Observable<{ user: ApiUser; game: Game; player: Player; }>;
   showCert = false;
   faLink = faExternalLinkAlt;
@@ -63,8 +63,4 @@ export class GamePageComponent implements OnInit {
     );
 
   }
-
-  ngOnInit(): void {
-  }
-
 }

@@ -8,7 +8,6 @@ export const environment = {
     tochost: '',
     tocfile: 'toc.json',
     supporthost: '',
-    // Add in and set link during production
     // unityclienthost: '',
     custom_background: '',
     oidc: {}
