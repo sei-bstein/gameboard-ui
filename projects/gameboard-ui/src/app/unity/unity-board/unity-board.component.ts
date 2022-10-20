@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, } from '@angular/core';
+import { Component, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
 import { UnityActiveGame, UnityBoardContext } from '../unity-models';
 import { UnityService } from '../unity.service';
 import { environment } from 'projects/gameboard-ui/src/environments/environment';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-unity-board',
@@ -13,6 +14,7 @@ import { environment } from 'projects/gameboard-ui/src/environments/environment'
 })
 export class UnityBoardComponent implements OnInit {
   @Input('gameContext') public ctx!: UnityBoardContext;
+  @ViewChild('iframe') private iframe: HTMLIFrameElement | null = null;
   @Output() public gameOver = new EventEmitter();
   @Output() public error = new EventEmitter<string>();
 
@@ -21,6 +23,7 @@ export class UnityBoardComponent implements OnInit {
   unityActiveGame: UnityActiveGame | null = null;
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
     private config: ConfigService,
     private sanitizer: DomSanitizer,
     private unityService: UnityService) { }
@@ -48,5 +51,29 @@ export class UnityBoardComponent implements OnInit {
         alert("The game's over! What's supposed to happen now?");
       }
     });
+  }
+
+  @HostListener("window:scroll", ["$event"])
+  private onWindowScroll($event: any) {
+    console.log('event is', $event)
+    const reveals = this.document.querySelectorAll(".reveal");
+    const window = this.document.defaultView;
+
+    if (!window) {
+      console.error("Couldn't manipulate the height of the window");
+      return;
+    }
+
+    for (var i = 0; i < reveals.length; i++) {
+      const windowHeight = window.innerHeight;
+      const elementTop = reveals[i].getBoundingClientRect().top;
+      const elementVisible = 150;
+
+      if (elementTop < windowHeight - elementVisible) {
+        reveals[i].classList.add("active");
+      } else {
+        reveals[i].classList.remove("active");
+      }
+    }
   }
 }
