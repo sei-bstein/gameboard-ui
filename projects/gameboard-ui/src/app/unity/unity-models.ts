@@ -8,7 +8,7 @@ export interface UnityActiveGame
 {
     gamespaceId: string;
     headlessUrl: string;
-    vms: VMStruct[];
+    vms: UnityGameVM[];
     gameId: string;
     teamId: string;
     sessionExpirationTime: Date;
@@ -19,7 +19,7 @@ export interface UnityDeployContext {
     teamId: string;
 }
 
-export interface VMStruct {
+export interface UnityGameVM {
     Id: string;
     Url: string;
     Name: string;

@@ -33,22 +33,22 @@ export class UnityService {
     }
 
     const storageKey = `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`;
-    this.log(`Retrieving storage key ${storageKey}`);
+    this.log(`Retrieving storage key: ${storageKey}`);
     const oidcUserToken = this.storage.getArbitrary(storageKey);
-
-    this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
-    this.log("Stuff is set.");
 
     if (oidcUserToken == null) {
       this.reportError("Can't start a Unity game if the user doesn't have an OIDC token.");
     }
+
+    this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
+    this.log("User OIDC resolved.");
 
     this.log("Starting unity game...");
     this.launchGame({ gameId: ctx.gameId, teamId: ctx.teamId })
   }
 
   public retrieveHeadlessUrl(ctx: UnityDeployContext): Observable<string> {
-    this.log("Getting headlessUrl...")
+    this.log("Getting headlessUrl with context...", ctx)
     return this.http.get<string>(`${this.API_ROOT}/game/headless/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
@@ -78,6 +78,8 @@ export class UnityService {
         of({
           gamespaceId: deployed.gamespaceId,
           headlessUrl: deployed.headless_url,
+          teamId: ctx.teamId,
+          gameId: ctx.gameId,
           vms: deployed.vms
         } as UnityActiveGame),
         this.retrieveHeadlessUrl(ctx)
@@ -88,7 +90,7 @@ export class UnityService {
         try {
           // validation - did we make it?
           if (!game.headlessUrl) {
-            this.reportError(`Couldn't resolve the headless url for the game: ${JSON.stringify(game)}`)
+            this.reportError(`Couldn't resolve the headless url for the context: ${JSON.stringify(game)}`)
           }
 
           if (!game.vms?.length) {
