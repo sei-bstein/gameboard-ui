@@ -54,8 +54,8 @@ export class UnityService {
 
   public undeployGame(ctx: UnityDeployContext): Observable<string> {
     this.log("Undeploying game...");
-    this.log(`... @ ${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`)
-    return this.http.get<string>(`${this.http}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
+    this.log(`... @/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`)
+    return this.http.get<string>(`${this.API_ROOT}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
   private createLocalStorageKeys(game: UnityActiveGame) {
