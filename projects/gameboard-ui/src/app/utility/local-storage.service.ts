@@ -41,14 +41,9 @@ export class LocalStorageService {
 
   clear(... keys: StorageKey[]): void {
     for (const key in keys) {
-      this._client.clear();
+      console.log('removing key', key);
+      this._client.remove(key);
     }
-
-  }
-
-  clearAll(): void {
-    console.log
-    this._client.clear();
   }
 
   get(key: StorageKey, throwIfNotExists = false) {
