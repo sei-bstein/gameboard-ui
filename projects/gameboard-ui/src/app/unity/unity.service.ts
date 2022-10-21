@@ -70,7 +70,7 @@ export class UnityService {
   }
 
   private clearLocalStorageKeys() {
-    this.storage.remove(false, StorageKey.UnityGameLink);
+    this.storage.remove(false, StorageKey.UnityOidcLink, StorageKey.UnityGameLink);
     this.storage.removeIf((key, value) => key.startsWith("VM"));
   }
 
@@ -121,6 +121,7 @@ export class UnityService {
   }
 
   private reportError(error: string) {
+    this.clearLocalStorageKeys();
     this.error$.next(error);
     throw new Error(error);
   }

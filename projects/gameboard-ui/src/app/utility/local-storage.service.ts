@@ -40,10 +40,14 @@ export class LocalStorageService {
   addArbitrary = (key: string, value: string, throwIfExists = false) => this.add(key as StorageKey, value, throwIfExists);
 
   clear(... keys: StorageKey[]): void {
-    this._client.clear();
+    for (const key in keys) {
+      this._client.clear();
+    }
+
   }
 
   clearAll(): void {
+    console.log
     this._client.clear();
   }
 
@@ -85,6 +89,7 @@ export class LocalStorageService {
       const value = this.getArbitrary(key!);
 
       if (predicate(key!, value!)) {
+        console.log("remove key", key);
         keysToRemove.push(key!);
       }
     }
