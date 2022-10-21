@@ -4,7 +4,6 @@ import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
 import { UnityActiveGame, UnityBoardContext } from '../unity-models';
 import { UnityService } from '../unity.service';
-import { environment } from 'projects/gameboard-ui/src/environments/environment';
 import { DOCUMENT } from '@angular/common';
 import { LayoutService } from '../../utility/layout.service';
 
@@ -62,6 +61,7 @@ export class UnityBoardComponent implements OnInit, OnDestroy {
 
   @HostListener("window:scroll", ["$event"])
   private onWindowScroll($event: any) {
+    console.log('event is', $event)
     const reveals = this.document.querySelectorAll(".reveal");
     const window = this.document.defaultView;
 

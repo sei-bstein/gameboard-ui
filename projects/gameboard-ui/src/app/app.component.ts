@@ -32,11 +32,10 @@ export class AppComponent {
   ) {
     this.user$ = usersvc.user$;
     this.toc$ = toc.toc$;
-    title.setTitle(config.settings.appname || 'Gameboard');
-
-    
-    if (this.config.settings.custom_background) {
-      this.document.body.style.background = this.config.settings.custom_background;
+    title.setTitle(this.config.settings.appname || 'Gameboard');
+    this.custom_bg = this.config.settings.custom_background || "";
+    if (this.custom_bg) {
+      document.getElementsByTagName('body')[0].classList.add(this.custom_bg);
     }
   }
 
