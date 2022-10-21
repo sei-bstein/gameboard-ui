@@ -59,12 +59,20 @@ export class LocalStorageService {
 
   getArbitrary = (key: string, throwIfNotExists = false) => this.get(key as StorageKey, throwIfNotExists);
 
+  has(key: string): boolean {
+    return !!this._client.getItem(key);
+  }
+
   remove(throwIfNotExists = false, ... keys: StorageKey[]): void {
     keys.forEach(key => {
       if (throwIfNotExists && this._client.getItem(key.toString())) {
         throw new Error(`Storage key ${key} doesn't exist in local storage.`);
       }
       
+      if (this._client.getItem(key)) {
+        console.log("[LocalStorage]: Flushing", key);
+      }
+
       this._client.removeItem(key);
     });
   }

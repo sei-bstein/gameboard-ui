@@ -28,6 +28,9 @@ export class UnityService {
   public async startGame(ctx: UnityBoardContext) {
     this.log("Starting unity game...", ctx);
 
+    this.log("Cleaning up any existing keys from prior runs...");
+    this.clearLocalStorageKeys();
+
     if (!ctx.sessionExpirationTime) {
       this.reportError("Can't start the game - no session expiration time.");
     }
@@ -37,7 +40,7 @@ export class UnityService {
     const oidcUserToken = this.storage.getArbitrary(storageKey);
 
     if (oidcUserToken == null) {
-      this.reportError("Can't start a Unity game if the user doesn't have an OIDC token.");
+      this.reportError("You don't seem to have an OIDC token. (If this is a playtest, try relogging. Sorry.");
     }
 
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
@@ -91,7 +94,7 @@ export class UnityService {
         try {
           // validation - did we make it?
           if (!game.headlessUrl) {
-            this.reportError(`Couldn't resolve the headless url for the context: ${JSON.stringify(game)}`);
+            this.reportError(`Couldn't resolve the headless url for team ${JSON.stringify(game.teamId)}. No gamespaces available.`);
           }
 
           if (!game.vms?.length) {

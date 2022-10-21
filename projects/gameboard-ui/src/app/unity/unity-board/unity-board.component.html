@@ -5,7 +5,7 @@
 </ng-container>
 
 <ng-template #loadingUnity>
-    <div class="loading-unity">
+    <div class="loading-unity" *ngIf="!isError">
         <app-spinner></app-spinner>
         <p>Connecting to {{ unityHost }}...</p>
     </div>
