@@ -113,7 +113,9 @@ export class UnityService {
         this.log("Game is active!", game);
         this.activeGame$.next(game);
       });
-    });
+    }, 
+    err => this.reportError(err),
+    () => this.log("Booting unity client!"));
   }
 
   private log(...messages: (string | any)[]) {
