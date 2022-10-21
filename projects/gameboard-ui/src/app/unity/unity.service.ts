@@ -85,7 +85,7 @@ export class UnityService {
         this.retrieveHeadlessUrl(ctx)
       ]).subscribe(([game, headlessUrl]) => {
         
-        console.log("Starting pre-launch validation...")
+        this.log("Starting pre-launch validation...")
         game.headlessUrl = headlessUrl;
 
         try {

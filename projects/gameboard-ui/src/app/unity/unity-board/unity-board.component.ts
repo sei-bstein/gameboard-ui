@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { Component, EventEmitter, HostListener, Inject, Input, OnDestroy, OnInit, Output, ViewChild, } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
@@ -6,13 +6,14 @@ import { UnityActiveGame, UnityBoardContext } from '../unity-models';
 import { UnityService } from '../unity.service';
 import { environment } from 'projects/gameboard-ui/src/environments/environment';
 import { DOCUMENT } from '@angular/common';
+import { LayoutService } from '../../utility/layout.service';
 
 @Component({
   selector: 'app-unity-board',
   templateUrl: './unity-board.component.html',
   styleUrls: ['./unity-board.component.scss']
 })
-export class UnityBoardComponent implements OnInit {
+export class UnityBoardComponent implements OnInit, OnDestroy {
   @Input('gameContext') public ctx!: UnityBoardContext;
   @ViewChild('iframe') private iframe: HTMLIFrameElement | null = null;
   @Output() public gameOver = new EventEmitter();
@@ -26,7 +27,12 @@ export class UnityBoardComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private config: ConfigService,
     private sanitizer: DomSanitizer,
-    private unityService: UnityService) { }
+    private unityService: UnityService,
+    public layoutService: LayoutService) { }
+
+  ngOnDestroy(): void {
+    this.layoutService.stickyMenu$.next(true);
+  }
 
   ngOnInit(): void {
     if (!this.config.settings.unityclienthost) {
@@ -37,6 +43,7 @@ export class UnityBoardComponent implements OnInit {
       throw new Error(errorMessage)
     }
 
+    this.layoutService.stickyMenu$.next(false);
     this.unityHost = this.config.settings.unityclienthost || null;
     this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost!);
     this.unityService.activeGame$.subscribe(game => this.unityActiveGame = game);
@@ -55,7 +62,6 @@ export class UnityBoardComponent implements OnInit {
 
   @HostListener("window:scroll", ["$event"])
   private onWindowScroll($event: any) {
-    console.log('event is', $event)
     const reveals = this.document.querySelectorAll(".reveal");
     const window = this.document.defaultView;
 
