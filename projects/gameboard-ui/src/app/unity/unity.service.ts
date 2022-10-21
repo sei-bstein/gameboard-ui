@@ -28,8 +28,8 @@ export class UnityService {
   public async startGame(ctx: UnityBoardContext) {
     this.log("Starting unity game...", ctx);
 
-    this.log("Cleaning up any existing keys from prior runs...");
-    this.clearLocalStorageKeys();
+    // this.log("Cleaning up any existing keys from prior runs...");
+    // this.clearLocalStorageKeys();
 
     if (!ctx.sessionExpirationTime) {
       this.reportError("Can't start the game - no session expiration time.");
