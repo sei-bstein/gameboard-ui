@@ -2,8 +2,10 @@ nav {
   position: sticky;
   top: 0px;
   left: 0px;
-  right: 0px;
-  z-index: 99;
+
+  &.nonsticky {
+    position: unset;
+  }
 
   a {
     font-size: 1.5rem;

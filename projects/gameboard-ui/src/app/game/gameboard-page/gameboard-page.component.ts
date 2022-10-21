@@ -78,7 +78,6 @@ export class GameboardPageComponent implements OnDestroy {
           teamId: b.teamId,
           sessionExpirationTime: b.sessionEnd
         }
-        console.log("Unity board context set.")
       }),
       tap(b => this.reselect())
     ).subscribe();
