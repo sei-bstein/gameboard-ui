@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { combineLatest, interval } from 'rxjs';
+import { interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
 import { UnityActiveGame, UnityBoardContext } from '../unity-models';
 import { UnityService } from '../unity.service';
-import { environment } from 'projects/gameboard-ui/src/environments/environment';
 import { DOCUMENT } from '@angular/common';
 import { LayoutService } from '../../utility/layout.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-unity-board',
@@ -23,6 +23,7 @@ export class UnityBoardComponent implements OnInit {
   unityClientLink: SafeResourceUrl | null = null;
   unityActiveGame: UnityActiveGame | null = null;
   isError = false;
+  isGamespaceProvisioned = false;
 
   constructor (
     @Inject(DOCUMENT) private document: Document,
@@ -44,21 +45,19 @@ export class UnityBoardComponent implements OnInit {
     }
 
     this.unityService.error$.subscribe(err => this.handleError(err));
-
     this.layoutService.stickyMenu$.next(false);
     this.unityHost = this.config.settings.unityclienthost || null;
     this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost!);
     this.unityService.activeGame$.subscribe(game => this.unityActiveGame = game);
     this.unityService.startGame(this.ctx);
 
-    combineLatest([
-      interval(1000),
-      this.unityService.gameOver$,
-    ]).subscribe(([tick, isGameOver]) => {
-      if (isGameOver) {
-        alert("The game's over! What's supposed to happen now?");
-      }
-    });
+    interval(2000).pipe(
+      takeUntil(this.unityService.gameOver$)
+    ).subscribe(s => alert("Game's over. now what?"));
+  }
+
+  onHasGame() {
+    this.isGamespaceProvisioned = true;
   }
 
   private handleError(error: string) {
