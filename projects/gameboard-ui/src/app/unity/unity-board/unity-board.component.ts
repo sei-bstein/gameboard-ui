@@ -23,7 +23,7 @@ export class UnityBoardComponent implements OnInit, OnDestroy {
   unityActiveGame: UnityActiveGame | null = null;
   isError = false;
 
-  constructor(
+  constructor (
     @Inject(DOCUMENT) private document: Document,
     private config: ConfigService,
     private sanitizer: DomSanitizer,
@@ -43,7 +43,6 @@ export class UnityBoardComponent implements OnInit, OnDestroy {
     }
 
     this.unityService.error$.subscribe(err => this.handleError(err));
-
     this.layoutService.stickyMenu$.next(false);
     this.unityHost = this.config.settings.unityclienthost || null;
     this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost!);
