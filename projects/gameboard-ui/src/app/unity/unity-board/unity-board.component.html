@@ -8,9 +8,6 @@
 <ng-template #loadingUnity>
     <div class="loading-unity" *ngIf="!isError">
         <app-spinner></app-spinner>
-
-        <p *ngIf="isGamespaceProvisioned">Connecting to {{ unityHost }}...</p>
-        <app-unity-team-leader-waiting-room context="this.ctx" *ngIf="!isGamespaceProvisioned" (hasGame)="onHasGame">
-        </app-unity-team-leader-waiting-room>
+        <p>Connecting to {{ unityHost }}...</p>
     </div>
 </ng-template>

@@ -217,8 +217,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": false
   }
 }

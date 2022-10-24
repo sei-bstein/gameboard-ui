@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ConfigService } from '../utility/config.service';
 import { UnityActiveGame, UnityBoardContext, UnityDeployContext } from '../unity/unity-models';
 import { LocalStorageService, StorageKey } from '../utility/local-storage.service';
@@ -25,9 +25,6 @@ export class UnityService {
     this.undeployGame(ctx).subscribe(m => this.log("Undeploy result:", m))
   }
 
-  public hasGame$ = (ctx: UnityDeployContext) =>
-    this.http.get<boolean>(`${this.config.apphost}/api/unity/hasGamespace/${ctx.gameId}/${ctx.teamId}`);
-
   public async startGame(ctx: UnityBoardContext) {
     this.log("Starting unity game...", ctx);
 
@@ -51,6 +48,11 @@ export class UnityService {
 
     this.log("Starting unity game...");
     this.launchGame({ gameId: ctx.gameId, teamId: ctx.teamId })
+  }
+
+  public retrieveHeadlessUrl(ctx: UnityDeployContext): Observable<string> {
+    this.log("Getting headlessUrl with context...", ctx)
+    return this.http.get<string>(`${this.API_ROOT}/game/headless/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
   public undeployGame(ctx: UnityDeployContext): Observable<string> {
