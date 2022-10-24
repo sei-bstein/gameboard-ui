@@ -9,6 +9,7 @@ import { LocalStorageService, StorageKey } from '../utility/local-storage.servic
 export class UnityService {
   private API_ROOT = `${this.config.apphost}api`;
   private activeGame: UnityBoardContext | null = null;
+  private vmKeyNameMatch = /vm\d+/i;
 
   activeGame$ = new Subject<UnityActiveGame>();
   gameOver$ = new Observable();
@@ -40,7 +41,7 @@ export class UnityService {
     const oidcUserToken = this.storage.getArbitrary(storageKey);
 
     if (oidcUserToken == null) {
-      this.reportError("You don't seem to have an OIDC token. (If this is a playtest, try relogging. Sorry.");
+      this.reportError("You don't seem to have an OIDC token. (If this is a playtest, try relogging. Sorry.)");
     }
 
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
@@ -71,7 +72,7 @@ export class UnityService {
 
   private clearLocalStorageKeys() {
     this.storage.remove(false, StorageKey.UnityOidcLink, StorageKey.UnityGameLink);
-    this.storage.removeIf((key, value) => key.startsWith("VM"));
+    this.storage.removeIf((key, value) => this.vmKeyNameMatch.test(key));
   }
 
   private launchGame(ctx: UnityDeployContext) {

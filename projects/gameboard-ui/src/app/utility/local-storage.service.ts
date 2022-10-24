@@ -76,6 +76,15 @@ export class LocalStorageService {
     });
   }
 
+  removeAll(... keys: StorageKey[]) : void {
+    keys.forEach(key => {
+
+      if (this.get(key)) {
+        
+      }
+    });
+  }
+
   removeIf(predicate: (key: string, value: string) => boolean) {
     const keysToRemove: string[] = []
 
