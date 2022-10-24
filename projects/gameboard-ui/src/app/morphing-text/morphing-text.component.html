@@ -1,0 +1,19 @@
+<div class="morphing-text-component">
+    <div class="flex-gutter"></div>
+    <div id="container">
+        <span id="text1" #text1></span>
+        <span id="text2" #text2></span>
+    </div>
+    <div class="flex-gutter"></div>
+</div>
+
+<svg id="filters">
+    <defs>
+        <filter id="threshold">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        0 0 0 255 -140" />
+        </filter>
+    </defs>
+</svg>

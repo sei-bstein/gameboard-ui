@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ConfigService } from '../utility/config.service';
 import { UnityActiveGame, UnityBoardContext, UnityDeployContext } from '../unity/unity-models';
 import { LocalStorageService, StorageKey } from '../utility/local-storage.service';
@@ -105,17 +105,6 @@ export class UnityService {
       this.log("Booting unity client!");
     });
   }
-
-  // forkJoin([
-  //   of({
-  //     gamespaceId: deployed.gamespaceId,
-  //     headlessUrl: deployed.headlessUrl,
-  //     teamId: ctx.teamId,
-  //     gameId: ctx.gameId,
-  //     vms: deployed.vms
-  //   } as UnityActiveGame),
-  //   this.retrieveHeadlessUrl(ctx)
-  // ]).subscribe(([game, headlessUrl]) => { });
 
   private log(...messages: (string | any)[]) {
     console.log("[UnityService]:", ...messages);

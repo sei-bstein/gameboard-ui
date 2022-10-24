@@ -11,8 +11,6 @@ import { Component, Input } from '@angular/core';
 export class ErrorDivComponent {
   @Input() errors!: any[];
 
-  constructor() { }
-
   closed(e: any): void {
     const i = this.errors.indexOf(e);
     if (i >= 0) {

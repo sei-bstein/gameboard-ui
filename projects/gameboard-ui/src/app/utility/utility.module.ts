@@ -38,6 +38,7 @@ import { TextToColorPipe } from './pipes/text-to-color.pipe';
 import { UntilPipe } from './pipes/until-date.pipe';
 import { RouterModule } from '@angular/router';
 import { ImagestackComponent } from './components/imagestack/imagestack.component';
+import { MorphingTextComponent } from '../morphing-text/morphing-text.component';
 
 const components = [
   ClipspanComponent,
@@ -65,7 +66,8 @@ const components = [
   ObserveOrderPipe,
   MatchesTermPipe,
   TextToColorPipe,
-  ImagestackComponent
+  ImagestackComponent,
+  MorphingTextComponent
 ]
 
 @NgModule({
