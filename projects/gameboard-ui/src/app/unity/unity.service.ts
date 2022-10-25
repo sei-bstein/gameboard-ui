@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { ConfigService } from '../utility/config.service';
-import { UnityActiveGame, UnityDeployContext, UnityUndeployContext } from '../unity/unity-models';
+import { UnityActiveGame, UnityDeployContext, UnityDeployResult, UnityUndeployContext } from '../unity/unity-models';
 import { LocalStorageService, StorageKey } from '../utility/local-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +26,7 @@ export class UnityService {
 
   public async startGame(ctx: UnityDeployContext) {
     this.log("Validating context for the game...", ctx);
-    
+
     if (!ctx.sessionExpirationTime) {
       this.reportError("Can't start the game - no session expiration time was specified.");
     }
@@ -53,8 +53,17 @@ export class UnityService {
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
     this.log("User OIDC resolved.");
 
-    this.log("Starting unity game with context ...", ctx);
-    this.launchGame(ctx)
+    const currentGame = (await this.getCurrentGame(ctx).toPromise()) as UnityActiveGame;
+    if (currentGame) {
+      this.log("A game already exists for context", ctx);
+      this.log("The existing game is: ", currentGame);
+
+      this.startupExistingGame(currentGame);
+    }
+    else {
+      this.log("Starting unity game with context ...", ctx);
+      this.launchGame(ctx);
+    }
   }
 
   public undeployGame(ctx: UnityUndeployContext): Observable<string> {
@@ -77,26 +86,9 @@ export class UnityService {
   }
 
   private launchGame(ctx: UnityDeployContext) {
-    this.http.get<any>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`).subscribe(deployResult => {
+    this.http.post<UnityDeployResult>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`, {}).subscribe(deployResult => {
+      this.log("Deployed this ->", deployResult);
 
-      try {
-        this.log("Starting pre-launch validation. This was deployed ->", deployResult);
-
-        // validation - did we make it?
-        if (!deployResult.headlessUrl || !deployResult.gamespaceId || !deployResult.vms || !deployResult.vms.length) {
-          this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available.`);
-        }
-
-        // add necessary items to local storage
-        this.createLocalStorageKeys(deployResult);
-      }
-      catch (err: any) {
-        this.reportError(err);
-        this.endGame(ctx);
-        return;
-      }
-
-      // emit the result
       const activeGame = {
         gamespaceId: deployResult.gamespaceId,
         headlessUrl: deployResult.headlessUrl,
@@ -106,10 +98,36 @@ export class UnityService {
         sessionExpirationTime: ctx.sessionExpirationTime
       };
 
-      this.log("Game is active!", activeGame);
-      this.activeGame$.next(activeGame);
-      this.log("Booting unity client!");
+      this.startupExistingGame(activeGame);
     });
+  }
+
+  private startupExistingGame(ctx: UnityActiveGame) {
+    try {
+      this.log("Starting pre-launch validation. The active game to run in the client is ->", ctx);
+
+      // validation - did we make it?
+      if (!ctx.headlessUrl || !ctx.gamespaceId || !ctx.vms || !ctx.vms.length) {
+        this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available.`);
+      }
+
+      // add necessary items to local storage
+      this.createLocalStorageKeys(ctx);
+    }
+    catch (err: any) {
+      this.reportError(err);
+      this.endGame(ctx);
+      return;
+    }
+
+    // emit the result
+    this.log("Game is active!", ctx);
+    this.activeGame$.next(ctx);
+    this.log("Booting unity client!");
+  }
+
+  private getCurrentGame<UnityActiveGame>(ctx: UnityDeployContext): Observable<UnityActiveGame> {
+    return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getUnitySpace/${ctx.gameId}/${ctx.teamId}`);
   }
 
   private log(...messages: (string | any)[]) {
