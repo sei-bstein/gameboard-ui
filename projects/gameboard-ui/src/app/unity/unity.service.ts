@@ -127,7 +127,7 @@ export class UnityService {
   }
 
   private getCurrentGame<UnityActiveGame>(ctx: UnityDeployContext): Observable<UnityActiveGame> {
-    return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getUnitySpace/${ctx.gameId}/${ctx.teamId}`);
+    return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getGamespace/${ctx.gameId}/${ctx.teamId}`);
   }
 
   private log(...messages: (string | any)[]) {
