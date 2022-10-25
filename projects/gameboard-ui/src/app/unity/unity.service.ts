@@ -62,6 +62,7 @@ export class UnityService {
     }
     else {
       this.log("This context doesn't have an active game:", ctx);
+      this.log("Their active game is:", currentGame);
       this.log("Starting one now...");
       this.launchGame(ctx);
     }
