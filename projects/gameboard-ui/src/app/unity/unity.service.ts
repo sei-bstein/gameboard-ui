@@ -54,14 +54,15 @@ export class UnityService {
     this.log("User OIDC resolved.");
 
     const currentGame = (await this.getCurrentGame(ctx).toPromise()) as UnityActiveGame;
-    if (this.isValidGame(currentGame)) {
+    if (currentGame.gamespaceId) {
+      this.log("GamespaceId is", currentGame.gamespaceId, "- valid game");
       this.log("A game already exists for context", ctx);
-      this.log("The existing game is: ", currentGame);
 
+      this.log("Starting up existing game.", currentGame);
       this.startupExistingGame(currentGame);
     }
     else {
-      this.log("This context doesn't have an active game:", ctx);
+      this.log("This context doesn't have an active game, because gamespaceId:", currentGame?.gamespaceId);
       this.log("Their active game is:", currentGame);
       this.log("Starting one now...");
       this.launchGame(ctx);
