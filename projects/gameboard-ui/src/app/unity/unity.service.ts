@@ -73,7 +73,7 @@ export class UnityService {
 
   private clearLocalStorageKeys() {
     this.storage.remove(false, StorageKey.UnityOidcLink, StorageKey.UnityGameLink);
-    this.storage.removeIf((key, value) => key.startsWith("VM"));
+    this.storage.removeIf((key, value) => /VM\d+/i.test(key));
   }
 
   private launchGame(ctx: UnityDeployContext) {
@@ -97,7 +97,7 @@ export class UnityService {
       }
 
       // emit the result
-      const UnityActiveGame = {
+      const activeGame = {
         gamespaceId: deployResult.gamespaceId,
         headlessUrl: deployResult.headlessUrl,
         vms: deployResult.vms,
@@ -106,8 +106,8 @@ export class UnityService {
         sessionExpirationTime: ctx.sessionExpirationTime
       };
 
-      this.log("Game is active!", deployResult);
-      this.activeGame$.next(deployResult);
+      this.log("Game is active!", activeGame);
+      this.activeGame$.next(activeGame);
       this.log("Booting unity client!");
     });
   }
