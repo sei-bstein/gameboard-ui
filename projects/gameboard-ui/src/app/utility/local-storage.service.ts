@@ -42,7 +42,7 @@ export class LocalStorageService {
   clear(...keys: StorageKey[]): void {
     for (const key in keys) {
       console.log('removing key', key);
-      this._client.remove(key);
+      this._client.removeItem(key);
     }
   }
 
@@ -72,7 +72,6 @@ export class LocalStorageService {
         console.log("[LocalStorage]: Flushing", key);
         this._client.removeItem(key);
       }
-
     });
   }
 
