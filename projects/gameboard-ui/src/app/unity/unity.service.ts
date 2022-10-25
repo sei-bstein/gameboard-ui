@@ -54,14 +54,15 @@ export class UnityService {
     this.log("User OIDC resolved.");
 
     const currentGame = (await this.getCurrentGame(ctx).toPromise()) as UnityActiveGame;
-    if (currentGame) {
+    if (this.isValidGame(currentGame)) {
       this.log("A game already exists for context", ctx);
       this.log("The existing game is: ", currentGame);
 
       this.startupExistingGame(currentGame);
     }
     else {
-      this.log("Starting unity game with context ...", ctx);
+      this.log("This context doesn't have an active game:", ctx);
+      this.log("Starting one now...");
       this.launchGame(ctx);
     }
   }
@@ -107,8 +108,8 @@ export class UnityService {
       this.log("Starting pre-launch validation. The active game to run in the client is ->", ctx);
 
       // validation - did we make it?
-      if (!ctx.headlessUrl || !ctx.gamespaceId || !ctx.vms || !ctx.vms.length) {
-        this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available.`);
+      if (!this.isValidGame(ctx)) {
+        this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available. Context: ${ctx}`);
       }
 
       // add necessary items to local storage
@@ -128,6 +129,10 @@ export class UnityService {
 
   private getCurrentGame<UnityActiveGame>(ctx: UnityDeployContext): Observable<UnityActiveGame> {
     return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getGamespace/${ctx.gameId}/${ctx.teamId}`);
+  }
+
+  private isValidGame(game: UnityActiveGame) {
+    return Object.values(game).every(o => o && o != null);
   }
 
   private log(...messages: (string | any)[]) {
