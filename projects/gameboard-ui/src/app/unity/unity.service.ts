@@ -55,7 +55,15 @@ export class UnityService {
 
     const currentGameJson = await this.getCurrentGame(ctx).toPromise();
     console.log("The type of the current game thing is", typeof currentGameJson);
-    const currentGame = (JSON.parse(currentGameJson)) as UnityActiveGame;
+    let currentGame: UnityActiveGame;
+
+    if (typeof currentGameJson === "string") {
+      currentGame = JSON.parse(currentGameJson) as UnityActiveGame;
+    }
+    else {
+      currentGame = currentGameJson as UnityActiveGame;
+    }
+
     if (currentGame.gamespaceId) {
       this.log("GamespaceId is", currentGame.gamespaceId, "- valid game");
       this.log("A game already exists for context", ctx);
