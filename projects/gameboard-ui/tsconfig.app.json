@@ -4,6 +4,7 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/app",
     "rootDir": "src",
+    "sourceMap": true,
     "types": []
   },
   "files": [

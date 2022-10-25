@@ -1,5 +1,10 @@
-export interface UnityBoardContext {
+export interface UnityDeployContext {
     sessionExpirationTime: Date;
+    gameId: string;
+    teamId: string;
+}
+
+export interface UnityUndeployContext {
     gameId: string;
     teamId: string;
 }
@@ -14,9 +19,10 @@ export interface UnityActiveGame
     sessionExpirationTime: Date;
 }
 
-export interface UnityDeployContext {
-    gameId: string;
-    teamId: string;
+export interface UnityDeployResult { 
+    gamespaceId: string;
+    headlessUrl: string;
+    vms: UnityGameVM[];
 }
 
 export interface UnityGameVM {

@@ -2,9 +2,8 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, } fr
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
-import { UnityActiveGame, UnityBoardContext } from '../unity-models';
+import { UnityActiveGame, UnityDeployContext } from '../unity-models';
 import { UnityService } from '../unity.service';
-import { environment } from 'projects/gameboard-ui/src/environments/environment';
 import { DOCUMENT } from '@angular/common';
 import { LayoutService } from '../../utility/layout.service';
 
@@ -14,7 +13,7 @@ import { LayoutService } from '../../utility/layout.service';
   styleUrls: ['./unity-board.component.scss']
 })
 export class UnityBoardComponent implements OnInit {
-  @Input('gameContext') public ctx!: UnityBoardContext;
+  @Input('gameContext') public ctx!: UnityDeployContext;
   @ViewChild('iframe') private iframe: HTMLIFrameElement | null = null;
   @Output() public gameOver = new EventEmitter();
   @Output() public error = new EventEmitter<string>();
