@@ -76,8 +76,10 @@ export class UnityService {
   private createLocalStorageKeys(game: UnityActiveGame) {
     this.storage.add(StorageKey.UnityGameLink, game.headlessUrl);
 
-    for (let i = 0; i < game.vms.length; i++) {
-      this.storage.addArbitrary(`VM${i}`, game.vms[i].Url);
+    if (game.vms?.length) {
+      for (let i = 0; i < game.vms.length; i++) {
+        this.storage.addArbitrary(`VM${i}`, game.vms[i].Url);
+      }
     }
   }
 
@@ -132,6 +134,7 @@ export class UnityService {
   }
 
   private isValidGame(game: UnityActiveGame) {
+    this.log("is this valid?", game);
     return Object.values(game).every(o => o && o != null);
   }
 
