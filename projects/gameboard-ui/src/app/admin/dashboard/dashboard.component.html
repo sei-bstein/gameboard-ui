@@ -145,8 +145,8 @@
                     <div [tooltip]="game.allowTeam ? 'Team' : 'Individual'" containerClass="light-tooltip" container="body" [adaptivePosition]="true" placement="top">
                       <fa-icon [icon]="game.allowTeam ? faTeam : faUser"></fa-icon>
                     </div>
-                    <div [tooltip]="!!game.feedbackTemplate?.challenge?.length || !!game.feedbackTemplate?.game?.length ? 'Accepts Feedback' : 'No Feedback'" containerClass="light-tooltip" container="body" [adaptivePosition]="true" placement="top">
-                      <fa-icon [icon]="!!game.feedbackTemplate?.challenge?.length || !!game.feedbackTemplate?.game?.length ? faChartBar : faCommentSlash"></fa-icon>
+                    <div [tooltip]="!!game.feedbackTemplate.challenge.length || !!game.feedbackTemplate.game.length ? 'Accepts Feedback' : 'No Feedback'" containerClass="light-tooltip" container="body" [adaptivePosition]="true" placement="top">
+                      <fa-icon [icon]="!!game.feedbackTemplate.challenge.length || !!game.feedbackTemplate.game.length ? faChartBar : faCommentSlash"></fa-icon>
                     </div>
                   </td>
                   <td class="thin-col sticky-options sticky-cell">
