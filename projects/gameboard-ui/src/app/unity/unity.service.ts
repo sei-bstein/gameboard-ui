@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ConfigService } from '../utility/config.service';
 import { UnityActiveGame, UnityBoardContext, UnityDeployContext } from '../unity/unity-models';
 import { LocalStorageService, StorageKey } from '../utility/local-storage.service';
@@ -14,7 +14,7 @@ export class UnityService {
   gameOver$ = new Observable();
   error$ = new Subject<any>();
 
-  constructor(
+  constructor (
     private config: ConfigService,
     private http: HttpClient,
     private storage: LocalStorageService) { }
@@ -75,47 +75,35 @@ export class UnityService {
   }
 
   private launchGame(ctx: UnityDeployContext) {
-    this.http.get<any>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`).subscribe(deployed => {
-      this.log("Deployed this ->", deployed);
-      forkJoin([
-        of({
-          gamespaceId: deployed.gamespaceId,
-          headlessUrl: deployed.headless_url,
-          teamId: ctx.teamId,
-          gameId: ctx.gameId,
-          vms: deployed.vms
-        } as UnityActiveGame),
-        this.retrieveHeadlessUrl(ctx)
-      ]).subscribe(([game, headlessUrl]) => {
-        
+    this.http.get<any>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`).subscribe(game => {
+      this.log("Deployed this ->", game);
+
+      try {
         this.log("Starting pre-launch validation...")
-        game.headlessUrl = headlessUrl;
 
-        try {
-          // validation - did we make it?
-          if (!game.headlessUrl) {
-            this.reportError(`Couldn't resolve the headless url for team ${JSON.stringify(game.teamId)}. No gamespaces available.`);
-          }
-
-          if (!game.vms?.length) {
-            this.reportError(`Couldn't resolve VMs for the game: ${JSON.stringify(game)}`);
-          }
-
-          // add necessary items to local storage
-          this.createLocalStorageKeys(game);
-        }
-        catch {
-          this.endGame(ctx);
-          return;
+        // validation - did we make it?
+        if (!game.headlessUrl) {
+          this.reportError(`Couldn't resolve the headless url for team ${JSON.stringify(game.teamId)}. No gamespaces available.`);
         }
 
-        // emit the result
-        this.log("Game is active!", game);
-        this.activeGame$.next(game);
-      });
-    }, 
-    err => this.reportError(err),
-    () => this.log("Booting unity client!"));
+        if (!game.vms?.length) {
+          this.reportError(`Couldn't resolve VMs for the game: ${JSON.stringify(game)}`);
+        }
+
+        // add necessary items to local storage
+        this.createLocalStorageKeys(game);
+      }
+      catch (err: any) {
+        this.reportError(err);
+        this.endGame(ctx);
+        return;
+      }
+
+      // emit the result
+      this.log("Game is active!", game);
+      this.activeGame$.next(game);
+      this.log("Booting unity client!");
+    });
   }
 
   private log(...messages: (string | any)[]) {

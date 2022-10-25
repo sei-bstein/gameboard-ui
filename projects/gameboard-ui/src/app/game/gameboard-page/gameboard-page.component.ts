@@ -47,7 +47,7 @@ export class GameboardPageComponent implements OnDestroy {
   hubsub: Subscription;
   unityBoardContext!: UnityBoardContext;
 
-  constructor(
+  constructor (
     route: ActivatedRoute,
     private router: Router,
     private api: BoardService,
@@ -128,10 +128,10 @@ export class GameboardPageComponent implements OnDestroy {
       this.router.navigateByUrl('/');
     } else {
       this.ctx = b;
-      
+
     }
   }
-  
+
   ngOnDestroy(): void {
     if (!this.hubsub.closed) {
       this.hubsub.unsubscribe();

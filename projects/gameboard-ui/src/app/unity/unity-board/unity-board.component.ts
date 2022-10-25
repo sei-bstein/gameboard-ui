@@ -1,9 +1,10 @@
-import { Component, EventEmitter, HostListener, Inject, Input, OnDestroy, OnInit, Output, ViewChild, } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { combineLatest, interval, Observable } from 'rxjs';
+import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
 import { UnityActiveGame, UnityBoardContext } from '../unity-models';
 import { UnityService } from '../unity.service';
+import { environment } from 'projects/gameboard-ui/src/environments/environment';
 import { DOCUMENT } from '@angular/common';
 import { LayoutService } from '../../utility/layout.service';
 
@@ -12,7 +13,7 @@ import { LayoutService } from '../../utility/layout.service';
   templateUrl: './unity-board.component.html',
   styleUrls: ['./unity-board.component.scss']
 })
-export class UnityBoardComponent implements OnInit, OnDestroy {
+export class UnityBoardComponent implements OnInit {
   @Input('gameContext') public ctx!: UnityBoardContext;
   @ViewChild('iframe') private iframe: HTMLIFrameElement | null = null;
   @Output() public gameOver = new EventEmitter();
@@ -23,7 +24,7 @@ export class UnityBoardComponent implements OnInit, OnDestroy {
   unityActiveGame: UnityActiveGame | null = null;
   isError = false;
 
-  constructor(
+  constructor (
     @Inject(DOCUMENT) private document: Document,
     private config: ConfigService,
     private sanitizer: DomSanitizer,
@@ -63,30 +64,5 @@ export class UnityBoardComponent implements OnInit, OnDestroy {
   private handleError(error: string) {
     this.isError = true;
     this.error.emit(error);
-    // throw new Error(error);
-  }
-
-  @HostListener("window:scroll", ["$event"])
-  private onWindowScroll($event: any) {
-    console.log('event is', $event)
-    const reveals = this.document.querySelectorAll(".reveal");
-    const window = this.document.defaultView;
-
-    if (!window) {
-      console.error("Couldn't manipulate the height of the window");
-      return;
-    }
-
-    for (var i = 0; i < reveals.length; i++) {
-      const windowHeight = window.innerHeight;
-      const elementTop = reveals[i].getBoundingClientRect().top;
-      const elementVisible = 150;
-
-      if (elementTop < windowHeight - elementVisible) {
-        reveals[i].classList.add("active");
-      } else {
-        reveals[i].classList.remove("active");
-      }
-    }
   }
 }
