@@ -58,9 +58,11 @@ export class UnityService {
     let currentGame: UnityActiveGame;
 
     if (typeof currentGameJson === "string") {
+      console.log("The current game is being parsed into JSON");
       currentGame = JSON.parse(currentGameJson) as UnityActiveGame;
     }
     else {
+      console.log("The current game is already an object.");
       currentGame = currentGameJson as UnityActiveGame;
     }
 
@@ -73,7 +75,7 @@ export class UnityService {
     }
     else {
       this.log("This context doesn't have an active game, because gamespaceId:", currentGame?.gamespaceId);
-      this.log("Their active game is:", currentGame);
+      this.log("Complete active game results:", currentGame);
       this.log("Starting one now...");
       this.launchGame(ctx);
     }
@@ -123,7 +125,7 @@ export class UnityService {
 
       // validation - did we make it?
       if (!this.isValidGame(ctx)) {
-        this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available. Context: ${ctx}`);
+        this.reportError(`Couldn't resolve the deploy result for team ${ctx.teamId}. No gamespaces available.\n\nContext: ${JSON.stringify(ctx)}`);
       }
 
       // add necessary items to local storage
