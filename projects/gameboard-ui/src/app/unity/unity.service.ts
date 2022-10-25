@@ -133,10 +133,8 @@ export class UnityService {
     return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getGamespace/${ctx.gameId}/${ctx.teamId}`);
   }
 
-  private isValidGame(game: UnityActiveGame) {
-    this.log("is this valid?", game);
-    return Object.values(game).every(o => o && o != null);
-  }
+  // TODO: this should check every field, but i don't know why stuff isn't working
+  private isValidGame = (game: UnityActiveGame) => game.gamespaceId;
 
   private log(...messages: (string | any)[]) {
     console.log("[UnityService]:", ...messages);
