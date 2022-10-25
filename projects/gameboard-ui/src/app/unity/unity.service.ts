@@ -46,13 +46,8 @@ export class UnityService {
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
     this.log("User OIDC resolved.");
 
-    this.log("Starting unity game...");
+    this.log("Starting unity game with context ...", ctx);
     this.launchGame({ gameId: ctx.gameId, teamId: ctx.teamId })
-  }
-
-  public retrieveHeadlessUrl(ctx: UnityDeployContext): Observable<string> {
-    this.log("Getting headlessUrl with context...", ctx)
-    return this.http.get<string>(`${this.API_ROOT}/game/headless/${ctx.teamId}?gid=${ctx.gameId}`);
   }
 
   public undeployGame(ctx: UnityDeployContext): Observable<string> {
@@ -83,7 +78,7 @@ export class UnityService {
 
         // validation - did we make it?
         if (!game.headlessUrl) {
-          this.reportError(`Couldn't resolve the headless url for team ${JSON.stringify(game.teamId)}. No gamespaces available.`);
+          this.reportError(`Couldn't resolve the headless url for team ${game.teamId}. No gamespaces available.`);
         }
 
         if (!game.vms?.length) {
