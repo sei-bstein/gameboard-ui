@@ -53,7 +53,9 @@ export class UnityService {
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
     this.log("User OIDC resolved.");
 
-    const currentGame = (await this.getCurrentGame(ctx).toPromise()) as UnityActiveGame;
+    const currentGameJson = await this.getCurrentGame(ctx).toPromise();
+    console.log("The type of the current game thing is", typeof currentGameJson);
+    const currentGame = (JSON.parse(currentGameJson)) as UnityActiveGame;
     if (currentGame.gamespaceId) {
       this.log("GamespaceId is", currentGame.gamespaceId, "- valid game");
       this.log("A game already exists for context", ctx);
