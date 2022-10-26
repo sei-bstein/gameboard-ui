@@ -43,7 +43,7 @@ export class UnityService {
     // this.clearLocalStorageKeys();
 
     const storageKey = `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`;
-    this.log(`Retrieving storage key: ${storageKey}`);
+    this.log("Retrieving storage key:", storageKey);
     const oidcUserToken = this.storage.getArbitrary(storageKey);
 
     if (oidcUserToken == null) {
@@ -53,8 +53,8 @@ export class UnityService {
     this.storage.add(StorageKey.UnityOidcLink, `oidc.user:${this.config.settings.oidc.authority}:${this.config.settings.oidc.client_id}`);
     this.log("User OIDC resolved.");
 
+    this.log("Checking for an active game for the context:", ctx);
     const currentGameJson = await this.getCurrentGame(ctx).toPromise();
-    this.log("The type of the current game thing is", typeof currentGameJson);
     this.log("This is the current game we got back:", currentGameJson);
     let currentGame: UnityActiveGame;
 
@@ -67,6 +67,7 @@ export class UnityService {
       currentGame = currentGameJson as UnityActiveGame;
     }
 
+    this.log("Checking current game for validity...", currentGame);
     if (currentGame.gamespaceId) {
       this.log("GamespaceId is", currentGame.gamespaceId, "- valid game");
       this.log("A game already exists for context", ctx);
@@ -139,9 +140,8 @@ export class UnityService {
     }
 
     // emit the result
-    this.log("Game is active!", ctx);
     this.activeGame$.next(ctx);
-    this.log("Booting unity client!");
+    this.log("Game is active. Booting Unity client!", ctx);
   }
 
   private getCurrentGame<UnityActiveGame>(ctx: UnityDeployContext): Observable<UnityActiveGame> {
