@@ -56,14 +56,12 @@ export class UnityService {
     this.log("Checking for an active game for the context:", ctx);
     const currentGameJson = await this.getCurrentGame(ctx).toPromise();
     this.log("This is the current game we got back:", currentGameJson);
-    let currentGame: UnityActiveGame;
 
+    let currentGame: UnityActiveGame;
     if (typeof currentGameJson === "string") {
-      this.log("The current game is being parsed into JSON");
       currentGame = JSON.parse(currentGameJson) as UnityActiveGame;
     }
     else {
-      this.log("The current game is already an object.");
       currentGame = currentGameJson as UnityActiveGame;
     }
 
@@ -84,9 +82,10 @@ export class UnityService {
   }
 
   public undeployGame(ctx: UnityUndeployContext): Observable<string> {
-    this.log("Undeploying game...");
-    this.log(`... ${this.API_ROOT}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}...`);
-    return this.http.get<string>(`${this.API_ROOT}/undeployunityspace/${ctx.teamId}?gid=${ctx.gameId}`);
+    const undeployEndpoint = `${this.API_ROOT}/unity/undeploy/${ctx.gameId}?gid=${ctx.teamId}`;
+    this.log("Undeploying game from", undeployEndpoint);
+    this.log(`... ${this.API_ROOT}/unity/undeploy/${ctx.gameId}?gid=${ctx.teamId}...`);
+    return this.http.post<string>(undeployEndpoint, {});
   }
 
   private createLocalStorageKeys(game: UnityActiveGame) {
@@ -105,7 +104,7 @@ export class UnityService {
   }
 
   private launchGame(ctx: UnityDeployContext) {
-    this.http.post<UnityDeployResult>(`${this.API_ROOT}/deployunityspace/${ctx.gameId}/${ctx.teamId}`, {}).subscribe(deployResult => {
+    this.http.post<UnityDeployResult>(`${this.API_ROOT}/unity/deploy/${ctx.gameId}/${ctx.teamId}`, {}).subscribe(deployResult => {
       this.log("Deployed this ->", deployResult);
 
       const activeGame = {
@@ -145,7 +144,7 @@ export class UnityService {
   }
 
   private getCurrentGame<UnityActiveGame>(ctx: UnityDeployContext): Observable<UnityActiveGame> {
-    return this.http.get<UnityActiveGame>(`${this.API_ROOT}/getGamespace/${ctx.gameId}/${ctx.teamId}`);
+    return this.http.get<UnityActiveGame>(`${this.API_ROOT}/unity/${ctx.gameId}/${ctx.teamId}`);
   }
 
   // TODO: this should check every field, but i don't know why stuff isn't working
