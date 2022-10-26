@@ -82,9 +82,8 @@ export class UnityService {
   }
 
   public undeployGame(ctx: UnityUndeployContext): Observable<string> {
-    const undeployEndpoint = `${this.API_ROOT}/unity/undeploy/${ctx.gameId}?gid=${ctx.teamId}`;
+    const undeployEndpoint = `${this.API_ROOT}/unity/undeploy/${ctx.gameId}/${ctx.teamId}`;
     this.log("Undeploying game from", undeployEndpoint);
-    this.log(`... ${this.API_ROOT}/unity/undeploy/${ctx.gameId}?gid=${ctx.teamId}...`);
     return this.http.post<string>(undeployEndpoint, {});
   }
 
