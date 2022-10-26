@@ -54,15 +54,16 @@ export class UnityService {
     this.log("User OIDC resolved.");
 
     const currentGameJson = await this.getCurrentGame(ctx).toPromise();
-    console.log("The type of the current game thing is", typeof currentGameJson);
+    this.log("The type of the current game thing is", typeof currentGameJson);
+    this.log("This is the current game we got back:", currentGameJson);
     let currentGame: UnityActiveGame;
 
     if (typeof currentGameJson === "string") {
-      console.log("The current game is being parsed into JSON");
+      this.log("The current game is being parsed into JSON");
       currentGame = JSON.parse(currentGameJson) as UnityActiveGame;
     }
     else {
-      console.log("The current game is already an object.");
+      this.log("The current game is already an object.");
       currentGame = currentGameJson as UnityActiveGame;
     }
 
