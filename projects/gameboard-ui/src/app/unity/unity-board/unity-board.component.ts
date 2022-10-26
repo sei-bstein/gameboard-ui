@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { combineLatest, interval } from 'rxjs';
 import { ConfigService } from '../../utility/config.service';
-import { UnityActiveGame, UnityBoardContext } from '../unity-models';
+import { UnityActiveGame, UnityDeployContext } from '../unity-models';
 import { UnityService } from '../unity.service';
+import { DOCUMENT } from '@angular/common';
+import { LayoutService } from '../../utility/layout.service';
 
 @Component({
   selector: 'app-unity-board',
@@ -11,22 +13,41 @@ import { UnityService } from '../unity.service';
   styleUrls: ['./unity-board.component.scss']
 })
 export class UnityBoardComponent implements OnInit {
-  @Input('gameContext') public ctx!: UnityBoardContext;
+  @Input('gameContext') public ctx!: UnityDeployContext;
+  @ViewChild('iframe') private iframe: HTMLIFrameElement | null = null;
   @Output() public gameOver = new EventEmitter();
   @Output() public error = new EventEmitter<string>();
 
-  unityHost = this.config.unityHost;
-  unityClientLink: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.config.unityHost);
+  unityHost: string | null = null;
+  unityClientLink: SafeResourceUrl | null = null;
   unityActiveGame: UnityActiveGame | null = null;
+  isError = false;
 
-  constructor(
+  constructor (
+    @Inject(DOCUMENT) private document: Document,
     private config: ConfigService,
     private sanitizer: DomSanitizer,
-    private unityService: UnityService) { }
+    public unityService: UnityService,
+    public layoutService: LayoutService) { }
+
+  ngOnDestroy(): void {
+    this.layoutService.stickyMenu$.next(true);
+  }
 
   ngOnInit(): void {
-    this.unityService.activeGame$.subscribe(game => this.unityActiveGame);
-    this.unityService.error$.subscribe(err => this.error.emit(err));
+    if (!this.config.settings.unityclienthost) {
+      console.log("Unity host error", this.config.settings);
+
+      const errorMessage = `Unity host is not set: ${this.config.settings.unityclienthost}`;
+      this.handleError(errorMessage);
+    }
+
+    this.unityService.error$.subscribe(err => this.handleError(err));
+
+    this.layoutService.stickyMenu$.next(false);
+    this.unityHost = this.config.settings.unityclienthost || null;
+    this.unityClientLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.unityHost!);
+    this.unityService.activeGame$.subscribe(game => this.unityActiveGame = game);
     this.unityService.startGame(this.ctx);
 
     combineLatest([
@@ -37,5 +58,10 @@ export class UnityBoardComponent implements OnInit {
         alert("The game's over! What's supposed to happen now?");
       }
     });
+  }
+
+  private handleError(error: string) {
+    this.isError = true;
+    this.error.emit(error);
   }
 }

@@ -1,0 +1,36 @@
+$font-size: 4rem;
+
+:host { 
+    display: block;
+    width: 100%;
+}
+
+.morphing-text-component {
+    display: flex;
+    font-family: Raleway 'sans-serif';
+}
+
+svg {
+    position: absolute;
+}
+
+#container {
+    flex-grow: 1;
+    height: $font-size;
+    top: 0;
+    bottom: 0;
+    filter: url(#threshold) blur(0.6px);
+}
+
+#text1,
+#text2 {
+    color: white;
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    font-family: "Lucida Console", monospace;
+    font-size: $font-size;
+    line-height: $font-size;
+    text-align: center;
+    user-select: none;
+}

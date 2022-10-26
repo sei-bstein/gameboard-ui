@@ -23,7 +23,6 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { YamlPipe } from './pipes/yaml.pipe';
 import { LoginComponent } from './components/login/login.component';
-import { ClipboardService } from './clipboard.service';
 import { ClockPipe } from './pipes/clock.pipe';
 import { ProfileEditorComponent } from './components/profile-editor/profile-editor.component';
 import { FormsModule } from '@angular/forms';
@@ -38,6 +37,7 @@ import { TextToColorPipe } from './pipes/text-to-color.pipe';
 import { UntilPipe } from './pipes/until-date.pipe';
 import { RouterModule } from '@angular/router';
 import { ImagestackComponent } from './components/imagestack/imagestack.component';
+import { MorphingTextComponent } from './components/morphing-text/morphing-text.component';
 
 const components = [
   ClipspanComponent,
@@ -65,7 +65,8 @@ const components = [
   ObserveOrderPipe,
   MatchesTermPipe,
   TextToColorPipe,
-  ImagestackComponent
+  ImagestackComponent,
+  MorphingTextComponent
 ]
 
 @NgModule({

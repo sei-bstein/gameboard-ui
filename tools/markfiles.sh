@@ -9,7 +9,7 @@ apply_markings () {
     fi
 
 cat<<EOF > $f.lic
-$2 Copyright 2021 Carnegie Mellon University. All Rights Reserved.$3
+$2 Copyright 2022 Carnegie Mellon University. All Rights Reserved.$3
 $2 Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information.$3
 
 EOF

@@ -9,7 +9,7 @@ import { catchError, debounceTime, filter, map, mergeAll, switchMap, takeUntil, 
 import { BoardPlayer, BoardSpec, Challenge, NewChallenge, VmState } from '../../api/board-models';
 import { BoardService } from '../../api/board.service';
 import { ApiUser } from '../../api/user-models';
-import { UnityBoardContext } from '../../unity/unity-models';
+import { UnityDeployContext } from '../../unity/unity-models';
 import { ConfigService } from '../../utility/config.service';
 import { HubState, NotificationService } from '../../utility/notification.service';
 import { UserService } from '../../utility/user.service';
@@ -45,9 +45,9 @@ export class GameboardPageComponent implements OnDestroy {
   user$: Observable<ApiUser | null>;
   hubstate$: Observable<HubState>;
   hubsub: Subscription;
-  unityBoardContext!: UnityBoardContext;
+  unityGameContext!: UnityDeployContext;
 
-  constructor(
+  constructor (
     route: ActivatedRoute,
     private router: Router,
     private api: BoardService,
@@ -73,12 +73,11 @@ export class GameboardPageComponent implements OnDestroy {
       tap(b => this.ctx = b),
       tap(b => this.startHub(b)),
       tap(b => {
-        this.unityBoardContext = {
+        this.unityGameContext = {
           gameId: b.gameId,
           teamId: b.teamId,
           sessionExpirationTime: b.sessionEnd
         }
-        console.log("Unity board context set.")
       }),
       tap(b => this.reselect())
     ).subscribe();
@@ -132,7 +131,6 @@ export class GameboardPageComponent implements OnDestroy {
       
     }
   }
-  
   ngOnDestroy(): void {
     if (!this.hubsub.closed) {
       this.hubsub.unsubscribe();

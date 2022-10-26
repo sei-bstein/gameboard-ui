@@ -22,12 +22,12 @@ import { ClipboardService } from '../../utility/clipboard.service';
 export class PlayerRegistrarComponent implements OnInit {
   refresh$ = new BehaviorSubject<boolean>(true);
   game!: Game;
-  ctx$: Observable<{game: Game, futures: Game[], players: Player[]}>;
+  ctx$: Observable<{ game: Game, futures: Game[], players: Player[] }>;
   source: Player[] = [];
   selected: Player[] = [];
   viewed: Player | undefined = undefined;
   viewChange$ = new BehaviorSubject<Player | undefined>(this.viewed);
-  search: PlayerSearch = { term: '', take: 0, filter: ['collapse'], sort: 'time'};
+  search: PlayerSearch = { term: '', take: 0, filter: ['collapse'], sort: 'time' };
   filter = '';
   teamView = 'collapse';
   scope = '';
@@ -51,7 +51,7 @@ export class PlayerRegistrarComponent implements OnInit {
   faStar = faStar;
   faSync = faSyncAlt;
 
-  constructor(
+  constructor (
     route: ActivatedRoute,
     private gameapi: GameService,
     private api: PlayerService,
@@ -93,9 +93,9 @@ export class PlayerRegistrarComponent implements OnInit {
     this.ctx$ = combineLatest([
       game$,
       players$,
-      gameapi.list({filter: ['future']})
+      gameapi.list({ filter: ['future'] })
     ]).pipe(
-      map(([game, players, futures]) => ({game, players, futures}))
+      map(([game, players, futures]) => ({ game, players, futures }))
     );
   }
 
@@ -170,9 +170,8 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   undeploy(model: Player): void {
-    this.unityService.undeployGame({ gameId: model.gameId, teamId: model.teamId }).pipe(
-      tap(res => console.log("Undeploy result: " + res))
-    ).subscribe();
+    this.unityService.undeployGame({ gameId: model.gameId, teamId: model.teamId })
+      .subscribe(result => console.log("Undeploy result: ", result));
   }
 
   update(model: Player): void {
@@ -198,7 +197,7 @@ export class PlayerRegistrarComponent implements OnInit {
   }
 
   asCsv(p: Player): string {
-    return `${p.gameId},${p.teamId},${p.approvedName.replace(',', '-')},${p.id},${p.userId},${p.userName.replace(',','-')},${p.rank},${p.score},${p.time},${p.correctCount},${p.partialCount},${p.sessionBegin},${p.sessionEnd}`;
+    return `${p.gameId},${p.teamId},${p.approvedName.replace(',', '-')},${p.id},${p.userId},${p.userName.replace(',', '-')},${p.rank},${p.score},${p.time},${p.correctCount},${p.partialCount},${p.sessionBegin},${p.sessionEnd}`;
   }
 
   exportMailMeta(list: Player[]): void {
@@ -206,12 +205,12 @@ export class PlayerRegistrarComponent implements OnInit {
     const ids = a.map(p => p.teamId);
 
     this.api.getTeams(this.game.id)
-    .pipe(
-      map(r => r.filter(s => ids.find(i => s.id === i)))
-    )
-    .subscribe(data => {
-      this.clipboard.copyToClipboard(JSON.stringify(data, null, 2))
-    });
+      .pipe(
+        map(r => r.filter(s => ids.find(i => s.id === i)))
+      )
+      .subscribe(data => {
+        this.clipboard.copyToClipboard(JSON.stringify(data, null, 2))
+      });
 
   }
 

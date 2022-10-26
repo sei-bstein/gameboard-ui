@@ -1,26 +1,29 @@
 <!-- Copyright 2021 Carnegie Mellon University. All Rights Reserved. -->
 <!-- Released under a MIT (SEI)-style license. See LICENSE.md in the project root for license information. -->
 
-<nav [class]="custom_bg">
-  <div class="text-right">
-    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/home']">Home</a>
-    <ng-container *ngFor="let t of toc$ | async">
-      <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['doc', t.link]">{{t.display}}</a>
-    </ng-container>
-    <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['profile']">Profile</a>
-    <ng-container *ngIf="user$ | async as user">
-      <a *ngIf="!!user" class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['support']">
-        <span>Support</span>
-        <app-support-pill></app-support-pill>
-      </a>
-      <a *ngIf="!!user && (user.isAdmin || user.isDirector || user.isRegistrar || user.isDesigner || user.isObserver || user.isSupport)" class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/admin']">Admin</a>
-      <a *ngIf="!!user" class="btn btn-link text-success mx-1" (click)="logout()">Logout</a>
-    </ng-container>
-  </div>
-</nav>
+<div class="app-container">
+  <nav [class]="['custom_bg', (layoutService.stickyMenu$ | async) ? '' : 'nonsticky']">
+    <div class="text-right">
+      <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/home']">Home</a>
+      <ng-container *ngFor="let t of toc$ | async">
+        <a class="btn btn-link text-success mx-1" routerLinkActive="text-info"
+          [routerLink]="['doc', t.link]">{{t.display}}</a>
+      </ng-container>
+      <a class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['profile']">Profile</a>
+      <ng-container *ngIf="user$ | async as user">
+        <a *ngIf="!!user" class="btn btn-link text-success mx-1" routerLinkActive="text-info"
+          [routerLink]="['support']">
+          <span>Support</span>
+          <app-support-pill></app-support-pill>
+        </a>
+        <a *ngIf="!!user && (user.isAdmin || user.isDirector || user.isRegistrar || user.isDesigner || user.isObserver || user.isSupport)"
+          class="btn btn-link text-success mx-1" routerLinkActive="text-info" [routerLink]="['/admin']">Admin</a>
+        <a *ngIf="!!user" class="btn btn-link text-success mx-1" (click)="logout()">Logout</a>
+      </ng-container>
+    </div>
+  </nav>
 
-<app-message-board></app-message-board>
-
-<router-outlet></router-outlet>
-
-<footer></footer>
+  <app-message-board></app-message-board>
+  <router-outlet></router-outlet>
+  <footer></footer>
+</div>

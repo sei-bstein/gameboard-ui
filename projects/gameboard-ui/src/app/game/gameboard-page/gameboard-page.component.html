@@ -55,7 +55,7 @@
 
     <!-- If the game mode is Unity, get the link to the Unity server and launch once that's been received -->
     <div *ngIf="ctx.game.mode == 'unity'">
-      <app-unity-board [gameContext]="unityBoardContext" (error)="errors = [$event]"></app-unity-board>
+      <app-unity-board [gameContext]="unityGameContext" (error)="errors = [$event]"></app-unity-board>
     </div>
 
     <!-- If the game mode is not Unity, then it's a normal challenge space -->

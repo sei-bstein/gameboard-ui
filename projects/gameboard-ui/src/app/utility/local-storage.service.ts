@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export enum StorageKey {
+  Gameboard = "gameboard",
   UnityGameLink = "gameServerLink",
   UnityOidcLink = "oidcLink",
   VM1 = "VM1",
@@ -23,27 +24,26 @@ export class LocalStorageService {
     this._client.setItem(key, value);
   }
 
-   /**
-   * Adds the given string to local storage.
-   *
-   * @remarks
-   * This is functionally identical to `.add`; however, it's a separate signature
-   * because you should only do it if you really have to. Most common scenarios
-   * require you to add an entry for your key to the `StorageKey` enum. This is just
-   * here for cases in which the key is dynamic and not known at compile time.
-   * 
-   * @param key - The local storage key
-   * @param value - The local storage value
-   * @param throwIfExists - Lets you specify whether you want an exception if the key exists
-   */
+  /**
+  * Adds the given string to local storage.
+  *
+  * @remarks
+  * This is functionally identical to `.add`; however, it's a separate signature
+  * because you should only do it if you really have to. Most common scenarios
+  * require you to add an entry for your key to the `StorageKey` enum. This is just
+  * here for cases in which the key is dynamic and not known at compile time.
+  * 
+  * @param key - The local storage key
+  * @param value - The local storage value
+  * @param throwIfExists - Lets you specify whether you want an exception if the key exists
+  */
   addArbitrary = (key: string, value: string, throwIfExists = false) => this.add(key as StorageKey, value, throwIfExists);
 
-  clear(... keys: StorageKey[]): void {
-    this._client.clear();
-  }
-
-  clearAll(): void {
-    this._client.clear();
+  clear(...keys: StorageKey[]): void {
+    for (const key in keys) {
+      console.log('removing key', key);
+      this._client.removeItem(key);
+    }
   }
 
   get(key: StorageKey, throwIfNotExists = false) {
@@ -58,28 +58,36 @@ export class LocalStorageService {
 
   getArbitrary = (key: string, throwIfNotExists = false) => this.get(key as StorageKey, throwIfNotExists);
 
-  remove(throwIfNotExists = false, ... keys: StorageKey[]): void {
+  has(key: string): boolean {
+    return !!this._client.getItem(key);
+  }
+
+  remove(throwIfNotExists = false, ...keys: StorageKey[]): void {
     keys.forEach(key => {
-      if (throwIfNotExists && this._client.getItem(key.toString())) {
+      if (throwIfNotExists && !this._client.getItem(key.toString())) {
         throw new Error(`Storage key ${key} doesn't exist in local storage.`);
       }
-      
-      this._client.removeItem(key);
+
+      if (this._client.getItem(key)) {
+        console.log("[LocalStorage]: Flushing", key);
+        this._client.removeItem(key);
+      }
     });
   }
 
   removeIf(predicate: (key: string, value: string) => boolean) {
     const keysToRemove: string[] = []
 
-    for ( var i = 0; i < this._client.length; ++i ) {
+    for (var i = 0; i < this._client.length; ++i) {
       const key = localStorage.key(i);
       const value = this.getArbitrary(key!);
 
       if (predicate(key!, value!)) {
+        console.log("remove key", key);
         keysToRemove.push(key!);
       }
     }
 
-    this.clear(... keysToRemove as StorageKey[]);
+    this.clear(...keysToRemove as StorageKey[]);
   }
 }

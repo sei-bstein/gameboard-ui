@@ -1,6 +1,6 @@
 # Gameboard
 
-Copyright 2020 Carnegie Mellon University.
+Copyright 2022 Carnegie Mellon University.
 
 ### MIT (SEI)
 

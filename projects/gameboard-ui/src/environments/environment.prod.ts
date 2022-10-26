@@ -8,7 +8,7 @@ export const environment = {
     tochost: '',
     tocfile: 'toc.json',
     supporthost: '',
-    unityhost: '',
+    // unityclienthost: '',
     custom_background: '',
     oidc: {}
   }
