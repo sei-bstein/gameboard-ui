@@ -74,9 +74,7 @@ export class UnityService {
       this.startupExistingGame(currentGame);
     }
     else {
-      this.log("This context doesn't have an active game, because gamespaceId:", currentGame?.gamespaceId);
-      this.log("Complete active game results:", currentGame);
-      this.log("Starting one now...");
+      this.log("This context doesn't have an active game. This is what we got for their active game:", currentGame);
       this.launchGame(ctx);
     }
   }
@@ -103,7 +101,10 @@ export class UnityService {
   }
 
   private launchGame(ctx: UnityDeployContext) {
-    this.http.post<UnityDeployResult>(`${this.API_ROOT}/unity/deploy/${ctx.gameId}/${ctx.teamId}`, {}).subscribe(deployResult => {
+    const deployUrl = `${this.API_ROOT}/unity/deploy/${ctx.gameId}/${ctx.teamId}`;
+    this.log("Launching a new game at", deployUrl);
+
+    this.http.post<UnityDeployResult>(deployUrl, {}).subscribe(deployResult => {
       this.log("Deployed this ->", deployResult);
 
       const activeGame = {
