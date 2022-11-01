@@ -128,7 +128,7 @@ export class GameboardPageComponent implements OnDestroy {
       this.router.navigateByUrl('/');
     } else {
       this.ctx = b;
-      
+
     }
   }
   ngOnDestroy(): void {
@@ -139,7 +139,7 @@ export class GameboardPageComponent implements OnDestroy {
 
   startHub(b: BoardPlayer): void {
     if (b.session.isDuring) {
-      this.hub.init(b.id);
+      this.hub.init(b.teamId);
     }
   }
 

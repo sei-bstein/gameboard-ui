@@ -19,19 +19,28 @@
           <div class="d-flex text-info card-text">
             <span *ngIf="ctx.player.session.isDuring">Time Remaining: </span>
             <span *ngIf="ctx.player.session.isAfter">Session ended </span>
-            <span class="font-weight-bold" [class]="ctx.player.session.countdown | countdowncolor">&nbsp;{{ctx.player.session.countdown | countdown}}</span>
+            <span class="font-weight-bold"
+              [class]="ctx.player.session.countdown | countdowncolor">&nbsp;{{ctx.player.session.countdown |
+              countdown}}</span>
             <div class="spacer"></div>
-            <app-confirm-button *ngIf="ctx.game.allowReset" class="mx-2"
-              btnClass="btn btn-sm pop-warning" (confirm)="reset(ctx.player)">
+            <app-confirm-button *ngIf="ctx.game.allowReset" class="mx-2" btnClass="btn btn-sm pop-warning"
+              (confirm)="reset(ctx.player)">
               <fa-icon [icon]="faTrash"></fa-icon>
               <span>Reset Session</span>
             </app-confirm-button>
           </div>
         </ng-container>
-        <img [src]="ctx.player.sponsorLogo" width="64px" class="mr-2">
-        <span class="mr-2">{{ctx.player.approvedName}}</span>
-        <small *ngIf="!!ctx.player.pendingName" class="text-muted">({{ctx.player.pendingName}})</small>
       </div>
+      <div class="team-leader">
+        <img [src]="ctx.player.sponsorLogo" width="64px" class="mr-3 team-leader-sponsor-logo">
+        <div class="mr-2 team-leader-name">
+          <p class="team-header">Team</p>
+          <p class="team-leader-name-text">{{ctx.player.approvedName}}</p>
+          <small *ngIf="!!ctx.player.pendingName" class="text-muted">({{ctx.player.pendingName}})</small>
+        </div>
+      </div>
+
+      <hr class="team-leader-divider" />
 
       <ng-container *ngIf="ctx.game.allowTeam">
         <app-player-presence [id]="ctx.player.teamId"></app-player-presence>
@@ -65,14 +74,17 @@
           <alert type="danger">
             <ul>
               <li>After starting the session, the clock expires after {{ctx.game.sessionMinutes}} minutes!</li>
-              <li [hidden]="ctx.game.maxTeamSize < 2">This will start the session for the team, so be sure your teammates are ready to start!</li>
-              <li [hidden]="ctx.game.maxTeamSize < 2">You cannot add or remove team members after your session has started!</li>
+              <li [hidden]="ctx.game.maxTeamSize < 2">This will start the session for the team, so be sure your
+                teammates are ready to start!</li>
+              <li [hidden]="ctx.game.maxTeamSize < 2">You cannot add or remove team members after your session has
+                started!</li>
               <li [hidden]="ctx.game.allowReset">You will not be able to reset the session after starting it!</li>
             </ul>
           </alert>
 
           <div class="text-center">
-            <app-confirm-button btnClass="btn btn-lg btn-warning" (confirm)="start(ctx.player)" (cancel)="doublechecking=false">
+            <app-confirm-button btnClass="btn btn-lg btn-warning" (confirm)="start(ctx.player)"
+              (cancel)="doublechecking=false">
               <fa-icon [icon]="faBolt"></fa-icon>
               <span>Yes, start {{ctx.game.name}}</span>
             </app-confirm-button>
@@ -84,7 +96,8 @@
           <alert type="warning">
             After starting the session, the clock expires after {{ctx.game.sessionMinutes}} minutes.
             <span [hidden]="ctx.game.maxTeamSize < 2">
-              <br />This will start the session for the team, so be sure your teammates are ready to start. You cannot add or remove team members after your session has started.
+              <br />This will start the session for the team, so be sure your teammates are ready to start. You cannot
+              add or remove team members after your session has started.
             </span>
           </alert>
 
