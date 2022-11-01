@@ -190,20 +190,20 @@ export class NotificationService {
     }
   }
 
-  public async disconnect(): Promise<void> {
+  private async disconnect(): Promise<void> {
     try {
       if (this.connection?.state === HubConnectionState.Connected) {
         await this.connection.stop();
         this.setDisconnected();
       }
-    } finally { }
+    } finally {}
   }
 
   private async setConnected(): Promise<void> {
     this.hubState.connected = true;
     this.hubState.initialized = true;
     this.postState();
-    if (this.hubState.id) {
+    if (this.hubState.id){
       await this.joinChannel(this.hubState.id); // rejoin if was previously joined
 
     }
@@ -259,7 +259,8 @@ export interface Actor {
   online: boolean;
 }
 
-export enum HubEventAction {
+export enum HubEventAction
+{
   arrived = 'arrived',
   greeted = 'greeted',
   departed = 'departed',
